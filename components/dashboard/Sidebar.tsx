@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Users, Receipt } from "lucide-react";
+import { Home, Users, Receipt, Settings } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
-  { name: "Groups", href: "/dashboard/groups", icon: Users },
-  { name: "Expenses", href: "/dashboard/expenses", icon: Receipt },
+  { name: "Groups", href: "/groups", icon: Users },
+  { name: "Expenses", href: "/expenses", icon: Receipt },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export default function Sidebar() {
