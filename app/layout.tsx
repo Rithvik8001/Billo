@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/contexts/auth-context";
-import { Toaster } from "@/components/ui/sonner";
+import { Providers } from "@/components/providers";
+import type { Metadata } from "next";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,36 +12,29 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Billo - Smart Expense Tracking",
   description:
-    "Take control of your finances with Billo. Track expenses, set budgets, and make informed decisions with beautiful analytics.",
+    "Track your expenses, set budgets, and gain insights into your spending habits with Billo.",
   keywords: [
     "expense tracker",
-    "budget management",
-    "financial planning",
+    "budget planner",
     "personal finance",
+    "money management",
+    "financial tracking",
   ],
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AuthProvider>
-            {children}
-            <Toaster />
-          </AuthProvider>
-        </ThemeProvider>
+        <Providers>
+          <AuthProvider>{children}</AuthProvider>
+        </Providers>
       </body>
     </html>
   );

@@ -57,7 +57,9 @@ export function Navbar() {
           {user ? (
             <>
               <Link href="/dashboard">
-                <Button className="w-full justify-start">Go to Dashboard</Button>
+                <Button className="w-full justify-start">
+                  Go to Dashboard
+                </Button>
               </Link>
               <div className="flex items-center gap-2">
                 <ThemeToggle />
