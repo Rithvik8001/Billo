@@ -23,7 +23,11 @@ const links = [
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
-export function DashboardNav() {
+interface DashboardNavProps {
+  onNavClick?: () => void;
+}
+
+export function DashboardNav({ onNavClick }: DashboardNavProps) {
   const pathname = usePathname();
 
   return (
@@ -34,6 +38,7 @@ export function DashboardNav() {
           <Link
             key={link.href}
             href={link.href}
+            onClick={onNavClick}
             className={cn(
               "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
               pathname === link.href ? "bg-accent" : "transparent"

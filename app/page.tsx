@@ -1,9 +1,14 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BarChart3, PieChart, Wallet } from "lucide-react";
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function Home() {
+  const { user } = useAuth();
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -12,30 +17,42 @@ export default function Home() {
         <section className="px-4 py-20 md:py-32 mx-auto max-w-7xl">
           <div className="text-center space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 fill-mode-both">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-primary">
-              Smart Expense Tracking
+              {user ? "Welcome Back to Billo" : "Smart Expense Tracking"}
               <br />
-              for Modern Life
+              {user ? "Let's Track Your Expenses" : "for Modern Life"}
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Take control of your finances with Billo. Track expenses, set
-              budgets, and make informed decisions with beautiful analytics.
+              {user
+                ? "Continue managing your finances with our powerful expense tracking tools and analytics."
+                : "Take control of your finances with Billo. Track expenses, set budgets, and make informed decisions with beautiful analytics."}
             </p>
             <div className="flex gap-4 justify-center">
-              <Link href="/register">
-                <Button size="lg" className="gap-2 group">
-                  Get Started{" "}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="transition-colors hover:text-primary"
-                >
-                  Sign In
-                </Button>
-              </Link>
+              {user ? (
+                <Link href="/dashboard">
+                  <Button size="lg" className="gap-2 group">
+                    Go to Dashboard{" "}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Link href="/register">
+                    <Button size="lg" className="gap-2 group">
+                      Get Started{" "}
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </Button>
+                  </Link>
+                  <Link href="/login">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="transition-colors hover:text-primary"
+                    >
+                      Sign In
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </section>
@@ -86,7 +103,9 @@ export default function Home() {
                     <h3 className="text-xl font-semibold mb-2">
                       {feature.title}
                     </h3>
-                    <p className="text-muted-foreground">{feature.description}</p>
+                    <p className="text-muted-foreground">
+                      {feature.description}
+                    </p>
                   </div>
                   <div className="absolute inset-0 border border-primary/10 rounded-lg pointer-events-none transition-opacity opacity-0 group-hover:opacity-100" />
                 </div>

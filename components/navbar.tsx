@@ -5,9 +5,12 @@ import { Menu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
+import { useAuth } from "@/contexts/auth-context";
+import { UserNav } from "./dashboard/user-nav";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <nav className="border-b">
@@ -20,12 +23,23 @@ export function Navbar() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-4">
           <ThemeToggle />
-          <Link href="/login">
-            <Button variant="ghost">Login</Button>
-          </Link>
-          <Link href="/register">
-            <Button>Get Started</Button>
-          </Link>
+          {user ? (
+            <>
+              <Link href="/dashboard">
+                <Button>Go to Dashboard</Button>
+              </Link>
+              <UserNav />
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost">Login</Button>
+              </Link>
+              <Link href="/register">
+                <Button>Get Started</Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -40,18 +54,31 @@ export function Navbar() {
       {/* Mobile Navigation */}
       {isMenuOpen && (
         <div className="md:hidden border-t px-4 py-4 flex flex-col gap-4">
-          <Link href="/login">
-            <Button variant="ghost" className="w-full justify-start">
-              Login
-            </Button>
-          </Link>
-          <Link href="/register">
-            <Button className="w-full justify-start">Get Started</Button>
-          </Link>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Toggle theme</span>
-            <ThemeToggle />
-          </div>
+          {user ? (
+            <>
+              <Link href="/dashboard">
+                <Button className="w-full justify-start">Go to Dashboard</Button>
+              </Link>
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <UserNav />
+              </div>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" className="w-full justify-start">
+                  Login
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button className="w-full justify-start">Get Started</Button>
+              </Link>
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+              </div>
+            </>
+          )}
         </div>
       )}
     </nav>

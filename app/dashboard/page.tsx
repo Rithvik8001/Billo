@@ -2,10 +2,50 @@
 
 import { useAuth } from "@/contexts/auth-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, CreditCard, PieChart, ArrowUpRight } from "lucide-react";
+import {
+  DollarSign,
+  CreditCard,
+  PieChart,
+  ArrowUpRight,
+  Coffee,
+  ShoppingCart,
+  Utensils,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+
+  // Placeholder data for recent activities
+  const recentActivities = [
+    {
+      id: 1,
+      type: "expense",
+      category: "Food",
+      amount: 25.5,
+      description: "Lunch at Cafe",
+      date: "Today, 2:15 PM",
+      icon: Coffee,
+    },
+    {
+      id: 2,
+      type: "expense",
+      category: "Shopping",
+      amount: 120.0,
+      description: "Grocery shopping",
+      date: "Today, 11:30 AM",
+      icon: ShoppingCart,
+    },
+    {
+      id: 3,
+      type: "expense",
+      category: "Food",
+      amount: 45.0,
+      description: "Dinner with friends",
+      date: "Yesterday, 8:20 PM",
+      icon: Utensils,
+    },
+  ];
 
   return (
     <div className="space-y-8">
@@ -64,6 +104,50 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Recent Activity Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Activity</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="relative">
+            {/* Timeline line */}
+            <div className="absolute left-4 top-0 bottom-0 w-px bg-border" />
+
+            <div className="space-y-6">
+              {recentActivities.map((activity) => {
+                const Icon = activity.icon;
+                return (
+                  <div key={activity.id} className="flex gap-4 relative">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center relative z-10">
+                      <Icon className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-medium leading-none">
+                          {activity.description}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {activity.category}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">
+                          ${activity.amount.toFixed(2)}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {activity.date}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

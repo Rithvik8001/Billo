@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { DashboardNav } from "@/components/dashboard/nav";
 import { UserNav } from "@/components/dashboard/user-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { MobileNav } from "@/components/dashboard/mobile-nav";
 
 export default function DashboardLayout({
   children,
@@ -35,6 +36,7 @@ export default function DashboardLayout({
       <header className="border-b">
         <div className="flex h-16 items-center px-4">
           <div className="flex items-center gap-4">
+            <MobileNav />
             <span className="text-xl font-bold text-primary">Billo</span>
           </div>
           <div className="ml-auto flex items-center gap-4">
