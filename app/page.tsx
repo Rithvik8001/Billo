@@ -41,7 +41,7 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section className="px-4 py-16 bg-muted/50">
+        <section className="px-4 py-16">
           <div className="mx-auto max-w-7xl">
             <h2 className="text-3xl font-bold text-center mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
               Why Choose Billo?
@@ -72,20 +72,23 @@ export default function Home() {
               ].map((feature, index) => (
                 <div
                   key={index}
-                  className="flex flex-col items-center text-center p-6 rounded-lg transition-colors hover:bg-muted animate-in fade-in slide-in-from-bottom-4"
+                  className="group relative overflow-hidden rounded-lg border bg-background p-6 transition-all hover:shadow-lg animate-in fade-in slide-in-from-bottom-4"
                   style={{
                     animationDelay: `${feature.delay}ms`,
                     animationDuration: "700ms",
                     animationFillMode: "both",
                   }}
                 >
-                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 transition-transform hover:scale-110">
-                    <feature.icon className="h-6 w-6 text-primary" />
+                  <div className="flex flex-col items-center text-center">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 transition-transform group-hover:scale-110 group-hover:bg-primary/20">
+                      <feature.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">
+                      {feature.title}
+                    </h3>
+                    <p className="text-muted-foreground">{feature.description}</p>
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-muted-foreground">{feature.description}</p>
+                  <div className="absolute inset-0 border border-primary/10 rounded-lg pointer-events-none transition-opacity opacity-0 group-hover:opacity-100" />
                 </div>
               ))}
             </div>

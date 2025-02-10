@@ -1,10 +1,6 @@
-import {
-  ChevronLeft,
-  Loader2,
-  type LucideIcon,
-} from "lucide-react"
+import { ChevronLeft, Loader2, type LucideIcon } from "lucide-react";
 
-export type Icon = LucideIcon
+export type Icon = LucideIcon;
 
 export const Icons = {
   chevronLeft: ChevronLeft,
@@ -26,4 +22,4 @@ export const Icons = {
       ></path>
     </svg>
   ),
-}
+};

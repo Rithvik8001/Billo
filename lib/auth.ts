@@ -1,41 +1,74 @@
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, User } from 'firebase/auth';
-import { app } from './firebase';
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { app } from "./firebase";
 
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
-export const signInWithGoogle = async () => {
+export async function signInWithGoogle() {
   try {
-    const result = await signInWithPopup(auth, googleProvider);
-    return { user: result.user, error: null };
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+      prompt: "select_account",
+    });
+    const userCredential = await signInWithPopup(auth, provider);
+    const token = await userCredential.user.getIdToken();
+    return { user: userCredential.user, error: null };
   } catch (error: any) {
-    return { user: null, error: error.message };
+    return {
+      user: null,
+      error: error.message || "Failed to sign in with Google",
+    };
   }
-};
+}
 
-export const signInWithEmail = async (email: string, password: string) => {
+export async function signInWithEmail(email: string, password: string) {
   try {
-    const result = await signInWithEmailAndPassword(auth, email, password);
-    return { user: result.user, error: null };
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const token = await userCredential.user.getIdToken();
+    return { user: userCredential.user, error: null };
   } catch (error: any) {
-    return { user: null, error: error.message };
+    return {
+      user: null,
+      error: error.message || "Failed to sign in",
+    };
   }
-};
+}
 
-export const signUpWithEmail = async (email: string, password: string) => {
+export async function signUpWithEmail(email: string, password: string) {
   try {
-    const result = await createUserWithEmailAndPassword(auth, email, password);
-    return { user: result.user, error: null };
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const token = await userCredential.user.getIdToken();
+    return { user: userCredential.user, error: null };
   } catch (error: any) {
-    return { user: null, error: error.message };
+    return {
+      user: null,
+      error: error.message || "Failed to sign up",
+    };
   }
-};
+}
 
-export const signOutUser = async () => {
+export async function signOutUser() {
   try {
     await signOut(auth);
     return { error: null };
   } catch (error: any) {
-    return { error: error.message };
+    return {
+      error: error.message || "Failed to sign out",
+    };
   }
-};
+}
