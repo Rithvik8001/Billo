@@ -24,6 +24,12 @@ export const metadata: Metadata = {
   title: "Billo",
   description:
     "Billo - Scan. Tap. Split. Snap the receipt, tap your items, see who owes what. ",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-128.png", sizes: "128x128", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({

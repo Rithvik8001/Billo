@@ -13,9 +13,7 @@ export default function Page() {
           <ArrowLeft className="size-4" />
           Back to home
         </Link>
-
         <div className="grid md:grid-cols-2 gap-8 items-center">
-          {/* Left side - Branding */}
           <div className="hidden md:flex flex-col justify-center space-y-6">
             <div>
               <h1 className="text-4xl font-bold tracking-tight">
@@ -27,7 +25,7 @@ export default function Page() {
             </div>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="size-2 rounded-full bg-primary flex-shrink-0" />
+                <div className="size-2 rounded-full bg-primary shrink-0" />
                 <div>
                   <h3 className="font-medium">Scan receipts instantly</h3>
                   <p className="text-sm text-foreground/60">
@@ -36,7 +34,7 @@ export default function Page() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="size-2 rounded-full bg-primary flex-shrink-0" />
+                <div className="size-2 rounded-full bg-primary shrink-0" />
                 <div>
                   <h3 className="font-medium">Split bills fairly</h3>
                   <p className="text-sm text-foreground/60">
@@ -45,7 +43,7 @@ export default function Page() {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="size-2 rounded-full bg-primary flex-shrink-0" />
+                <div className="size-2 rounded-full bg-primary shrink-0" />
                 <div>
                   <h3 className="font-medium">Settle up easily</h3>
                   <p className="text-sm text-foreground/60">
@@ -55,8 +53,6 @@ export default function Page() {
               </div>
             </div>
           </div>
-
-          {/* Right side - Auth form */}
           <div className="flex flex-col items-center justify-center">
             <SignUp />
           </div>
