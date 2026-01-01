@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Home, ScanLine, Edit3, LogOut } from "lucide-react";
+import { Home, ScanLine, Edit3 } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import { UserButton } from "@clerk/nextjs";
 import { Separator } from "@/components/ui/separator";
+import { LogoutButton } from "@/components/logout-button";
 
 export default async function DashboardLayout({
   children,
@@ -80,12 +81,7 @@ export default async function DashboardLayout({
         <SidebarFooter className="border-t p-4">
           <div className="flex items-center justify-between">
             <UserButton />
-            <Link
-              href="/"
-              className="text-sm text-foreground/60 hover:text-foreground transition-colors"
-            >
-              <LogOut className="size-4" />
-            </Link>
+            <LogoutButton />
           </div>
         </SidebarFooter>
       </Sidebar>
