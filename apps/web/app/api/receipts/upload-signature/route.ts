@@ -12,11 +12,11 @@ export async function POST() {
     const timestamp = Math.round(Date.now() / 1000);
     const folder = `billo/receipts/${userId}`;
 
-    // Parameters to sign
-    const paramsToSign = {
+    // Parameters to sign (for signed uploads, we sign timestamp and folder)
+    // Note: upload_preset is for unsigned uploads, so we don't include it in signed uploads
+    const paramsToSign: Record<string, string> = {
       timestamp: timestamp.toString(),
       folder,
-      upload_preset: "ml_default", // Your existing preset
     };
 
     // Generate signature
@@ -29,7 +29,6 @@ export async function POST() {
       cloudName: process.env.CLOUDINARY_CLOUD_NAME,
       apiKey: process.env.CLOUDINARY_API_KEY,
       folder,
-      uploadPreset: "ml_default",
     });
   } catch (error) {
     console.error("Error generating upload signature:", error);

@@ -39,21 +39,43 @@ export function createReceiptExtractionStream(
         // Save to database if receiptId was provided
         if (fullObject && receiptId && receipt) {
           try {
-            const { itemCount } = await saveExtractedReceiptData(
-              receiptId,
-              fullObject
-            );
+            // Check if items were extracted
+            const itemCount = fullObject.items?.length || 0;
 
-            // Send completion message
-            controller.enqueue(
-              encoder.encode(
-                `data: ${JSON.stringify({
-                  type: "completed",
-                  receiptId,
-                  itemCount,
-                })}\n\n`
-              )
-            );
+            if (itemCount === 0) {
+              // No items extracted - mark as failed
+              await markReceiptExtractionFailed(
+                receiptId,
+                "No items detected in receipt image"
+              );
+
+              controller.enqueue(
+                encoder.encode(
+                  `data: ${JSON.stringify({
+                    type: "completed",
+                    receiptId,
+                    itemCount: 0,
+                  })}\n\n`
+                )
+              );
+            } else {
+              // Items extracted - save normally
+              const result = await saveExtractedReceiptData(
+                receiptId,
+                fullObject
+              );
+
+              // Send completion message
+              controller.enqueue(
+                encoder.encode(
+                  `data: ${JSON.stringify({
+                    type: "completed",
+                    receiptId,
+                    itemCount: result.itemCount,
+                  })}\n\n`
+                )
+              );
+            }
           } catch (dbError) {
             console.error("Database save error:", dbError);
             await markReceiptExtractionFailed(

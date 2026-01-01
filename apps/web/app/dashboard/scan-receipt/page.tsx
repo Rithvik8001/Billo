@@ -1,6 +1,53 @@
-import { Camera } from "lucide-react";
+"use client";
+
+import { useEffect, useCallback } from "react";
+import { useReceiptUpload } from "@/hooks/use-receipt-upload";
+import { useFileHandler } from "@/hooks/use-file-handler";
+import { useRouter } from "next/navigation";
+import { UploadDropzone } from "@/components/receipt-upload/upload-dropzone";
+import { UploadProgress } from "@/components/receipt-upload/upload-progress";
+import { ProcessingState } from "@/components/receipt-upload/processing-state";
+import { CompletedState } from "@/components/receipt-upload/completed-state";
+import { ErrorState } from "@/components/receipt-upload/error-state";
+import { InfoSection } from "@/components/receipt-upload/info-section";
 
 export default function ScanReceiptPage() {
+  const { progress, uploadReceipt, reset } = useReceiptUpload();
+  const router = useRouter();
+
+  const fileHandler = useFileHandler(uploadReceipt);
+
+  // Redirect on completion only if items were extracted
+  useEffect(() => {
+    if (
+      progress.state === "completed" &&
+      progress.receiptId &&
+      (progress.itemCount || 0) > 0
+    ) {
+      const timer = setTimeout(() => {
+        router.push(`/dashboard/receipts/${progress.receiptId}`);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [progress.state, progress.receiptId, progress.itemCount, router]);
+
+  // Cleanup preview URL
+  useEffect(() => {
+    return () => {
+      if (fileHandler.previewUrl) {
+        URL.revokeObjectURL(fileHandler.previewUrl);
+      }
+    };
+  }, [fileHandler.previewUrl]);
+
+  // Reset handler
+  const handleReset = useCallback(() => {
+    reset();
+    fileHandler.reset();
+  }, [reset, fileHandler]);
+
+  const displayImageUrl = fileHandler.previewUrl || progress.imageUrl;
+
   return (
     <div className="max-w-5xl mx-auto">
       <div className="mb-8">
@@ -12,40 +59,48 @@ export default function ScanReceiptPage() {
         </p>
       </div>
 
-      <div className="bg-white border-2 border-dashed rounded-2xl p-12 md:p-16 flex flex-col items-center justify-center text-center shadow-sm">
-        <div className="bg-primary/10 rounded-full p-6 mb-4">
-          <Camera className="size-12 text-primary" />
-        </div>
-        <h3 className="text-xl font-semibold mb-2">
-          Receipt Scanning Coming Soon
-        </h3>
-        <p className="text-foreground/60 max-w-md">
-          We're working on AI-powered receipt scanning. Soon you'll be able to
-          snap a photo and instantly extract all items.
-        </p>
-      </div>
+      {progress.state === "idle" && (
+        <UploadDropzone
+          dragActive={fileHandler.dragActive}
+          fileInputRef={fileHandler.fileInputRef}
+          onDrag={fileHandler.handleDrag}
+          onDrop={fileHandler.handleDrop}
+          onInputChange={fileHandler.handleInputChange}
+          onFileClick={fileHandler.handleFileClick}
+        />
+      )}
 
-      <div className="mt-8 bg-white border rounded-2xl p-6 md:p-8 shadow-sm">
-        <h3 className="font-semibold text-lg mb-4">How it will work:</h3>
-        <ol className="space-y-3 text-sm text-foreground/80">
-          <li className="flex gap-3">
-            <span className="font-semibold text-primary">1.</span>
-            <span>Take a photo of your receipt using your camera</span>
-          </li>
-          <li className="flex gap-3">
-            <span className="font-semibold text-primary">2.</span>
-            <span>AI automatically extracts items and prices</span>
-          </li>
-          <li className="flex gap-3">
-            <span className="font-semibold text-primary">3.</span>
-            <span>Tap items to assign them to people in your group</span>
-          </li>
-          <li className="flex gap-3">
-            <span className="font-semibold text-primary">4.</span>
-            <span>Instantly see who owes what</span>
-          </li>
-        </ol>
-      </div>
+      {progress.state === "uploading" && displayImageUrl && (
+        <UploadProgress
+          imageUrl={displayImageUrl}
+          progress={progress.progress}
+        />
+      )}
+
+      {progress.state === "processing" && displayImageUrl && (
+        <ProcessingState
+          imageUrl={displayImageUrl}
+          progress={progress.progress}
+          extractedData={progress.extractedData}
+        />
+      )}
+
+      {progress.state === "completed" && (
+        <CompletedState
+          imageUrl={displayImageUrl || undefined}
+          itemCount={progress.itemCount || 0}
+          extractedData={progress.extractedData}
+          onRetry={(progress.itemCount || 0) === 0 ? handleReset : undefined}
+        />
+      )}
+
+      {progress.state === "error" && (
+        <ErrorState error={progress.error} onRetry={handleReset} />
+      )}
+
+      {(progress.state === "idle" || progress.state === "error") && (
+        <InfoSection />
+      )}
     </div>
   );
 }

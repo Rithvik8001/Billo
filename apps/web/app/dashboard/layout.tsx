@@ -89,7 +89,6 @@ export default async function DashboardLayout({
         <header className="flex h-16 items-center gap-4 border-b px-6 bg-[#F4EDEB]">
           <SidebarTrigger />
           <Separator orientation="vertical" className="h-6" />
-          <h1 className="text-lg font-semibold">Billo</h1>
         </header>
         <main className="flex-1 p-6">{children}</main>
       </SidebarInset>

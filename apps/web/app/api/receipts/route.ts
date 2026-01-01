@@ -1,6 +1,6 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
-import { receipts } from "@/db/models/schema";
+import { receipts, users } from "@/db/models/schema";
 import { eq, desc } from "drizzle-orm";
 
 export async function POST(request: Request) {
@@ -22,6 +22,26 @@ export async function POST(request: Request) {
       );
     }
 
+    // Ensure user exists in database
+    const user = await currentUser();
+    if (user) {
+      const [existingUser] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, userId))
+        .limit(1);
+
+      if (!existingUser) {
+        await db.insert(users).values({
+          id: userId,
+          clerkUserId: userId,
+          email: user.emailAddresses[0]?.emailAddress || "",
+          name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || null,
+          imageUrl: user.imageUrl || null,
+        });
+      }
+    }
+
     // Create receipt record
     const [receipt] = await db
       .insert(receipts)
@@ -37,8 +57,15 @@ export async function POST(request: Request) {
     return Response.json(receipt, { status: 201 });
   } catch (error) {
     console.error("Error creating receipt:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    const errorDetails = error instanceof Error ? error.stack : String(error);
+    console.error("Error details:", errorDetails);
     return Response.json(
-      { error: "Failed to create receipt" },
+      {
+        error: "Failed to create receipt",
+        details: errorMessage,
+      },
       { status: 500 }
     );
   }
