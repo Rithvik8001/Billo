@@ -3,9 +3,6 @@ import { receipts, receiptItems } from "@/db/models/schema";
 import { eq } from "drizzle-orm";
 import type { ReceiptExtractionResult } from "./schemas";
 
-/**
- * Process and save extracted receipt data to database
- */
 export async function saveExtractedReceiptData(
   receiptId: number,
   extractedData: ReceiptExtractionResult
@@ -60,9 +57,6 @@ export async function saveExtractedReceiptData(
   };
 }
 
-/**
- * Mark receipt extraction as failed
- */
 export async function markReceiptExtractionFailed(
   receiptId: number,
   errorMessage: string
@@ -76,4 +70,3 @@ export async function markReceiptExtractionFailed(
     })
     .where(eq(receipts.id, receiptId));
 }
-

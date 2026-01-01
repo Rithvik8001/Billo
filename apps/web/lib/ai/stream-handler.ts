@@ -4,18 +4,13 @@ import {
   markReceiptExtractionFailed,
 } from "./receipt-processor";
 
-/**
- * Stream result type for receipt extraction
- * Accepts the actual streamText result structure
- */
 export interface ReceiptExtractionStreamResult {
   partialOutputStream: AsyncIterable<unknown>;
-  output: PromiseLike<ReceiptExtractionResult> | Promise<ReceiptExtractionResult>;
+  output:
+    | PromiseLike<ReceiptExtractionResult>
+    | Promise<ReceiptExtractionResult>;
 }
 
-/**
- * Create a streaming response handler for receipt extraction
- */
 export function createReceiptExtractionStream(
   result: ReceiptExtractionStreamResult,
   receiptId: number | undefined,
@@ -114,4 +109,3 @@ export function createReceiptExtractionStream(
     },
   });
 }
-

@@ -3,9 +3,6 @@ export interface ParsedMessage {
   receiptId?: number;
 }
 
-/**
- * Extract image URL from message content
- */
 export function extractImageUrl(message: {
   content?: string | Array<{ type: string; image?: string }>;
 }): string | undefined {
@@ -30,9 +27,6 @@ export function extractImageUrl(message: {
   return undefined;
 }
 
-/**
- * Extract receipt ID from message content or body
- */
 export function extractReceiptId(
   message: { content?: string },
   bodyReceiptId?: unknown
@@ -55,9 +49,6 @@ export function extractReceiptId(
   return undefined;
 }
 
-/**
- * Parse chat message to extract receipt information
- */
 export function parseChatMessage(
   messages: Array<{
     content?: string | Array<{ type: string; image?: string }>;

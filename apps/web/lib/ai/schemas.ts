@@ -1,9 +1,5 @@
 import { z } from "zod";
 
-/**
- * Zod schema for receipt extraction
- * Defines the structure expected from Google Gemini vision model
- */
 export const receiptExtractionSchema = z.object({
   merchantName: z.string().optional(),
   merchantAddress: z.string().optional(),
@@ -23,4 +19,3 @@ export const receiptExtractionSchema = z.object({
 });
 
 export type ReceiptExtractionResult = z.infer<typeof receiptExtractionSchema>;
-

@@ -2,9 +2,6 @@ import db from "@/db/config/connection";
 import { receipts } from "@/db/models/schema";
 import { eq, and } from "drizzle-orm";
 
-/**
- * Validate receipt ownership and status
- */
 export async function validateReceipt(
   receiptId: number,
   userId: string
@@ -41,9 +38,6 @@ export async function validateReceipt(
   };
 }
 
-/**
- * Update receipt status to processing
- */
 export async function markReceiptAsProcessing(
   receiptId: number
 ): Promise<void> {
@@ -55,4 +49,3 @@ export async function markReceiptAsProcessing(
     })
     .where(eq(receipts.id, receiptId));
 }
-
