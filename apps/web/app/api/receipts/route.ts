@@ -1,19 +1,13 @@
-import { auth } from '@clerk/nextjs/server';
-import db from '@/db/config/connection';
-import { receipts } from '@/db/models/schema';
-import { eq, desc } from 'drizzle-orm';
+import { auth } from "@clerk/nextjs/server";
+import db from "@/db/config/connection";
+import { receipts } from "@/db/models/schema";
+import { eq, desc } from "drizzle-orm";
 
-/**
- * POST /api/receipts
- * Create a new receipt record after successful Cloudinary upload
- *
- * Body: { imageUrl, imagePublicId, thumbnailUrl? }
- */
 export async function POST(request: Request) {
   const { userId } = await auth();
 
   if (!userId) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
@@ -23,7 +17,7 @@ export async function POST(request: Request) {
     // Validate required fields
     if (!imageUrl || !imagePublicId) {
       return Response.json(
-        { error: 'Missing required fields: imageUrl and imagePublicId' },
+        { error: "Missing required fields: imageUrl and imagePublicId" },
         { status: 400 }
       );
     }
@@ -36,36 +30,40 @@ export async function POST(request: Request) {
         imageUrl,
         imagePublicId,
         thumbnailUrl: thumbnailUrl || null,
-        status: 'pending',
+        status: "pending",
       })
       .returning();
 
     return Response.json(receipt, { status: 201 });
   } catch (error) {
-    console.error('Error creating receipt:', error);
+    console.error("Error creating receipt:", error);
     return Response.json(
-      { error: 'Failed to create receipt' },
+      { error: "Failed to create receipt" },
       { status: 500 }
     );
   }
 }
 
-/**
- * GET /api/receipts
- * List all receipts for the authenticated user
- *
- * Query params: ?status=completed (optional filter)
- */
 export async function GET(request: Request) {
   const { userId } = await auth();
 
   if (!userId) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     const { searchParams } = new URL(request.url);
-    const statusFilter = searchParams.get('status');
+    const statusFilter = searchParams.get("status");
+
+    // Validate status filter
+    const validStatuses = [
+      "pending",
+      "uploading",
+      "processing",
+      "completed",
+      "failed",
+    ] as const;
+    type ReceiptStatus = (typeof validStatuses)[number];
 
     // Build query
     let query = db
@@ -75,9 +73,9 @@ export async function GET(request: Request) {
       .orderBy(desc(receipts.createdAt))
       .$dynamic();
 
-    // Apply status filter if provided
-    if (statusFilter) {
-      query = query.where(eq(receipts.status, statusFilter as any));
+    // Apply status filter if provided and valid
+    if (statusFilter && validStatuses.includes(statusFilter as ReceiptStatus)) {
+      query = query.where(eq(receipts.status, statusFilter as ReceiptStatus));
     }
 
     const userReceipts = await query;
@@ -87,9 +85,9 @@ export async function GET(request: Request) {
       total: userReceipts.length,
     });
   } catch (error) {
-    console.error('Error fetching receipts:', error);
+    console.error("Error fetching receipts:", error);
     return Response.json(
-      { error: 'Failed to fetch receipts' },
+      { error: "Failed to fetch receipts" },
       { status: 500 }
     );
   }

@@ -1,0 +1,117 @@
+import type { ReceiptExtractionResult } from "./schemas";
+import {
+  saveExtractedReceiptData,
+  markReceiptExtractionFailed,
+} from "./receipt-processor";
+
+/**
+ * Stream result type for receipt extraction
+ * Accepts the actual streamText result structure
+ */
+export interface ReceiptExtractionStreamResult {
+  partialOutputStream: AsyncIterable<unknown>;
+  output: PromiseLike<ReceiptExtractionResult> | Promise<ReceiptExtractionResult>;
+}
+
+/**
+ * Create a streaming response handler for receipt extraction
+ */
+export function createReceiptExtractionStream(
+  result: ReceiptExtractionStreamResult,
+  receiptId: number | undefined,
+  receipt: { id: number } | null
+): ReadableStream<Uint8Array> {
+  const encoder = new TextEncoder();
+
+  return new ReadableStream({
+    async start(controller) {
+      try {
+        // Stream partial updates to client
+        for await (const partialObject of result.partialOutputStream) {
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({
+                type: "partial",
+                data: partialObject,
+              })}\n\n`
+            )
+          );
+        }
+
+        // Get the final complete object (validated against schema)
+        const fullObject = await result.output;
+
+        // Save to database if receiptId was provided
+        if (fullObject && receiptId && receipt) {
+          try {
+            const { itemCount } = await saveExtractedReceiptData(
+              receiptId,
+              fullObject
+            );
+
+            // Send completion message
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({
+                  type: "completed",
+                  receiptId,
+                  itemCount,
+                })}\n\n`
+              )
+            );
+          } catch (dbError) {
+            console.error("Database save error:", dbError);
+            await markReceiptExtractionFailed(
+              receiptId,
+              dbError instanceof Error
+                ? dbError.message
+                : "Database save failed"
+            );
+
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({
+                  type: "error",
+                  error: "Failed to save to database",
+                })}\n\n`
+              )
+            );
+          }
+        } else if (fullObject) {
+          // No receiptId provided, just return the extracted data
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({
+                type: "completed",
+                data: fullObject,
+              })}\n\n`
+            )
+          );
+        }
+
+        controller.close();
+      } catch (error) {
+        console.error("Streaming error:", error);
+
+        // Update receipt status to failed if we have a receiptId
+        if (receiptId) {
+          await markReceiptExtractionFailed(
+            receiptId,
+            error instanceof Error ? error.message : "Extraction failed"
+          );
+        }
+
+        controller.enqueue(
+          encoder.encode(
+            `data: ${JSON.stringify({
+              type: "error",
+              error: error instanceof Error ? error.message : "Unknown error",
+            })}\n\n`
+          )
+        );
+        controller.close();
+      }
+    },
+  });
+}
+

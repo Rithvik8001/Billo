@@ -1,4 +1,4 @@
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary } from "cloudinary";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -9,10 +9,6 @@ cloudinary.config({
 
 export default cloudinary;
 
-/**
- * Generate a signed upload signature for Cloudinary
- * This keeps your API secret secure on the server
- */
 export function generateUploadSignature(paramsToSign: Record<string, string>) {
   const signature = cloudinary.utils.api_sign_request(
     paramsToSign,
