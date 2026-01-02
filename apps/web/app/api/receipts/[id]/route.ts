@@ -42,10 +42,7 @@ export async function GET(request: Request, { params }: RouteParams) {
     return Response.json(receipt);
   } catch (error) {
     console.error("Error fetching receipt:", error);
-    return Response.json(
-      { error: "Failed to fetch receipt" },
-      { status: 500 }
-    );
+    return Response.json({ error: "Failed to fetch receipt" }, { status: 500 });
   }
 }
 
@@ -89,7 +86,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     const validatedData = updateReceiptSchema.parse(body);
 
     // Recalculate total if tax changed
-    let totalAmount = receipt.totalAmount;
+    let totalAmount: string | null = receipt.totalAmount;
     if (validatedData.tax !== undefined) {
       const items = await db.query.receiptItems.findMany({
         where: eq(receiptItems.receiptId, receiptId),
@@ -109,7 +106,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
       merchantAddress?: string | null;
       purchaseDate?: Date | null;
       tax?: string | null;
-      totalAmount?: string;
+      totalAmount?: string | null;
       updatedAt: Date;
     } = {
       updatedAt: new Date(),
@@ -128,7 +125,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     }
     if (validatedData.tax !== undefined) {
       updateData.tax = validatedData.tax || null;
-      updateData.totalAmount = totalAmount;
+      updateData.totalAmount = totalAmount ?? null;
     }
 
     const [updatedReceipt] = await db
@@ -157,4 +154,3 @@ export async function PUT(request: Request, { params }: RouteParams) {
     );
   }
 }
-
