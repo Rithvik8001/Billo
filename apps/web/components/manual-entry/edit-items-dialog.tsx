@@ -77,7 +77,9 @@ export function EditItemsDialog({
     setItems(
       items.map((item) => {
         if (item.tempId === tempId) {
-          const updated = { ...item, ...updates };
+          // Exclude 'id' from updates since we use tempId for identification
+          const { id, ...updateFields } = updates;
+          const updated = { ...item, ...updateFields };
           // Auto-calculate totalPrice
           if (updates.quantity !== undefined || updates.unitPrice !== undefined) {
             const qty = parseFloat(updated.quantity || "1");
