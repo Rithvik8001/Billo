@@ -31,12 +31,14 @@ export function EditGroupDialog({
 }: EditGroupDialogProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [emoji, setEmoji] = useState("👥");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (open && group) {
       setName(group.name);
       setDescription(group.description || "");
+      setEmoji(group.emoji || "👥");
     }
   }, [open, group]);
 
@@ -56,6 +58,7 @@ export function EditGroupDialog({
         body: JSON.stringify({
           name: name.trim(),
           description: description.trim() || null,
+          emoji: emoji.trim() || "👥",
         }),
       });
 
@@ -88,17 +91,32 @@ export function EditGroupDialog({
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-group-name">Group Name *</Label>
-              <Input
-                id="edit-group-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., Roommates, Family Trip"
-                maxLength={100}
-                required
-                disabled={isLoading}
-              />
+            <div className="flex gap-3 items-end">
+              <div className="space-y-2 w-20">
+                <Label htmlFor="edit-group-emoji">Emoji</Label>
+                <Input
+                  id="edit-group-emoji"
+                  value={emoji}
+                  onChange={(e) => setEmoji(e.target.value)}
+                  onFocus={(e) => e.target.select()}
+                  placeholder="👥"
+                  maxLength={10}
+                  disabled={isLoading}
+                  className="text-center text-2xl h-10"
+                />
+              </div>
+              <div className="space-y-2 flex-1">
+                <Label htmlFor="edit-group-name">Group Name *</Label>
+                <Input
+                  id="edit-group-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g., Roommates, Family Trip"
+                  maxLength={100}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -117,7 +135,7 @@ export function EditGroupDialog({
             </div>
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="gap-2">
             <Button
               type="button"
               variant="outline"

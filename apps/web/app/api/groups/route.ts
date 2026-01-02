@@ -19,6 +19,7 @@ export async function GET() {
         id: groups.id,
         name: groups.name,
         description: groups.description,
+        emoji: groups.emoji,
         createdAt: groups.createdAt,
         updatedAt: groups.updatedAt,
         memberCount: sql<number>`cast(count(${groupMembers.id}) as int)`,
@@ -58,6 +59,7 @@ export async function POST(request: Request) {
         .values({
           name: validatedData.name,
           description: validatedData.description || null,
+          emoji: validatedData.emoji,
           createdBy: userId,
         })
         .returning();

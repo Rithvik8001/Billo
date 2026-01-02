@@ -22,12 +22,17 @@ export function GroupCard({ group, onClick }: GroupCardProps) {
       onClick={onClick}
     >
       <CardHeader>
-        <CardTitle className="text-lg">{group.name}</CardTitle>
-        {group.description && (
-          <CardDescription className="line-clamp-2">
-            {group.description}
-          </CardDescription>
-        )}
+        <div className="flex items-center gap-3">
+          <div className="text-3xl">{group.emoji}</div>
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-lg">{group.name}</CardTitle>
+            {group.description && (
+              <CardDescription className="line-clamp-2">
+                {group.description}
+              </CardDescription>
+            )}
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">

@@ -54,8 +54,15 @@ export function MemberRow({
       );
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to remove member");
+        let errorMessage = "Failed to remove member";
+        try {
+          const data = await response.json();
+          errorMessage = data.error || errorMessage;
+        } catch {
+          // If JSON parsing fails, use default error message
+        }
+        toast.error(errorMessage);
+        return;
       }
 
       toast.success("Member removed successfully");
@@ -85,8 +92,15 @@ export function MemberRow({
       );
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to change role");
+        let errorMessage = "Failed to change role";
+        try {
+          const data = await response.json();
+          errorMessage = data.error || errorMessage;
+        } catch {
+          // If JSON parsing fails, use default error message
+        }
+        toast.error(errorMessage);
+        return;
       }
 
       toast.success(`Member role changed to ${newRole}`);

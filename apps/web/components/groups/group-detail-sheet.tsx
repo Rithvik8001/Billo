@@ -154,16 +154,19 @@ export function GroupDetailSheet({
   const isAdmin = currentUserRole === "admin";
 
   const headerContent = (
-    <div className="flex items-center justify-between gap-3 pr-8">
-      <div className="flex-1 min-w-0">
-        <h2 className="text-xl font-semibold leading-none tracking-tight">
-          {group.name}
-        </h2>
-        {group.description && (
-          <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
-            {group.description}
-          </p>
-        )}
+    <div className="flex items-start justify-between gap-3 pr-8">
+      <div className="flex items-start gap-3 flex-1 min-w-0">
+        <div className="text-3xl shrink-0 leading-none mt-0.5">{group.emoji}</div>
+        <div className="flex-1 min-w-0">
+          <h2 className="text-xl font-semibold leading-tight tracking-tight">
+            {group.name}
+          </h2>
+          {group.description && (
+            <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
+              {group.description}
+            </p>
+          )}
+        </div>
       </div>
       {isAdmin && (
         <DropdownMenu>

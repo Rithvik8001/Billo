@@ -28,6 +28,7 @@ export function CreateGroupDialog({
 }: CreateGroupDialogProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [emoji, setEmoji] = useState("👥");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,6 +47,7 @@ export function CreateGroupDialog({
         body: JSON.stringify({
           name: name.trim(),
           description: description.trim() || null,
+          emoji: emoji.trim() || "👥",
         }),
       });
 
@@ -57,6 +59,7 @@ export function CreateGroupDialog({
       toast.success("Group created successfully");
       setName("");
       setDescription("");
+      setEmoji("👥");
       onOpenChange(false);
       onSuccess();
     } catch (error) {
@@ -81,17 +84,32 @@ export function CreateGroupDialog({
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="group-name">Group Name *</Label>
-              <Input
-                id="group-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., Roommates, Family Trip"
-                maxLength={100}
-                required
-                disabled={isLoading}
-              />
+            <div className="flex gap-3 items-end">
+              <div className="space-y-2 w-20">
+                <Label htmlFor="group-emoji">Emoji</Label>
+                <Input
+                  id="group-emoji"
+                  value={emoji}
+                  onChange={(e) => setEmoji(e.target.value)}
+                  onFocus={(e) => e.target.select()}
+                  placeholder="👥"
+                  maxLength={10}
+                  disabled={isLoading}
+                  className="text-center text-2xl h-10"
+                />
+              </div>
+              <div className="space-y-2 flex-1">
+                <Label htmlFor="group-name">Group Name *</Label>
+                <Input
+                  id="group-name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g., Roommates, Family Trip"
+                  maxLength={100}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -108,7 +126,7 @@ export function CreateGroupDialog({
             </div>
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="gap-2">
             <Button
               type="button"
               variant="outline"

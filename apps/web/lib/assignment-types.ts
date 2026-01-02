@@ -35,6 +35,7 @@ export interface Group {
   id: number;
   name: string;
   description: string | null;
+  emoji: string;
   memberCount: number;
   createdAt: Date;
   updatedAt: Date;

@@ -10,6 +10,11 @@ export const createGroupSchema = z.object({
     .max(500, "Description must be less than 500 characters")
     .optional()
     .nullable(),
+  emoji: z
+    .string()
+    .max(10, "Emoji must be less than 10 characters")
+    .optional()
+    .default("👥"),
 });
 
 export const updateGroupSchema = createGroupSchema

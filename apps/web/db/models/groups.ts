@@ -11,6 +11,7 @@ export const groups = pgTable('groups', {
   id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
   name: text('name').notNull(),
   description: text('description'),
+  emoji: text('emoji').default('👥').notNull(),
   createdBy: text('created_by')
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),

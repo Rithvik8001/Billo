@@ -135,8 +135,8 @@ export function AddMemberSheet({
   const selectedUser = users.find((u) => u.id === selectedUserId);
 
   const formContent = (
-    <div className="space-y-6 px-1">
-      <div className="space-y-2.5">
+    <>
+      <div className="space-y-2">
         <Label htmlFor="user-search" className="text-sm font-medium">
           Search by Email
         </Label>
@@ -204,7 +204,7 @@ export function AddMemberSheet({
       </div>
 
       {selectedUser && (
-        <div className="rounded-lg border bg-card p-4 space-y-3 transition-colors">
+        <div className="mt-4 rounded-lg border bg-card p-4 space-y-3 transition-colors">
           <p className="text-sm font-medium">Selected:</p>
           <div className="flex items-center gap-3">
             {selectedUser.imageUrl ? (
@@ -233,11 +233,11 @@ export function AddMemberSheet({
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 
   const footerContent = (
-    <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-0 sm:justify-end">
+    <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
       <Button
         type="button"
         variant="outline"
@@ -261,14 +261,14 @@ export function AddMemberSheet({
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
         <DrawerContent className="max-h-[85vh] flex flex-col">
-          <DrawerHeader className="text-left pb-4">
+          <DrawerHeader className="text-left pb-6">
             <DrawerTitle>Add Member</DrawerTitle>
             <DrawerDescription>
               Search for a user by email to add them to this group.
             </DrawerDescription>
           </DrawerHeader>
           <div className="px-4 overflow-y-auto flex-1">{formContent}</div>
-          <DrawerFooter className="border-t pt-4">{footerContent}</DrawerFooter>
+          <DrawerFooter className="border-t pt-6 pb-4">{footerContent}</DrawerFooter>
         </DrawerContent>
       </Drawer>
     );
@@ -276,15 +276,15 @@ export function AddMemberSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-md flex flex-col">
-        <SheetHeader className="pb-6">
+      <SheetContent className="w-full sm:max-w-md flex flex-col gap-0 p-0">
+        <SheetHeader className="px-6 pt-6 pb-6">
           <SheetTitle>Add Member</SheetTitle>
           <SheetDescription>
             Search for a user by email to add them to this group.
           </SheetDescription>
         </SheetHeader>
-        <div className="flex-1 overflow-y-auto">{formContent}</div>
-        <SheetFooter className="border-t pt-6 mt-6">{footerContent}</SheetFooter>
+        <div className="flex-1 overflow-y-auto px-6">{formContent}</div>
+        <SheetFooter className="border-t pt-6 mt-6 px-6 pb-6">{footerContent}</SheetFooter>
       </SheetContent>
     </Sheet>
   );

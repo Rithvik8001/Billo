@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -44,6 +45,7 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased ${ibmPlexMono.variable}`}
         >
           {children}
+          <Toaster position="bottom-right" richColors />
         </body>
       </html>
     </ClerkProvider>
