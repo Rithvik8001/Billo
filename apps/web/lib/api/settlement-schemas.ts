@@ -25,12 +25,10 @@ export const settlementFiltersSchema = z.object({
       return isNaN(parsed) ? undefined : parsed;
     }),
   status: z
-    .union([z.enum(["pending", "completed", "cancelled"]), z.null()])
-    .optional()
-    .transform((val) => (val && val !== "null" ? val : undefined)),
+    .enum(["pending", "completed", "cancelled"])
+    .optional(),
   direction: z
-    .union([z.enum(["owed", "owing"]), z.null()])
-    .optional()
-    .transform((val) => (val && val !== "null" ? val : undefined)),
+    .enum(["owed", "owing"])
+    .optional(),
 });
 

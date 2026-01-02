@@ -164,7 +164,7 @@ export async function getBalanceSummary(userId: string): Promise<{
 
   const completedSettlements = await db
     .select({
-      count: sql<number>`count(*)`,
+      count: sql<number>`cast(count(*) as int)`,
     })
     .from(settlements)
     .where(
