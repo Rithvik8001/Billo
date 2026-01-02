@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from "react";
 import {
-  Combobox,
-  ComboboxInput,
-  ComboboxContent,
-  ComboboxList,
-  ComboboxItem,
-  ComboboxEmpty,
-} from "@/components/ui/combobox";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Group } from "@/lib/assignment-types";
 
 interface GroupSelectorProps {
@@ -77,11 +76,11 @@ export function GroupSelector({
     <div>
       <label
         htmlFor="group-selector"
-        className="mb-2 block text-sm font-medium"
+        className="mb-2 block text-small font-medium"
       >
         Select Group
       </label>
-      <Combobox
+      <Select
         value={selectedGroupId?.toString() || ""}
         onValueChange={(value) => {
           if (value) {
@@ -89,21 +88,25 @@ export function GroupSelector({
           }
         }}
       >
-        <ComboboxInput
-          id="group-selector"
-          placeholder="Choose a group..."
-          showTrigger
-          showClear={!!selectedGroupId}
-        />
-        <ComboboxContent>
-          <ComboboxList>
-            <ComboboxEmpty>No groups found</ComboboxEmpty>
-            {groups.map((group) => (
-              <ComboboxItem key={group.id} value={group.id.toString()}>
-                <div className="flex flex-col">
-                  <span className="font-medium">{group.name}</span>
+        <SelectTrigger id="group-selector" className="w-full">
+          <SelectValue placeholder="Choose a group...">
+            {selectedGroup ? (
+              <span className="flex items-center gap-2">
+                <span>{selectedGroup.emoji}</span>
+                <span>{selectedGroup.name}</span>
+              </span>
+            ) : null}
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {groups.map((group) => (
+            <SelectItem key={group.id} value={group.id.toString()}>
+              <div className="flex items-start gap-2">
+                <span className="text-lg mt-0.5">{group.emoji}</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-medium truncate">{group.name}</span>
                   {group.description && (
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-muted-foreground truncate">
                       {group.description}
                     </span>
                   )}
@@ -111,13 +114,13 @@ export function GroupSelector({
                     {group.memberCount} member{group.memberCount !== 1 ? "s" : ""}
                   </span>
                 </div>
-              </ComboboxItem>
-            ))}
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       {selectedGroup && (
-        <p className="mt-2 text-xs text-muted-foreground">
+        <p className="mt-2 text-small text-muted-foreground">
           Selected: {selectedGroup.name} ({selectedGroup.memberCount} member
           {selectedGroup.memberCount !== 1 ? "s" : ""})
         </p>

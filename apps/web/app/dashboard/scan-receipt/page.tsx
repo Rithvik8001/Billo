@@ -49,12 +49,10 @@ export default function ScanReceiptPage() {
   const displayImageUrl = fileHandler.previewUrl || progress.imageUrl;
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3">
-          Scan Receipt
-        </h1>
-        <p className="text-lg text-muted-foreground/70">
+    <div className="space-y-12">
+      <div className="space-y-2">
+        <h1 className="text-display">Scan Receipt</h1>
+        <p className="text-body text-muted-foreground">
           Take a photo of your receipt to automatically extract items
         </p>
       </div>

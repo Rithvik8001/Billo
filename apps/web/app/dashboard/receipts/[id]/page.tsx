@@ -4,6 +4,7 @@ import db from "@/db/config/connection";
 import { receipts } from "@/db/models/schema";
 import { eq, asc } from "drizzle-orm";
 import Image from "next/image";
+import { Card, CardContent } from "@/components/ui/card";
 import { ReceiptItemsSection } from "@/components/receipt-review/receipt-items-section";
 import { AssignmentSection } from "@/components/receipt-assignment/assignment-section";
 
@@ -39,66 +40,73 @@ export default async function ReceiptPage({ params }: ReceiptPageProps) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3">
-          Receipt Review
-        </h1>
-        <p className="text-lg text-muted-foreground/70">
+    <div className="space-y-12">
+      <div className="space-y-2">
+        <h1 className="text-display">Receipt Review</h1>
+        <p className="text-body text-muted-foreground">
           Review and assign items from your receipt
         </p>
       </div>
 
-      <div className="bg-white border rounded-2xl p-6 md:p-8 shadow-sm">
-        <h3 className="font-semibold text-lg mb-4">Receipt Details</h3>
-        <div className="space-y-4">
-          {receipt.merchantName && (
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">Merchant</p>
-              <p className="font-medium">{receipt.merchantName}</p>
+      {/* Receipt Header */}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="flex flex-col md:flex-row gap-8">
+            {receipt.imageUrl && (
+              <div className="shrink-0">
+                <Image
+                  src={receipt.imageUrl}
+                  alt="Receipt"
+                  width={300}
+                  height={400}
+                  className="w-full max-w-xs h-auto rounded-lg object-contain border border-border"
+                  unoptimized
+                />
+              </div>
+            )}
+            <div className="flex-1 space-y-6">
+              <div>
+                <h2 className="text-heading-2 mb-4">
+                  {receipt.merchantName || "Receipt"}
+                </h2>
+                <div className="grid grid-cols-2 gap-6">
+                  {receipt.purchaseDate && (
+                    <div>
+                      <p className="text-small text-muted-foreground mb-1">
+                        Date
+                      </p>
+                      <p className="text-body font-medium">
+                        {new Date(receipt.purchaseDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          }
+                        )}
+                      </p>
+                    </div>
+                  )}
+                  {receipt.totalAmount && (
+                    <div>
+                      <p className="text-small text-muted-foreground mb-1">
+                        Total
+                      </p>
+                      <p className="text-heading-2">${receipt.totalAmount}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-          )}
-          {receipt.purchaseDate && (
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">Date</p>
-              <p className="font-medium">
-                {new Date(receipt.purchaseDate).toLocaleDateString()}
-              </p>
-            </div>
-          )}
-          {receipt.totalAmount && (
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">Total</p>
-              <p className="font-medium text-lg">${receipt.totalAmount}</p>
-            </div>
-          )}
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">Status</p>
-            <p className="font-medium capitalize">{receipt.status}</p>
           </div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {receipt.imageUrl && (
-          <div className="mt-6">
-            <Image
-              src={receipt.imageUrl}
-              alt="Receipt"
-              width={800}
-              height={600}
-              className="w-full max-w-md h-auto rounded-lg object-contain border"
-              unoptimized
-            />
-          </div>
-        )}
-      </div>
-
-      <div className="mt-6">
-        <ReceiptItemsSection
-          items={receipt.items}
-          tax={receipt.tax}
-          totalAmount={receipt.totalAmount}
-        />
-      </div>
+      <ReceiptItemsSection
+        items={receipt.items}
+        tax={receipt.tax}
+        totalAmount={receipt.totalAmount}
+      />
 
       <AssignmentSection
         items={receipt.items}

@@ -48,22 +48,22 @@ export function SettlementCard({
   const StatusIcon = status.icon;
 
   return (
-    <Card>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-start gap-3 flex-1 min-w-0">
+    <Card className="interactive">
+      <CardContent className="py-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 flex-1 min-w-0">
             {/* User Avatar */}
             {otherUser.imageUrl ? (
               <Image
                 src={otherUser.imageUrl}
                 alt={otherUser.name || otherUser.email}
-                width={40}
-                height={40}
-                className="size-10 rounded-full shrink-0 ring-1 ring-border"
+                width={48}
+                height={48}
+                className="size-12 rounded-full shrink-0 ring-1 ring-border"
               />
             ) : (
-              <div className="size-10 rounded-full shrink-0 bg-muted flex items-center justify-center ring-1 ring-border">
-                <span className="text-sm font-medium text-muted-foreground">
+              <div className="size-12 rounded-full shrink-0 bg-muted flex items-center justify-center ring-1 ring-border">
+                <span className="text-base font-medium text-muted-foreground">
                   {otherUser.email[0].toUpperCase()}
                 </span>
               </div>
@@ -72,23 +72,23 @@ export function SettlementCard({
             {/* Settlement Details */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <p className="font-medium text-sm truncate">
+                <p className="font-semibold text-body truncate">
                   {otherUser.name || otherUser.email.split("@")[0]}
                 </p>
-                <Badge variant={status.variant} className="text-xs">
+                <Badge variant={settlement.status === "pending" ? "pending" : settlement.status === "completed" ? "completed" : "cancelled"} className="text-xs">
                   <StatusIcon className="size-3 mr-1" />
                   {status.label}
                 </Badge>
               </div>
 
-              <p className="text-xs text-muted-foreground truncate mb-2">
+              <p className="text-small text-muted-foreground truncate mb-2">
                 {otherUser.email}
               </p>
 
-              <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-4 flex-wrap">
                 <span
-                  className={`font-semibold ${
-                    isOwed ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+                  className={`font-semibold text-body ${
+                    isOwed ? "text-green-600" : "text-red-600"
                   }`}
                 >
                   {isOwed ? "+" : "-"}
@@ -98,28 +98,32 @@ export function SettlementCard({
                 {settlement.receipt && (
                   <Link
                     href={`/dashboard/receipts/${settlement.receipt.id}`}
-                    className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+                    className="text-small text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
                   >
-                    <Receipt className="size-3" />
-                    <span className="text-xs">
+                    <Receipt className="size-3.5" />
+                    <span>
                       {settlement.receipt.merchantName || "Receipt"}
                     </span>
                   </Link>
                 )}
 
                 {settlement.group && (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-small text-muted-foreground">
                     {settlement.group.emoji} {settlement.group.name}
                   </span>
                 )}
-              </div>
 
-              {settlement.settledAt && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  Settled on{" "}
-                  {new Date(settlement.settledAt).toLocaleDateString()}
-                </p>
-              )}
+                {settlement.settledAt && (
+                  <span className="text-small text-muted-foreground">
+                    Settled{" "}
+                    {new Date(settlement.settledAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 

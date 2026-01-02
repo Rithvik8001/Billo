@@ -70,18 +70,14 @@ export function AssignmentSection({
   const canSave = personTotals.length > 0 && !isLoading;
 
   return (
-    <div className="mt-6 space-y-6">
+    <div className="space-y-8">
       {/* Group Selection */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <span>Who&apos;s Splitting This Bill?</span>
-          </CardTitle>
-          <CardDescription>
+        <CardContent className="pt-6">
+          <h2 className="text-heading-2 mb-2">Who&apos;s Splitting This Bill?</h2>
+          <p className="text-body text-muted-foreground mb-6">
             Select a group and assign items to people
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </p>
           <GroupSelector
             selectedGroupId={selectedGroupId}
             onGroupSelect={loadGroupMembers}
@@ -112,16 +108,22 @@ export function AssignmentSection({
 
       {/* Error Display */}
       {error && (
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
-          {error}
-        </div>
+        <Card className="border-destructive/50 bg-destructive/10">
+          <CardContent className="py-4">
+            <p className="text-body text-destructive">{error}</p>
+          </CardContent>
+        </Card>
       )}
 
       {/* Success Message */}
       {saveSuccess && (
-        <div className="rounded-lg border border-green-500/50 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400">
-          Assignments saved successfully!
-        </div>
+        <Card className="border-green-500/50 bg-green-500/10">
+          <CardContent className="py-4">
+            <p className="text-body text-green-700 dark:text-green-400">
+              Assignments saved successfully!
+            </p>
+          </CardContent>
+        </Card>
       )}
 
       {/* Action Buttons */}

@@ -150,63 +150,68 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
   const youAreOwed = pendingSettlements.filter((s) => s.toUserId === userId);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-12">
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-display">Settle Up</h1>
+        <p className="text-body text-muted-foreground">
+          Track who owes what and mark payments as settled
+        </p>
+      </div>
+
       {/* Balance Summary */}
       <BalanceSummary summary={summary} />
 
       {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filters</CardTitle>
-          <CardDescription>Filter settlements by group and status</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <label className="text-sm font-medium mb-2 block">Group</label>
-              <Select
-                value={selectedGroupId === "all" ? "all" : selectedGroupId.toString()}
-                onValueChange={(value) =>
-                  setSelectedGroupId(value === "all" ? "all" : parseInt(value, 10))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="All groups" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All groups</SelectItem>
-                  {groups.map((group) => (
-                    <SelectItem key={group.id} value={group.id.toString()}>
-                      {group.emoji} {group.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <label className="text-small font-medium mb-2 block text-foreground">Group</label>
+          <Select
+            value={selectedGroupId === "all" ? "all" : selectedGroupId.toString()}
+            onValueChange={(value) =>
+              setSelectedGroupId(value === "all" ? "all" : parseInt(value, 10))
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="All groups" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All groups</SelectItem>
+              {groups.map((group) => (
+                <SelectItem key={group.id} value={group.id.toString()}>
+                  {group.emoji} {group.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-            <div className="flex-1">
-              <label className="text-sm font-medium mb-2 block">Status</label>
-              <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All statuses</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="flex-1">
+          <label className="text-small font-medium mb-2 block text-foreground">Status</label>
+          <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
       {/* You Owe Section */}
       {youOwe.length > 0 && statusFilter !== "completed" && (
-        <div>
-          <h2 className="text-xl font-semibold mb-4 text-red-600 dark:text-red-400">
-            You Owe ({formatCurrency(youOwe.reduce((sum, s) => sum + parseFloat(s.amount), 0).toFixed(2))})
-          </h2>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-heading-2 text-red-600">
+              You Owe
+            </h2>
+            <p className="text-body font-semibold text-red-600">
+              {formatCurrency(youOwe.reduce((sum, s) => sum + parseFloat(s.amount), 0).toFixed(2))}
+            </p>
+          </div>
           <div className="space-y-3">
             {youOwe.map((settlement) => (
               <SettlementCard
@@ -226,10 +231,15 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
 
       {/* You're Owed Section */}
       {youAreOwed.length > 0 && statusFilter !== "completed" && (
-        <div>
-          <h2 className="text-xl font-semibold mb-4 text-green-600 dark:text-green-400">
-            You&apos;re Owed ({formatCurrency(youAreOwed.reduce((sum, s) => sum + parseFloat(s.amount), 0).toFixed(2))})
-          </h2>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-heading-2 text-green-600">
+              You&apos;re Owed
+            </h2>
+            <p className="text-body font-semibold text-green-600">
+              {formatCurrency(youAreOwed.reduce((sum, s) => sum + parseFloat(s.amount), 0).toFixed(2))}
+            </p>
+          </div>
           <div className="space-y-3">
             {youAreOwed.map((settlement) => (
               <SettlementCard
@@ -249,8 +259,8 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
 
       {/* Completed Settlements */}
       {completedSettlements.length > 0 && statusFilter !== "pending" && (
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Completed Settlements</h2>
+        <div className="space-y-4">
+          <h2 className="text-heading-2">Completed Settlements</h2>
           <div className="space-y-3">
             {completedSettlements.map((settlement) => (
               <SettlementCard
@@ -266,8 +276,8 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
       {/* Empty State */}
       {settlements.length === 0 && !isLoading && (
         <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">
+          <CardContent className="py-16 text-center">
+            <p className="text-body text-muted-foreground">
               {statusFilter === "all"
                 ? "No settlements found. Start splitting bills to see settlements here."
                 : `No ${statusFilter} settlements found.`}
@@ -278,11 +288,15 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
 
       {/* Loading State */}
       {isLoading && (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">Loading settlements...</p>
-          </CardContent>
-        </Card>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <Card key={i}>
+              <CardContent className="py-6">
+                <div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       )}
 
       {/* Settle Dialog */}

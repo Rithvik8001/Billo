@@ -22,30 +22,35 @@ export function GroupCard({ group, onClick }: GroupCardProps) {
 
   return (
     <Card
-      className="cursor-pointer hover:shadow-md transition-shadow"
+      className="cursor-pointer interactive"
       onClick={onClick}
     >
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <div className="text-3xl">{group.emoji}</div>
+      <CardContent className="pt-6">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="text-4xl shrink-0">{group.emoji}</div>
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-lg">{group.name}</CardTitle>
+            <h3 className="text-heading-2 mb-1">{group.name}</h3>
             {group.description && (
-              <CardDescription className="line-clamp-2">
+              <p className="text-small text-muted-foreground line-clamp-2">
                 {group.description}
-              </CardDescription>
+              </p>
             )}
           </div>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Users className="size-4" />
-          <span>
-            {group.memberCount} member{group.memberCount !== 1 ? "s" : ""}
-          </span>
+        <div className="space-y-3 pt-4 border-t border-border">
+          <div className="flex items-center gap-2 text-small text-muted-foreground">
+            <Users className="size-4" />
+            <span>
+              {group.memberCount} member{group.memberCount !== 1 ? "s" : ""}
+            </span>
+          </div>
+          {user?.id && (
+            <div className="flex items-center justify-between">
+              <GroupBalancePreview groupId={group.id} currentUserId={user.id} />
+              <span className="text-small text-muted-foreground">View →</span>
+            </div>
+          )}
         </div>
-        {user?.id && <GroupBalancePreview groupId={group.id} currentUserId={user.id} />}
       </CardContent>
     </Card>
   );

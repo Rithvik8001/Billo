@@ -50,29 +50,30 @@
 
 :root {
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --foreground: oklch(0.12 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.12 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --popover-foreground: oklch(0.12 0 0);
   --primary: oklch(0.589 0.196 37.3);
+  --primary-hover: oklch(0.52 0.196 37.3);
   --primary-foreground: oklch(0.969 0.016 293.756);
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
+  --muted: oklch(0.97 0.005 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: oklch(0.97 0.005 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.58 0.22 27);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
+  --border: oklch(0.92 0.005 0);
+  --input: oklch(0.92 0.005 0);
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.811 0.111 293.571);
   --chart-2: oklch(0.606 0.25 292.717);
   --chart-3: oklch(0.541 0.281 293.009);
   --chart-4: oklch(0.491 0.27 292.581);
   --chart-5: oklch(0.432 0.232 292.759);
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.541 0.281 293.009);
@@ -132,5 +133,72 @@
   }
   .delay-300 {
     animation-delay: 300ms;
+  }
+
+  /* Typography scale */
+  .text-display {
+    font-size: 40px;
+    line-height: 48px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .text-heading-1 {
+    font-size: 28px;
+    line-height: 36px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .text-heading-2 {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
+  }
+
+  .text-body {
+    font-size: 15px;
+    line-height: 24px;
+    font-weight: 400;
+  }
+
+  .text-small {
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 400;
+  }
+
+  .text-caption {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Standard transitions */
+  .transition-colors {
+    transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease;
+  }
+
+  .transition-transform {
+    transition: transform 150ms ease;
+  }
+
+  .transition-opacity {
+    transition: opacity 150ms ease;
+  }
+
+  .transition-shadow {
+    transition: box-shadow 150ms ease;
+  }
+
+  /* Interactive states */
+  .interactive:hover {
+    transform: translateY(-1px);
+  }
+
+  .interactive:active {
+    transform: translateY(0) scale(0.98);
   }
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Users } from "lucide-react";
 import { CreateGroupDialog } from "@/components/groups/create-group-dialog";
 import { GroupCard } from "@/components/groups/group-card";
@@ -57,13 +58,11 @@ export default function GroupsPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3">
-            Groups
-          </h1>
-          <p className="text-lg text-muted-foreground/70">
+    <div className="space-y-12">
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <h1 className="text-display">Groups</h1>
+          <p className="text-body text-muted-foreground">
             Manage your groups and split bills with others
           </p>
         </div>
@@ -74,23 +73,32 @@ export default function GroupsPage() {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">Loading groups...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i}>
+              <CardContent className="py-6">
+                <div className="h-6 bg-muted rounded w-3/4 animate-pulse mb-4" />
+                <div className="h-4 bg-muted rounded w-1/2 animate-pulse" />
+              </CardContent>
+            </Card>
+          ))}
         </div>
       ) : groups.length === 0 ? (
-        <div className="bg-white border rounded-2xl p-12 text-center">
-          <Users className="size-12 mx-auto mb-4 text-muted-foreground" />
-          <h2 className="text-2xl font-semibold mb-2">No groups yet</h2>
-          <p className="text-muted-foreground mb-6">
-            Create your first group to start splitting bills with others
-          </p>
-          <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
-            <Plus className="size-4" />
-            Create Your First Group
-          </Button>
-        </div>
+        <Card>
+          <CardContent className="py-16 text-center">
+            <Users className="size-16 mx-auto mb-6 text-muted-foreground opacity-50" />
+            <h2 className="text-heading-2 mb-2">No groups yet</h2>
+            <p className="text-body text-muted-foreground mb-8">
+              Create your first group to start splitting bills with others
+            </p>
+            <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
+              <Plus className="size-4" />
+              Create Your First Group
+            </Button>
+          </CardContent>
+        </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {groups.map((group) => (
             <GroupCard
               key={group.id}
