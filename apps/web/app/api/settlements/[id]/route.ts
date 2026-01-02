@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { settlements } from "@/db/models/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or } from "drizzle-orm";
 import { updateSettlementSchema } from "@/lib/api/settlement-schemas";
 
 interface RouteParams {
