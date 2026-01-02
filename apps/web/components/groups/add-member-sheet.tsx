@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   Sheet,
@@ -19,17 +19,11 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxContent,
-  ComboboxList,
-  ComboboxItem,
-  ComboboxEmpty,
-} from "@/components/ui/combobox";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
+import { XIcon } from "lucide-react";
 
 interface User {
   id: string;
@@ -52,23 +46,29 @@ export function AddMemberSheet({
   onSuccess,
 }: AddMemberSheetProps) {
   const isMobile = useIsMobile();
+  const searchContainerRef = useRef<HTMLDivElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedUserData, setSelectedUserData] = useState<User | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
     if (open) {
       setSearchQuery("");
       setSelectedUserId(null);
+      setSelectedUserData(null);
       setUsers([]);
+      setShowResults(false);
     }
   }, [open]);
 
   useEffect(() => {
     if (!searchQuery.trim() || searchQuery.length < 2) {
       setUsers([]);
+      setShowResults(false);
       return;
     }
 
@@ -78,6 +78,26 @@ export function AddMemberSheet({
 
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setShowResults(false);
+      }
+    };
+
+    if (showResults) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showResults]);
 
   const searchUsers = async (query: string) => {
     setIsSearching(true);
@@ -91,10 +111,22 @@ export function AddMemberSheet({
 
       const data = await response.json();
       setUsers(data.users || []);
+      setShowResults(true);
     } catch {
       toast.error("Failed to search users");
+      setShowResults(false);
     } finally {
       setIsSearching(false);
+    }
+  };
+
+  const handleSelectUser = (userId: string) => {
+    const user = users.find((u) => u.id === userId);
+    if (user) {
+      setSelectedUserId(userId);
+      setSelectedUserData(user);
+      setShowResults(false);
+      setSearchQuery("");
     }
   };
 
@@ -119,8 +151,10 @@ export function AddMemberSheet({
 
       toast.success("Member added successfully");
       setSelectedUserId(null);
+      setSelectedUserData(null);
       setSearchQuery("");
       setUsers([]);
+      setShowResults(false);
       onOpenChange(false);
       onSuccess();
     } catch (error) {
@@ -132,7 +166,7 @@ export function AddMemberSheet({
     }
   };
 
-  const selectedUser = users.find((u) => u.id === selectedUserId);
+  const selectedUser = selectedUserData;
 
   const formContent = (
     <>
@@ -140,67 +174,90 @@ export function AddMemberSheet({
         <Label htmlFor="user-search" className="text-sm font-medium">
           Search by Email
         </Label>
-        <Combobox
-          value={selectedUserId || ""}
-          onValueChange={(value) => {
-            if (!value) {
-              setSelectedUserId(null);
-              setSearchQuery("");
-            } else {
-              setSelectedUserId(value);
-            }
-          }}
-        >
-          <ComboboxInput
-            id="user-search"
-            placeholder="Type email to search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            showTrigger
-            showClear={!!selectedUserId}
-          />
-          <ComboboxContent>
-            <ComboboxList>
+        <div className="relative" ref={searchContainerRef}>
+          <div className="relative">
+            <Input
+              id="user-search"
+              type="text"
+              placeholder="Type email to search..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                if (selectedUserId) {
+                  setSelectedUserId(null);
+                  setSelectedUserData(null);
+                }
+              }}
+              onFocus={() => {
+                if (users.length > 0) {
+                  setShowResults(true);
+                }
+              }}
+              className="pr-8"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery("");
+                  setSelectedUserId(null);
+                  setSelectedUserData(null);
+                  setUsers([]);
+                  setShowResults(false);
+                }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <XIcon className="size-4" />
+              </button>
+            )}
+          </div>
+          {showResults && (
+            <div className="absolute z-50 w-full mt-1 bg-popover text-popover-foreground rounded-lg shadow-md ring-1 ring-border max-h-72 overflow-y-auto">
               {isSearching ? (
                 <div className="px-3 py-2.5 text-sm text-muted-foreground">
                   Searching...
                 </div>
               ) : users.length === 0 && searchQuery.length >= 2 ? (
-                <ComboboxEmpty>No users found</ComboboxEmpty>
+                <div className="px-3 py-2.5 text-sm text-muted-foreground text-center">
+                  No users found
+                </div>
               ) : (
                 users.map((user) => (
-                  <ComboboxItem key={user.id} value={user.id}>
-                    <div className="flex items-center gap-2.5">
-                      {user.imageUrl ? (
-                        <Image
-                          src={user.imageUrl}
-                          alt={user.name || user.email}
-                          width={20}
-                          height={20}
-                          className="size-5 rounded-full shrink-0 ring-1 ring-border"
-                        />
-                      ) : (
-                        <div className="size-5 rounded-full shrink-0 bg-muted flex items-center justify-center ring-1 ring-border">
-                          <span className="text-xs font-medium text-muted-foreground">
-                            {user.email[0].toUpperCase()}
-                          </span>
-                        </div>
-                      )}
-                      <div className="flex flex-col min-w-0 flex-1">
-                        <span className="font-medium text-sm truncate leading-tight">
-                          {user.name || user.email.split("@")[0]}
-                        </span>
-                        <span className="text-xs text-muted-foreground truncate mt-0.5">
-                          {user.email}
+                  <button
+                    key={user.id}
+                    type="button"
+                    onClick={() => handleSelectUser(user.id)}
+                    className="w-full px-3 py-2.5 text-left hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2.5 cursor-pointer"
+                  >
+                    {user.imageUrl ? (
+                      <Image
+                        src={user.imageUrl}
+                        alt={user.name || user.email}
+                        width={20}
+                        height={20}
+                        className="size-5 rounded-full shrink-0 ring-1 ring-border"
+                      />
+                    ) : (
+                      <div className="size-5 rounded-full shrink-0 bg-muted flex items-center justify-center ring-1 ring-border">
+                        <span className="text-xs font-medium text-muted-foreground">
+                          {user.email[0].toUpperCase()}
                         </span>
                       </div>
+                    )}
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className="font-medium text-sm truncate leading-tight">
+                        {user.name || user.email.split("@")[0]}
+                      </span>
+                      <span className="text-xs text-muted-foreground truncate mt-0.5">
+                        {user.email}
+                      </span>
                     </div>
-                  </ComboboxItem>
+                  </button>
                 ))
               )}
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
+            </div>
+          )}
+        </div>
       </div>
 
       {selectedUser && (

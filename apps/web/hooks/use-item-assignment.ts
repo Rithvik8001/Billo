@@ -142,7 +142,10 @@ export function useItemAssignment(
         const response = await fetch(`/api/receipts/${receiptId}/assignments`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ assignments: payload }),
+          body: JSON.stringify({
+            assignments: payload,
+            groupId: state.selectedGroupId || undefined,
+          }),
         });
 
         if (!response.ok) {

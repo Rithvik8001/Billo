@@ -8,7 +8,9 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Users } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 import type { Group } from "@/lib/assignment-types";
+import { GroupBalancePreview } from "./group-balance-preview";
 
 interface GroupCardProps {
   group: Group;
@@ -16,6 +18,8 @@ interface GroupCardProps {
 }
 
 export function GroupCard({ group, onClick }: GroupCardProps) {
+  const { user } = useUser();
+
   return (
     <Card
       className="cursor-pointer hover:shadow-md transition-shadow"
@@ -41,6 +45,7 @@ export function GroupCard({ group, onClick }: GroupCardProps) {
             {group.memberCount} member{group.memberCount !== 1 ? "s" : ""}
           </span>
         </div>
+        {user?.id && <GroupBalancePreview groupId={group.id} currentUserId={user.id} />}
       </CardContent>
     </Card>
   );

@@ -2,7 +2,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Home, ScanLine, Edit3, Users } from "lucide-react";
+import { Home, ScanLine, Edit3, Users, Wallet } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -114,6 +114,14 @@ export default async function DashboardLayout({
                     <Link href="/dashboard/groups">
                       <Users className="size-4" />
                       <span>Groups</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link href="/dashboard/settle">
+                      <Wallet className="size-4" />
+                      <span>Settle Up</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
-import { receipts, receiptItems, itemAssignments } from "@/db/models/schema";
+import { receipts, receiptItems, itemAssignments, groupMembers } from "@/db/models/schema";
 import { eq, inArray } from "drizzle-orm";
 import { createAssignmentsSchema } from "@/lib/api/assignment-schemas";
+import { calculateSettlements } from "@/lib/settlement-helpers";
+import { calculatePersonTotals } from "@/lib/assignment-helpers";
+import type { GroupMember } from "@/lib/assignment-types";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -54,7 +57,7 @@ export async function POST(request: Request, { params }: RouteParams) {
       );
     }
 
-    const { assignments } = validation.data;
+    const { assignments, groupId } = validation.data;
 
     // Get all items for this receipt
     const items = await db.query.receiptItems.findMany({
@@ -80,7 +83,33 @@ export async function POST(request: Request, { params }: RouteParams) {
       );
     }
 
-    // Perform transaction: delete existing + insert new + update status
+    // Get group members if groupId is provided
+    let groupMembersList: GroupMember[] = [];
+    if (groupId) {
+      const members = await db.query.groupMembers.findMany({
+        where: eq(groupMembers.groupId, groupId),
+        with: {
+          user: {
+            columns: {
+              id: true,
+              name: true,
+              email: true,
+              imageUrl: true,
+            },
+          },
+        },
+      });
+      groupMembersList = members.map((m) => ({
+        userId: m.userId,
+        name: m.user.name,
+        email: m.user.email,
+        imageUrl: m.user.imageUrl,
+        role: m.role,
+        joinedAt: m.joinedAt,
+      }));
+    }
+
+    // Perform transaction: delete existing + insert new + update status + generate settlements
     await db.transaction(async (tx) => {
       // 1. Delete existing assignments for all items in this receipt
       const itemIdsArray = Array.from(itemIds);
@@ -103,15 +132,41 @@ export async function POST(request: Request, { params }: RouteParams) {
         );
       }
 
-      // 3. Update receipt status to completed
+      // 3. Update receipt status to completed and set groupId
       await tx
         .update(receipts)
         .set({
           status: "completed",
+          groupId: groupId || null,
           updatedAt: new Date(),
         })
         .where(eq(receipts.id, receiptId));
     });
+
+    // 4. Generate settlements (outside transaction to avoid deadlocks)
+    if (groupId && groupMembersList.length > 0 && assignments.length > 0) {
+      // Build assignment map for calculation
+      const assignmentMap = new Map<number, Set<string>>();
+      assignments.forEach((a) => {
+        const existing = assignmentMap.get(a.receiptItemId) || new Set<string>();
+        existing.add(a.userId);
+        assignmentMap.set(a.receiptItemId, existing);
+      });
+
+      // Calculate person totals
+      const personTotals = calculatePersonTotals(
+        items.map((item) => ({
+          id: item.id,
+          totalPrice: item.totalPrice,
+        })),
+        assignmentMap,
+        groupMembersList,
+        receipt.tax
+      );
+
+      // Generate settlements
+      await calculateSettlements(receiptId, userId, personTotals, groupId);
+    }
 
     return NextResponse.json({
       success: true,

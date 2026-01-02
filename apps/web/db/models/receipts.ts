@@ -3,6 +3,7 @@ import { relations } from 'drizzle-orm';
 import { users } from './users';
 import { receiptItems } from './receipt-items';
 import { settlements } from './settlements';
+import { groups } from './groups';
 
 // =====================
 // RECEIPTS TABLE
@@ -30,6 +31,10 @@ export const receipts = pgTable('receipts', {
     enum: ['pending', 'uploading', 'processing', 'completed', 'failed']
   }).default('pending').notNull(),
 
+  // Group association (which group this receipt was split with)
+  groupId: integer('group_id')
+    .references(() => groups.id, { onDelete: 'set null' }),
+
   // AI extraction metadata
   extractedData: jsonb('extracted_data'), // Raw AI response
   extractionError: text('extraction_error'),
@@ -40,6 +45,7 @@ export const receipts = pgTable('receipts', {
 }, (table) => [
   index('receipts_user_idx').on(table.userId),
   index('receipts_status_idx').on(table.status),
+  index('receipts_group_idx').on(table.groupId),
 ]);
 
 // Relations
@@ -47,6 +53,10 @@ export const receiptsRelations = relations(receipts, ({ one, many }) => ({
   user: one(users, {
     fields: [receipts.userId],
     references: [users.id],
+  }),
+  group: one(groups, {
+    fields: [receipts.groupId],
+    references: [groups.id],
   }),
   items: many(receiptItems),
   settlements: many(settlements),

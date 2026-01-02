@@ -10,6 +10,7 @@ export const assignmentItemSchema = z.object({
 
 export const createAssignmentsSchema = z.object({
   assignments: z.array(assignmentItemSchema).min(1),
+  groupId: z.number().int().positive().optional(),
 });
 
 export type CreateAssignmentsInput = z.infer<typeof createAssignmentsSchema>;

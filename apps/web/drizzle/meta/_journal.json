@@ -15,6 +15,13 @@
       "when": 1767369952745,
       "tag": "0001_oval_mandroid",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1767380318151,
+      "tag": "0002_nosy_viper",
+      "breakpoints": true
     }
   ]
 }
