@@ -12,7 +12,11 @@ export async function saveExtractedReceiptData(
 }> {
   // Parse purchase date if available
   let purchaseDate: Date | null = null;
-  if (extractedData.purchaseDate) {
+  if (
+    extractedData.purchaseDate &&
+    extractedData.purchaseDate.toLowerCase() !== "null" &&
+    extractedData.purchaseDate.trim() !== ""
+  ) {
     const parsedDate = new Date(extractedData.purchaseDate);
     if (!isNaN(parsedDate.getTime())) {
       purchaseDate = parsedDate;
@@ -64,6 +68,14 @@ export async function saveExtractedReceiptData(
     }
   }
 
+  // Clean and validate tax field
+  const cleanTax =
+    extractedData.tax &&
+    extractedData.tax.toLowerCase() !== "null" &&
+    extractedData.tax.trim() !== ""
+      ? extractedData.tax
+      : null;
+
   // Update receipt with extracted metadata
   try {
     await db
@@ -73,7 +85,7 @@ export async function saveExtractedReceiptData(
         merchantAddress: extractedData.merchantAddress || null,
         purchaseDate,
         totalAmount: extractedData.totalAmount || null,
-        tax: extractedData.tax || null,
+        tax: cleanTax,
         extractedData: extractedData as unknown as Record<string, unknown>,
         extractedAt: new Date(),
         status: "completed",
@@ -82,15 +94,28 @@ export async function saveExtractedReceiptData(
       .where(eq(receipts.id, receiptId));
   } catch (updateError) {
     console.error("Failed to update receipt:", updateError);
+    console.error("Error details:", JSON.stringify(updateError, null, 2));
     console.error("Update data:", {
       receiptId,
       merchantName: extractedData.merchantName,
       merchantAddress: extractedData.merchantAddress,
       purchaseDate,
       totalAmount: extractedData.totalAmount,
-      tax: extractedData.tax,
+      tax: cleanTax,
       extractedData,
     });
+
+    // Check if this is a Drizzle error with a cause
+    if (updateError && typeof updateError === "object" && "cause" in updateError) {
+      const cause = (updateError as { cause?: unknown }).cause;
+      console.error("Error cause:", cause);
+      if (cause && typeof cause === "object" && "message" in cause) {
+        throw new Error(
+          `Failed to update receipt: ${(cause as { message: string }).message}`
+        );
+      }
+    }
+
     throw new Error(
       `Failed to update receipt: ${updateError instanceof Error ? updateError.message : "Unknown error"}`
     );
