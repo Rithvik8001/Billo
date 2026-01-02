@@ -19,37 +19,82 @@ export async function saveExtractedReceiptData(
     }
   }
 
-  // Prepare receipt items for insertion
-  const itemsToInsert = extractedData.items.map((item, index) => ({
-    receiptId,
-    name: item.name,
-    quantity: item.quantity || "1",
-    unitPrice: item.unitPrice,
-    totalPrice: item.totalPrice,
-    lineNumber: item.lineNumber ?? index + 1,
-    category: item.category || null,
-  }));
+  // Prepare receipt items for insertion with validation
+  const itemsToInsert = extractedData.items.map((item, index) => {
+    // Validate decimal values - ensure they're not empty and are valid decimals
+    const quantity = item.quantity?.trim() || "1";
+    const unitPrice = item.unitPrice?.trim();
+    const totalPrice = item.totalPrice?.trim();
+
+    // Validate that prices are not empty
+    if (!unitPrice || !totalPrice) {
+      throw new Error(
+        `Invalid item data: missing prices for item "${item.name}". unitPrice: ${unitPrice}, totalPrice: ${totalPrice}`
+      );
+    }
+
+    // Validate that prices are valid numbers
+    if (isNaN(parseFloat(unitPrice)) || isNaN(parseFloat(totalPrice))) {
+      throw new Error(
+        `Invalid item data: prices must be valid numbers for item "${item.name}". unitPrice: ${unitPrice}, totalPrice: ${totalPrice}`
+      );
+    }
+
+    return {
+      receiptId,
+      name: item.name,
+      quantity,
+      unitPrice,
+      totalPrice,
+      lineNumber: item.lineNumber ?? index + 1,
+      category: item.category || null,
+    };
+  });
 
   // Insert receipt items
   if (itemsToInsert.length > 0) {
-    await db.insert(receiptItems).values(itemsToInsert);
+    try {
+      await db.insert(receiptItems).values(itemsToInsert);
+    } catch (insertError) {
+      console.error("Failed to insert receipt items:", insertError);
+      console.error("Items to insert:", JSON.stringify(itemsToInsert, null, 2));
+      throw new Error(
+        `Database insert failed: ${insertError instanceof Error ? insertError.message : "Unknown error"}`
+      );
+    }
   }
 
   // Update receipt with extracted metadata
-  await db
-    .update(receipts)
-    .set({
-      merchantName: extractedData.merchantName || null,
-      merchantAddress: extractedData.merchantAddress || null,
+  try {
+    await db
+      .update(receipts)
+      .set({
+        merchantName: extractedData.merchantName || null,
+        merchantAddress: extractedData.merchantAddress || null,
+        purchaseDate,
+        totalAmount: extractedData.totalAmount || null,
+        tax: extractedData.tax || null,
+        extractedData: extractedData as unknown as Record<string, unknown>,
+        extractedAt: new Date(),
+        status: "completed",
+        updatedAt: new Date(),
+      })
+      .where(eq(receipts.id, receiptId));
+  } catch (updateError) {
+    console.error("Failed to update receipt:", updateError);
+    console.error("Update data:", {
+      receiptId,
+      merchantName: extractedData.merchantName,
+      merchantAddress: extractedData.merchantAddress,
       purchaseDate,
-      totalAmount: extractedData.totalAmount || null,
-      tax: extractedData.tax || null,
-      extractedData: extractedData as unknown,
-      extractedAt: new Date(),
-      status: "completed",
-      updatedAt: new Date(),
-    })
-    .where(eq(receipts.id, receiptId));
+      totalAmount: extractedData.totalAmount,
+      tax: extractedData.tax,
+      extractedData,
+    });
+    throw new Error(
+      `Failed to update receipt: ${updateError instanceof Error ? updateError.message : "Unknown error"}`
+    );
+  }
 
   return {
     receiptId,

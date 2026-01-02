@@ -5,6 +5,7 @@ import { receipts } from "@/db/models/schema";
 import { eq, asc } from "drizzle-orm";
 import Image from "next/image";
 import { ReceiptItemsSection } from "@/components/receipt-review/receipt-items-section";
+import { AssignmentSection } from "@/components/receipt-assignment/assignment-section";
 
 interface ReceiptPageProps {
   params: Promise<{ id: string }>;
@@ -98,6 +99,13 @@ export default async function ReceiptPage({ params }: ReceiptPageProps) {
           totalAmount={receipt.totalAmount}
         />
       </div>
+
+      <AssignmentSection
+        items={receipt.items}
+        receiptId={receipt.id}
+        tax={receipt.tax}
+        totalAmount={receipt.totalAmount}
+      />
     </div>
   );
 }

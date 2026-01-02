@@ -78,18 +78,16 @@ export function createReceiptExtractionStream(
             }
           } catch (dbError) {
             console.error("Database save error:", dbError);
-            await markReceiptExtractionFailed(
-              receiptId,
-              dbError instanceof Error
-                ? dbError.message
-                : "Database save failed"
-            );
+            const errorMessage =
+              dbError instanceof Error ? dbError.message : "Database save failed";
+
+            await markReceiptExtractionFailed(receiptId, errorMessage);
 
             controller.enqueue(
               encoder.encode(
                 `data: ${JSON.stringify({
                   type: "error",
-                  error: "Failed to save to database",
+                  error: `Failed to save to database: ${errorMessage}`,
                 })}\n\n`
               )
             );
