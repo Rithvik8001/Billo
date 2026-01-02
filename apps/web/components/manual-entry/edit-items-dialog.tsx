@@ -16,6 +16,7 @@ import { Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency } from "@/lib/receipt-helpers";
 import { toast } from "sonner";
+import { ManualEntryItem } from "@/hooks/use-manual-entry";
 
 interface ReceiptItem {
   id: number;
@@ -71,7 +72,7 @@ export function EditItemsDialog({
 
   const handleUpdateItem = (
     tempId: string,
-    updates: Partial<ReceiptItem>
+    updates: Partial<ManualEntryItem>
   ) => {
     setItems(
       items.map((item) => {
