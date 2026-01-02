@@ -12,7 +12,7 @@ interface ItemRowProps {
 
 export function ItemRow({ item, onEdit, onRemove }: ItemRowProps) {
   return (
-    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
       <div className="flex-1">
         <p className="font-medium text-body">{item.name || "Unnamed Item"}</p>
         <div className="flex items-center gap-4 mt-1">

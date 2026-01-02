@@ -64,12 +64,12 @@ export function ReceiptClient({ receipt, items, isOwner }: ReceiptClientProps) {
 
       {/* Receipt Header */}
       <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-8">
+        <CardContent className="pt-4">
+          <div className="flex flex-col md:flex-row gap-6">
             {isManualReceipt ? (
-              <div className="shrink-0 flex items-center justify-center w-full max-w-xs h-64 bg-muted/50 rounded-lg border border-border">
+              <div className="shrink-0 flex items-center justify-center w-full max-w-xs h-48 bg-muted/50 rounded-lg border border-border">
                 <div className="text-center">
-                  <Badge variant="secondary" className="mb-2">
+                  <Badge variant="secondary" className="mb-1.5">
                     Manual Entry
                   </Badge>
                   <p className="text-small text-muted-foreground">
@@ -89,12 +89,12 @@ export function ReceiptClient({ receipt, items, isOwner }: ReceiptClientProps) {
                 />
               </div>
             ) : null}
-            <div className="flex-1 space-y-6">
+            <div className="flex-1 space-y-4">
               <div>
-                <h2 className="text-heading-2 mb-4">
+                <h2 className="text-heading-2 mb-3">
                   {receipt.merchantName || "Receipt"}
                 </h2>
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-4">
                   {receipt.purchaseDate && (
                     <div>
                       <p className="text-small text-muted-foreground mb-1">

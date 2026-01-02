@@ -46,13 +46,13 @@ export function StepReceiptDetails({
           Enter basic information about your receipt
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3">
         {/* Merchant Name */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <div className="shrink-0">
-            <Store className="size-5 text-muted-foreground" />
+            <Store className="size-4 text-muted-foreground" />
           </div>
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 space-y-1.5">
             <Label htmlFor="merchant-name" className="text-small">
               Merchant Name <span className="text-destructive">*</span>
             </Label>
@@ -71,11 +71,11 @@ export function StepReceiptDetails({
         </div>
 
         {/* Purchase Date */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <div className="shrink-0">
-            <CalendarIcon className="size-5 text-muted-foreground" />
+            <CalendarIcon className="size-4 text-muted-foreground" />
           </div>
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 space-y-1.5">
             <Label className="text-small">
               Purchase Date <span className="text-destructive">*</span>
             </Label>
@@ -110,11 +110,11 @@ export function StepReceiptDetails({
         </div>
 
         {/* Tax Amount */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <div className="shrink-0">
-            <DollarSign className="size-5 text-muted-foreground" />
+            <DollarSign className="size-4 text-muted-foreground" />
           </div>
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 space-y-1.5">
             <Label htmlFor="tax" className="text-small">
               Tax Amount ($)
             </Label>

@@ -37,11 +37,8 @@ export function UploadDropzone({
       <p className="text-foreground/60 max-w-md mb-6">
         Drag and drop your receipt image here, or click the button below
       </p>
-      <Button
-        onClick={onFileClick}
-        className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-5 h-auto text-base rounded-2xl px-8"
-      >
-        <Upload className="size-5 mr-2" />
+      <Button onClick={onFileClick}>
+        <Upload className="size-4 mr-2" />
         Choose File
       </Button>
       <input

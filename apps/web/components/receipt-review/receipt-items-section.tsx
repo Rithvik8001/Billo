@@ -46,16 +46,16 @@ export function ReceiptItemsSection({
 
   return (
     <Card>
-      <CardContent className="pt-6">
-        <h2 className="text-heading-2 mb-6">
+      <CardContent className="pt-4">
+        <h2 className="text-heading-2 mb-4">
           {itemCountEmoji} Items ({items.length})
         </h2>
 
-        <div className="space-y-2 mb-8">
+        <div className="space-y-2 mb-5">
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between p-4 bg-muted/50 rounded-lg"
+              className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
             >
               <div className="flex-1">
                 <p className="font-medium text-body">{item.name}</p>
@@ -77,10 +77,10 @@ export function ReceiptItemsSection({
           ))}
         </div>
 
-        <Separator className="my-6" />
+        <Separator className="my-4" />
 
-        <div className="space-y-4">
-          <h3 className="text-heading-2 mb-4">Summary</h3>
+        <div className="space-y-3">
+          <h3 className="text-heading-2 mb-3">Summary</h3>
 
           <div className="flex items-center justify-between">
             <p className="text-body text-muted-foreground">Subtotal</p>
@@ -94,7 +94,7 @@ export function ReceiptItemsSection({
             </div>
           )}
 
-          <Separator className="my-4" />
+          <Separator className="my-3" />
 
           <div className="flex items-center justify-between">
             <p className="font-semibold text-heading-2">Total {priceEmoji}</p>

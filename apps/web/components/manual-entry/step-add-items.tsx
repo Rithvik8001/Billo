@@ -59,12 +59,12 @@ export function StepAddItems({
           Add items to your receipt. Each item needs a name and price.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4">
         {items.length === 0 ? (
-          <div className="py-12 text-center border-2 border-dashed border-border rounded-lg">
-            <ShoppingCart className="size-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-            <h3 className="text-heading-2 mb-2">No Items Yet</h3>
-            <p className="text-body text-muted-foreground mb-6">
+          <div className="py-8 text-center border-2 border-dashed border-border rounded-lg">
+            <ShoppingCart className="size-10 mx-auto mb-3 text-muted-foreground opacity-50" />
+            <h3 className="text-heading-2 mb-1.5">No Items Yet</h3>
+            <p className="text-body text-muted-foreground mb-4">
               Add your first item to get started
             </p>
             <Button onClick={handleAddItem}>
@@ -74,7 +74,7 @@ export function StepAddItems({
           </div>
         ) : (
           <>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {items.map((item) =>
                 editingId === item.id ? (
                   <ItemForm

@@ -61,10 +61,10 @@ export function ItemForm({
   };
 
   return (
-    <div className="space-y-4 p-4 border border-border rounded-lg bg-card">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 space-y-4">
-          <div className="space-y-2">
+    <div className="space-y-3 p-3 border border-border rounded-lg bg-card">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 space-y-3">
+          <div className="space-y-1.5">
             <Label htmlFor={`item-name-${item.id}`}>Item Name *</Label>
             <Input
               id={`item-name-${item.id}`}
@@ -75,8 +75,8 @@ export function ItemForm({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
               <Label htmlFor={`item-quantity-${item.id}`}>Quantity</Label>
               <Input
                 id={`item-quantity-${item.id}`}
