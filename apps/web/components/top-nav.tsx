@@ -24,8 +24,10 @@ export function TopNav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-border h-16">
       <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/dashboard" className="flex items-center gap-2 shrink-0">
+        <Link
+          href="/dashboard"
+          className="flex items-center justify-center shrink-0 h-full mt-2"
+        >
           <Image
             src="/web-logo.png"
             alt="Billo"
@@ -33,7 +35,6 @@ export function TopNav() {
             height={32}
             className="object-contain"
           />
-          <span className="font-semibold text-lg tracking-tight">Billo</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -119,4 +120,3 @@ export function TopNav() {
     </nav>
   );
 }
-

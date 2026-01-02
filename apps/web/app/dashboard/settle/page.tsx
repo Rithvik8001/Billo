@@ -9,19 +9,6 @@ export default async function SettleUpPage() {
     notFound();
   }
 
-  return (
-    <div className="max-w-6xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3">
-          Settle Up
-        </h1>
-        <p className="text-lg text-muted-foreground/70">
-          Track who owes what and mark payments as settled
-        </p>
-      </div>
-
-      <SettleUpClient userId={userId} />
-    </div>
-  );
+  return <SettleUpClient userId={userId} />;
 }
 
