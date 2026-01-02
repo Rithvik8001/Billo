@@ -142,7 +142,8 @@ export async function getBalanceSummary(userId: string): Promise<{
   totalYouOwe: number;
   totalOwedToYou: number;
   netBalance: number;
-  pendingCount: number;
+  pendingYouOweCount: number;
+  pendingOwedToYouCount: number;
   completedCount: number;
 }> {
   // Get all settlements where user is involved
@@ -183,7 +184,8 @@ export async function getBalanceSummary(userId: string): Promise<{
     totalYouOwe,
     totalOwedToYou,
     netBalance,
-    pendingCount: settlementsOwed.length + settlementsOwedTo.length,
+    pendingYouOweCount: settlementsOwed.length,
+    pendingOwedToYouCount: settlementsOwedTo.length,
     completedCount,
   };
 }

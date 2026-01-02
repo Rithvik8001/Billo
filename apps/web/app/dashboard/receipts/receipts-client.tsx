@@ -4,6 +4,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { Receipt, ArrowRight } from "lucide-react";
 import { formatCurrency } from "@/lib/receipt-helpers";
 
@@ -65,16 +74,40 @@ export function ReceiptsClient({ userId }: ReceiptsClientProps) {
       )}
 
       {isLoading ? (
-        <div className="space-y-3">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <Card key={i}>
-              <CardContent className="py-6">
-                <div className="h-4 bg-muted rounded w-3/4 animate-pulse mb-2" />
-                <div className="h-4 bg-muted rounded w-1/2 animate-pulse" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Merchant</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead className="text-right"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <TableRow key={i}>
+                    <TableCell>
+                      <div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 bg-muted rounded w-1/2 animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 bg-muted rounded w-1/3 animate-pulse" />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="h-4 bg-muted rounded w-1/4 animate-pulse ml-auto" />
+                    </TableCell>
+                    <TableCell className="text-right"></TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       ) : receipts.length === 0 ? (
         <Card>
           <CardContent className="py-16 text-center">
@@ -94,62 +127,92 @@ export function ReceiptsClient({ userId }: ReceiptsClientProps) {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-3">
-          {receipts.map((receipt) => (
-            <Link
-              key={receipt.id}
-              href={`/dashboard/receipts/${receipt.id}`}
-              className="block"
-            >
-              <Card className="interactive hover:border-primary/50">
-                <CardContent className="py-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="size-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                        <Receipt className="size-5 text-muted-foreground" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-body truncate">
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Merchant</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead className="text-right"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {receipts.map((receipt) => (
+                  <TableRow
+                    key={receipt.id}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => {
+                      window.location.href = `/dashboard/receipts/${receipt.id}`;
+                    }}
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="size-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                          <Receipt className="size-4 text-muted-foreground" />
+                        </div>
+                        <p className="font-medium text-body">
                           {receipt.merchantName || "Receipt"}
                         </p>
-                        <p className="text-small text-muted-foreground">
-                          {receipt.purchaseDate
-                            ? new Date(receipt.purchaseDate).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                }
-                              )
-                            : new Date(receipt.createdAt).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                }
-                              )}
-                        </p>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-4 shrink-0">
-                      {receipt.totalAmount && (
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-small text-muted-foreground">
+                        {receipt.purchaseDate
+                          ? new Date(receipt.purchaseDate).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              }
+                            )
+                          : new Date(receipt.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              }
+                            )}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          receipt.status === "completed"
+                            ? "completed"
+                            : receipt.status === "failed"
+                            ? "cancelled"
+                            : "pending"
+                        }
+                        className="capitalize"
+                      >
+                        {receipt.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {receipt.totalAmount ? (
                         <p className="font-semibold text-body">
                           {formatCurrency(receipt.totalAmount)}
                         </p>
+                      ) : (
+                        <span className="text-small text-muted-foreground">
+                          —
+                        </span>
                       )}
-                      <span className="text-small text-muted-foreground capitalize">
-                        {receipt.status}
-                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
                       <ArrowRight className="size-4 text-muted-foreground" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

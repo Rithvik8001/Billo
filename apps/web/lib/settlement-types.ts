@@ -53,7 +53,8 @@ export interface BalanceSummary {
   totalYouOwe: number;
   totalOwedToYou: number;
   netBalance: number;
-  pendingCount: number;
+  pendingYouOweCount: number; // settlements where you owe
+  pendingOwedToYouCount: number; // settlements where you're owed
   completedCount: number;
 }
 

@@ -20,8 +20,8 @@ export function BalanceSummary({ summary }: BalanceSummaryProps) {
             {formatCurrency(summary.totalYouOwe.toFixed(2))}
           </p>
           <p className="text-small text-muted-foreground">
-            {summary.pendingCount} pending settlement
-            {summary.pendingCount !== 1 ? "s" : ""}
+            {summary.pendingYouOweCount ?? 0} pending settlement
+            {(summary.pendingYouOweCount ?? 0) !== 1 ? "s" : ""}
           </p>
         </CardContent>
       </Card>
@@ -33,8 +33,8 @@ export function BalanceSummary({ summary }: BalanceSummaryProps) {
             {formatCurrency(summary.totalOwedToYou.toFixed(2))}
           </p>
           <p className="text-small text-muted-foreground">
-            {summary.completedCount} completed settlement
-            {summary.completedCount !== 1 ? "s" : ""}
+            {summary.pendingOwedToYouCount ?? 0} pending settlement
+            {(summary.pendingOwedToYouCount ?? 0) !== 1 ? "s" : ""}
           </p>
         </CardContent>
       </Card>

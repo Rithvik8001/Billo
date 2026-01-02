@@ -3,6 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Receipt, ArrowRight, Users, DollarSign, TrendingUp } from "lucide-react";
 import { formatCurrency } from "@/lib/receipt-helpers";
 import type { BalanceSummary } from "@/lib/settlement-types";
@@ -26,7 +34,8 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
     totalYouOwe: 0,
     totalOwedToYou: 0,
     netBalance: 0,
-    pendingCount: 0,
+    pendingYouOweCount: 0,
+    pendingOwedToYouCount: 0,
     completedCount: 0,
   });
   const [recentReceipts, setRecentReceipts] = useState<RecentReceipt[]>([]);
@@ -48,19 +57,25 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
         const pending = allSettlements.filter((s: any) => s.status === "pending");
         const completed = allSettlements.filter((s: any) => s.status === "completed");
 
-        const totalYouOwe = pending
-          .filter((s: any) => s.fromUserId === userId)
-          .reduce((sum: number, s: any) => sum + parseFloat(s.amount), 0);
+        const youOweSettlements = pending.filter((s: any) => s.fromUserId === userId);
+        const owedToYouSettlements = pending.filter((s: any) => s.toUserId === userId);
 
-        const totalOwedToYou = pending
-          .filter((s: any) => s.toUserId === userId)
-          .reduce((sum: number, s: any) => sum + parseFloat(s.amount), 0);
+        const totalYouOwe = youOweSettlements.reduce(
+          (sum: number, s: any) => sum + parseFloat(s.amount),
+          0
+        );
+
+        const totalOwedToYou = owedToYouSettlements.reduce(
+          (sum: number, s: any) => sum + parseFloat(s.amount),
+          0
+        );
 
         setSummary({
           totalYouOwe,
           totalOwedToYou,
           netBalance: totalYouOwe - totalOwedToYou,
-          pendingCount: pending.length,
+          pendingYouOweCount: youOweSettlements.length,
+          pendingOwedToYouCount: owedToYouSettlements.length,
           completedCount: completed.length,
         });
       }
@@ -109,7 +124,7 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
               {isLoading ? "..." : formatCurrency(summary.totalYouOwe.toFixed(2))}
             </p>
             <p className="text-small text-muted-foreground">
-              {summary.pendingCount} pending settlement{summary.pendingCount !== 1 ? "s" : ""}
+              {summary.pendingYouOweCount} pending settlement{summary.pendingYouOweCount !== 1 ? "s" : ""}
             </p>
           </CardContent>
         </Card>
@@ -181,53 +196,67 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-3">
-            {recentReceipts.map((receipt) => (
-              <Link
-                key={receipt.id}
-                href={`/dashboard/receipts/${receipt.id}`}
-                className="block"
-              >
-                <Card className="interactive hover:border-primary/50">
-                  <CardContent className="py-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className="size-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                          <Receipt className="size-5 text-muted-foreground" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-body truncate">
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Merchant</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead className="text-right"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentReceipts.map((receipt) => (
+                    <TableRow
+                      key={receipt.id}
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => {
+                        window.location.href = `/dashboard/receipts/${receipt.id}`;
+                      }}
+                    >
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="size-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                            <Receipt className="size-4 text-muted-foreground" />
+                          </div>
+                          <p className="font-medium text-body">
                             {receipt.merchantName || "Receipt"}
                           </p>
-                          <p className="text-small text-muted-foreground">
-                            {receipt.purchaseDate
-                              ? new Date(receipt.purchaseDate).toLocaleDateString("en-US", {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                })
-                              : new Date(receipt.createdAt).toLocaleDateString("en-US", {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                })}
-                          </p>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-4 shrink-0">
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-small text-muted-foreground">
+                          {receipt.purchaseDate
+                            ? new Date(receipt.purchaseDate).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })
+                            : new Date(receipt.createdAt).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
                         {receipt.totalAmount && (
                           <p className="font-semibold text-body">
                             {formatCurrency(receipt.totalAmount)}
                           </p>
                         )}
+                      </TableCell>
+                      <TableCell className="text-right">
                         <ArrowRight className="size-4 text-muted-foreground" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
