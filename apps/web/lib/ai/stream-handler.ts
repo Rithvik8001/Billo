@@ -79,7 +79,9 @@ export function createReceiptExtractionStream(
           } catch (dbError) {
             console.error("Database save error:", dbError);
             const errorMessage =
-              dbError instanceof Error ? dbError.message : "Database save failed";
+              dbError instanceof Error
+                ? dbError.message
+                : "Database save failed";
 
             await markReceiptExtractionFailed(receiptId, errorMessage);
 

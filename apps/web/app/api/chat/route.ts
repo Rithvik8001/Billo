@@ -79,11 +79,8 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-
-    // Stream the object extraction using streamText with Output.object()
-    // See: https://ai-sdk.dev/docs/ai-sdk-core/generating-structured-data
     const result = streamText({
-      model: "google/gemini-3-flash",
+      model: "google/gemini-2.5-flash",
       output: Output.object({
         schema: receiptExtractionSchema,
       }),
