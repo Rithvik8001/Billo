@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -20,6 +20,9 @@ import {
 import { UserButton } from "@clerk/nextjs";
 import { Separator } from "@/components/ui/separator";
 import { LogoutButton } from "@/components/logout-button";
+import db from "@/db/config/connection";
+import { users } from "@/db/models/schema";
+import { eq } from "drizzle-orm";
 
 export default async function DashboardLayout({
   children,
@@ -30,6 +33,38 @@ export default async function DashboardLayout({
 
   if (!userId) {
     redirect("/sign-in");
+  }
+
+  // Auto-create user in database if they don't exist
+  try {
+    const user = await currentUser();
+    if (user) {
+      const existingUser = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+      });
+
+      if (!existingUser) {
+        // Validate email exists
+        const email = user.emailAddresses[0]?.emailAddress;
+        if (!email) {
+          console.error("User has no email address");
+          redirect("/sign-in");
+        }
+
+        await db.insert(users).values({
+          id: userId,
+          clerkUserId: userId,
+          email,
+          name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || null,
+          imageUrl: user.imageUrl || null,
+        });
+        console.log(`✅ User auto-created: ${userId}`);
+      }
+    }
+  } catch (error) {
+    // Log error but don't crash the page
+    console.error("Failed to auto-create user:", error);
+    // User can still access dashboard, will be created on next visit
   }
 
   return (
