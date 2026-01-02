@@ -21,7 +21,7 @@ export function BalanceSummary({ summary }: BalanceSummaryProps) {
         </CardHeader>
         <CardContent>
           <p className="text-2xl font-bold text-red-600 dark:text-red-400">
-            {formatCurrency(summary.totalYouOwe)}
+            {formatCurrency(summary.totalYouOwe.toFixed(2))}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             {summary.pendingCount} pending settlement
@@ -38,7 +38,7 @@ export function BalanceSummary({ summary }: BalanceSummaryProps) {
         </CardHeader>
         <CardContent>
           <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-            {formatCurrency(summary.totalOwedToYou)}
+            {formatCurrency(summary.totalOwedToYou.toFixed(2))}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             {summary.completedCount} completed settlement
@@ -62,7 +62,7 @@ export function BalanceSummary({ summary }: BalanceSummaryProps) {
             }`}
           >
             {isPositive ? "+" : ""}
-            {formatCurrency(Math.abs(summary.netBalance))}
+            {formatCurrency(Math.abs(summary.netBalance).toFixed(2))}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
             {isPositive ? "You're owed" : "You owe"}

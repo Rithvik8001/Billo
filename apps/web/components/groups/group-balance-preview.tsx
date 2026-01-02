@@ -76,7 +76,7 @@ export function GroupBalancePreview({
                 : "text-red-600 dark:text-red-400"
             }`}
           >
-            {formatCurrency(amount)}
+            {formatCurrency(amount.toFixed(2))}
           </span>
         </div>
         <Link href={`/dashboard/settle?groupId=${groupId}`}>

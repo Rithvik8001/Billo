@@ -92,7 +92,7 @@ export function SettlementCard({
                   }`}
                 >
                   {isOwed ? "+" : "-"}
-                  {formatCurrency(parseFloat(settlement.amount))}
+                  {formatCurrency(settlement.amount)}
                 </span>
 
                 {settlement.receipt && (

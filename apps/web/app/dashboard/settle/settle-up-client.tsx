@@ -205,7 +205,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
       {youOwe.length > 0 && statusFilter !== "completed" && (
         <div>
           <h2 className="text-xl font-semibold mb-4 text-red-600 dark:text-red-400">
-            You Owe ({formatCurrency(youOwe.reduce((sum, s) => sum + parseFloat(s.amount), 0))})
+            You Owe ({formatCurrency(youOwe.reduce((sum, s) => sum + parseFloat(s.amount), 0).toFixed(2))})
           </h2>
           <div className="space-y-3">
             {youOwe.map((settlement) => (
@@ -228,7 +228,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
       {youAreOwed.length > 0 && statusFilter !== "completed" && (
         <div>
           <h2 className="text-xl font-semibold mb-4 text-green-600 dark:text-green-400">
-            You&apos;re Owed ({formatCurrency(youAreOwed.reduce((sum, s) => sum + parseFloat(s.amount), 0))})
+            You&apos;re Owed ({formatCurrency(youAreOwed.reduce((sum, s) => sum + parseFloat(s.amount), 0).toFixed(2))})
           </h2>
           <div className="space-y-3">
             {youAreOwed.map((settlement) => (
@@ -291,7 +291,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
           open={settleDialogOpen}
           onOpenChange={setSettleDialogOpen}
           onConfirm={confirmSettle}
-          amount={formatCurrency(parseFloat(settlementToSettle.amount))}
+          amount={formatCurrency(settlementToSettle.amount)}
           userName={
             settlementToSettle.fromUserId === userId
               ? settlementToSettle.toUser.name || settlementToSettle.toUser.email.split("@")[0]
