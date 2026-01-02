@@ -3,7 +3,7 @@
 import { useRef, useState, useCallback } from "react";
 
 export interface UseFileHandlerReturn {
-  fileInputRef: React.RefObject<HTMLInputElement>;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
   dragActive: boolean;
   previewUrl: string | null;
   handleFileSelect: (file: File) => void;

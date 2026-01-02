@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { receipts } from "@/db/models/schema";
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 import Image from "next/image";
+import { ReceiptItemsSection } from "@/components/receipt-review/receipt-items-section";
 
 interface ReceiptPageProps {
   params: Promise<{ id: string }>;
@@ -23,11 +24,14 @@ export default async function ReceiptPage({ params }: ReceiptPageProps) {
     notFound();
   }
 
-  const [receipt] = await db
-    .select()
-    .from(receipts)
-    .where(eq(receipts.id, receiptId))
-    .limit(1);
+  const receipt = await db.query.receipts.findFirst({
+    where: eq(receipts.id, receiptId),
+    with: {
+      items: {
+        orderBy: (items) => [asc(items.lineNumber)],
+      },
+    },
+  });
 
   if (!receipt || receipt.userId !== userId) {
     notFound();
@@ -87,14 +91,12 @@ export default async function ReceiptPage({ params }: ReceiptPageProps) {
         )}
       </div>
 
-      <div className="mt-6 bg-white border rounded-2xl p-6 md:p-8 shadow-sm">
-        <h3 className="font-semibold text-lg mb-4">
-          Receipt Review Coming Soon
-        </h3>
-        <p className="text-muted-foreground">
-          The receipt review and item assignment interface will be available in
-          Phase 5.
-        </p>
+      <div className="mt-6">
+        <ReceiptItemsSection
+          items={receipt.items}
+          tax={receipt.tax}
+          totalAmount={receipt.totalAmount}
+        />
       </div>
     </div>
   );

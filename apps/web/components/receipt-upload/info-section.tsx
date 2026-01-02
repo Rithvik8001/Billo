@@ -5,7 +5,7 @@ export function InfoSection() {
       <ol className="space-y-3 text-sm text-foreground/80">
         <li className="flex gap-3">
           <span className="font-semibold text-primary">1.</span>
-          <span>Take a photo of your receipt using your camera</span>
+          <span>Upload a photo of your receipt</span>
         </li>
         <li className="flex gap-3">
           <span className="font-semibold text-primary">2.</span>
@@ -23,4 +23,3 @@ export function InfoSection() {
     </div>
   );
 }
-

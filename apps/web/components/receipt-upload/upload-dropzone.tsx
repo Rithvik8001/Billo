@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 interface UploadDropzoneProps {
   dragActive: boolean;
-  fileInputRef: React.RefObject<HTMLInputElement>;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
   onDrag: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent) => void;
   onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
