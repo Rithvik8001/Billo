@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -39,15 +40,21 @@ export function GroupCard({ group, onClick }: GroupCardProps) {
         </div>
         <div className="space-y-3 pt-4 border-t border-border">
           <div className="flex items-center gap-2 text-small text-muted-foreground">
-            <Users className="size-4" />
+            <Users className="size-4 shrink-0" />
             <span>
               {group.memberCount} member{group.memberCount !== 1 ? "s" : ""}
             </span>
           </div>
           {user?.id && (
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <GroupBalancePreview groupId={group.id} currentUserId={user.id} />
-              <span className="text-small text-muted-foreground">View →</span>
+              <Link
+                href={`/dashboard/settle?groupId=${group.id}`}
+                className="text-small text-muted-foreground hover:text-foreground transition-colors"
+                onClick={(e) => e.stopPropagation()}
+              >
+                View →
+              </Link>
             </div>
           )}
         </div>
