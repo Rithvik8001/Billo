@@ -1,7 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
-import { receipts, users } from "@/db/models/schema";
-import { eq, desc } from "drizzle-orm";
+import { receipts, users, groupMembers, itemAssignments, receiptItems } from "@/db/models/schema";
+import { eq, desc, or, and, inArray } from "drizzle-orm";
 
 export async function POST(request: Request) {
   const { userId } = await auth();
@@ -92,20 +92,52 @@ export async function GET(request: Request) {
     ] as const;
     type ReceiptStatus = (typeof validStatuses)[number];
 
-    // Build query
-    let query = db
-      .select()
-      .from(receipts)
-      .where(eq(receipts.userId, userId))
-      .orderBy(desc(receipts.createdAt))
-      .$dynamic();
+    // Get all group IDs the user belongs to
+    const userGroups = await db.query.groupMembers.findMany({
+      where: eq(groupMembers.userId, userId),
+      columns: { groupId: true },
+    });
+    const groupIds = userGroups.map((gm) => gm.groupId);
+
+    // Get all receipt IDs where user has item assignments
+    const userAssignments = await db.query.itemAssignments.findMany({
+      where: eq(itemAssignments.userId, userId),
+      columns: { receiptItemId: true },
+      with: {
+        item: {
+          columns: { receiptId: true },
+        },
+      },
+    });
+    const receiptIdsWithAssignments = [
+      ...new Set(userAssignments.map((a) => a.item.receiptId)),
+    ];
+
+    // Build access conditions: owner OR group member OR has assignments
+    const accessConditions = [eq(receipts.userId, userId)];
+
+    if (groupIds.length > 0) {
+      accessConditions.push(inArray(receipts.groupId, groupIds));
+    }
+
+    if (receiptIdsWithAssignments.length > 0) {
+      accessConditions.push(inArray(receipts.id, receiptIdsWithAssignments));
+    }
+
+    // Build WHERE conditions combining access control and status filter
+    const whereConditions = [or(...accessConditions)];
 
     // Apply status filter if provided and valid
     if (statusFilter && validStatuses.includes(statusFilter as ReceiptStatus)) {
-      query = query.where(eq(receipts.status, statusFilter as ReceiptStatus));
+      whereConditions.push(eq(receipts.status, statusFilter as ReceiptStatus));
     }
 
-    const userReceipts = await query;
+    // Build query with access control and status filter
+    const userReceipts = await db
+      .select()
+      .from(receipts)
+      .where(and(...whereConditions))
+      .orderBy(desc(receipts.createdAt));
 
     return Response.json({
       receipts: userReceipts,
