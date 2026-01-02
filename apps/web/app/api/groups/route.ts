@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { groups, groupMembers } from "@/db/models/schema";
-import { eq, or, sql } from "drizzle-orm";
+import { eq, or, sql, inArray } from "drizzle-orm";
 import { createGroupSchema } from "@/lib/api/group-schemas";
 
 export async function GET() {
@@ -14,6 +14,22 @@ export async function GET() {
     }
 
     // Fetch groups where user is creator OR member
+    // First, get the group IDs the user has access to
+    const accessibleGroupIds = await db
+      .selectDistinct({
+        groupId: groups.id,
+      })
+      .from(groups)
+      .leftJoin(groupMembers, eq(groups.id, groupMembers.groupId))
+      .where(or(eq(groups.createdBy, userId), eq(groupMembers.userId, userId)));
+
+    const groupIdArray = accessibleGroupIds.map((g) => g.groupId);
+
+    if (groupIdArray.length === 0) {
+      return NextResponse.json({ groups: [] });
+    }
+
+    // Then fetch groups with correct member counts (count ALL members, not filtered)
     const userGroups = await db
       .select({
         id: groups.id,
@@ -26,7 +42,7 @@ export async function GET() {
       })
       .from(groups)
       .leftJoin(groupMembers, eq(groups.id, groupMembers.groupId))
-      .where(or(eq(groups.createdBy, userId), eq(groupMembers.userId, userId)))
+      .where(inArray(groups.id, groupIdArray))
       .groupBy(groups.id)
       .orderBy(groups.updatedAt);
 
