@@ -1,8 +1,6 @@
 import Nav from "@/components/landing/nav";
 import Header from "@/components/landing/header";
 
-export const dynamic = 'force-dynamic';
-
 export default function Landing() {
   return (
     <>
