@@ -9,7 +9,10 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-async function checkAdminAccess(groupId: number, userId: string): Promise<boolean> {
+async function checkAdminAccess(
+  groupId: number,
+  userId: string
+): Promise<boolean> {
   const member = await db.query.groupMembers.findFirst({
     where: and(
       eq(groupMembers.groupId, groupId),
@@ -173,10 +176,7 @@ export async function POST(request: Request, { params }: RouteParams) {
       .where(eq(groupMembers.id, newMember.id))
       .limit(1);
 
-    return NextResponse.json(
-      { member: memberWithUser[0] },
-      { status: 201 }
-    );
+    return NextResponse.json({ member: memberWithUser[0] }, { status: 201 });
   } catch (error) {
     if (error instanceof Error && error.name === "ZodError") {
       return NextResponse.json(

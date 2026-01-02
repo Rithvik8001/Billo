@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import {
   Drawer,
   DrawerContent,
@@ -148,9 +154,11 @@ export function GroupDetailSheet({
   const isAdmin = currentUserRole === "admin";
 
   const headerContent = (
-    <div className="flex items-start justify-between gap-3 px-1">
+    <div className="flex items-center justify-between gap-3 pr-8">
       <div className="flex-1 min-w-0">
-        <h2 className="text-xl font-semibold leading-tight">{group.name}</h2>
+        <h2 className="text-xl font-semibold leading-none tracking-tight">
+          {group.name}
+        </h2>
         {group.description && (
           <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
             {group.description}
@@ -160,11 +168,7 @@ export function GroupDetailSheet({
       {isAdmin && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              className="shrink-0 -mt-1 -mr-1"
-            >
+            <Button variant="ghost" size="icon-sm" className="shrink-0">
               <MoreVertical className="size-4" />
               <span className="sr-only">More options</span>
             </Button>
@@ -188,17 +192,19 @@ export function GroupDetailSheet({
   );
 
   const bodyContent = (
-    <div className="mt-8 space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold">
+    <div className="mt-6 space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-base font-semibold tracking-tight">
           Members{" "}
-          <span className="text-muted-foreground">({members.length})</span>
+          <span className="text-muted-foreground font-normal">
+            ({members.length})
+          </span>
         </h3>
         {isAdmin && (
           <Button
             size="sm"
             onClick={() => setAddMemberOpen(true)}
-            className="gap-1.5"
+            className="gap-1.5 shrink-0"
           >
             <Plus className="size-4" />
             Add Member
@@ -219,7 +225,7 @@ export function GroupDetailSheet({
           </div>
         </div>
       ) : (
-        <div className="space-y-2.5">
+        <div className="space-y-2">
           {members.map((member) => (
             <MemberRow
               key={member.userId}
@@ -240,7 +246,7 @@ export function GroupDetailSheet({
       <>
         <Drawer open={open} onOpenChange={onOpenChange}>
           <DrawerContent className="max-h-[85vh] flex flex-col">
-            <DrawerHeader className="text-left pb-4">
+            <DrawerHeader className="text-left pb-0">
               <DrawerTitle className="sr-only">{group.name}</DrawerTitle>
               <DrawerDescription className="sr-only">
                 {group.description || "Group details"}
@@ -298,9 +304,17 @@ export function GroupDetailSheet({
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent className="w-full sm:max-w-md flex flex-col">
-          <SheetHeader className="pb-6">{headerContent}</SheetHeader>
-          <div className="flex-1 overflow-y-auto">{bodyContent}</div>
+        <SheetContent className="w-full sm:max-w-md flex flex-col gap-0 p-4">
+          <SheetHeader className="pb-0 p-0">
+            <SheetTitle className="sr-only">{group.name}</SheetTitle>
+            <SheetDescription className="sr-only">
+              {group.description || "Group details"}
+            </SheetDescription>
+            {headerContent}
+          </SheetHeader>
+          <div className="flex-1 overflow-y-auto -mx-1">
+            {bodyContent}
+          </div>
         </SheetContent>
       </Sheet>
 

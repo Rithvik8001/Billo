@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
-import { groups, groupMembers, users } from "@/db/models/schema";
+import { groupMembers, users } from "@/db/models/schema";
 import { eq, and } from "drizzle-orm";
 import { updateMemberRoleSchema } from "@/lib/api/group-schemas";
 
@@ -9,7 +9,10 @@ interface RouteParams {
   params: Promise<{ id: string; userId: string }>;
 }
 
-async function checkAdminAccess(groupId: number, userId: string): Promise<boolean> {
+async function checkAdminAccess(
+  groupId: number,
+  userId: string
+): Promise<boolean> {
   const member = await db.query.groupMembers.findFirst({
     where: and(
       eq(groupMembers.groupId, groupId),
@@ -68,10 +71,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     });
 
     if (!member) {
-      return NextResponse.json(
-        { error: "Member not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Member not found" }, { status: 404 });
     }
 
     // Prevent demoting the last admin
@@ -90,10 +90,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       .update(groupMembers)
       .set({ role: validatedData.role })
       .where(
-        and(
-          eq(groupMembers.groupId, groupId),
-          eq(groupMembers.userId, userId)
-        )
+        and(eq(groupMembers.groupId, groupId), eq(groupMembers.userId, userId))
       )
       .returning();
 
@@ -162,10 +159,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     });
 
     if (!member) {
-      return NextResponse.json(
-        { error: "Member not found" },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: "Member not found" }, { status: 404 });
     }
 
     // Prevent removing the last admin
@@ -183,10 +177,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     await db
       .delete(groupMembers)
       .where(
-        and(
-          eq(groupMembers.groupId, groupId),
-          eq(groupMembers.userId, userId)
-        )
+        and(eq(groupMembers.groupId, groupId), eq(groupMembers.userId, userId))
       );
 
     return NextResponse.json({ success: true });
@@ -198,4 +189,3 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     );
   }
 }
-

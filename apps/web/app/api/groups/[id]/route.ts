@@ -9,7 +9,10 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-async function checkAdminAccess(groupId: number, userId: string): Promise<boolean> {
+async function checkAdminAccess(
+  groupId: number,
+  userId: string
+): Promise<boolean> {
   const member = await db.query.groupMembers.findFirst({
     where: and(
       eq(groupMembers.groupId, groupId),
@@ -186,4 +189,3 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     );
   }
 }
-
