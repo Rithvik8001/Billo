@@ -325,7 +325,9 @@ export function AddMemberSheet({
             </DrawerDescription>
           </DrawerHeader>
           <div className="px-4 overflow-y-auto flex-1">{formContent}</div>
-          <DrawerFooter className="border-t pt-6 pb-4">{footerContent}</DrawerFooter>
+          <DrawerFooter className="border-t pt-6 pb-4">
+            {footerContent}
+          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     );
@@ -341,7 +343,9 @@ export function AddMemberSheet({
           </SheetDescription>
         </SheetHeader>
         <div className="flex-1 overflow-y-auto px-6">{formContent}</div>
-        <SheetFooter className="border-t pt-6 mt-6 px-6 pb-6">{footerContent}</SheetFooter>
+        <SheetFooter className="border-t pt-6 mt-6 px-6 pb-6">
+          {footerContent}
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );
