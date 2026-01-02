@@ -22,6 +22,8 @@ export interface ManualEntryState {
   step: 1 | 2 | 3;
   receiptDetails: ManualEntryReceiptDetails;
   items: ManualEntryItem[];
+  imageUrl?: string;
+  imagePublicId?: string;
 }
 
 const initialState: ManualEntryState = {
@@ -32,6 +34,8 @@ const initialState: ManualEntryState = {
     tax: "",
   },
   items: [],
+  imageUrl: undefined,
+  imagePublicId: undefined,
 };
 
 export function useManualEntry() {
@@ -154,6 +158,23 @@ export function useManualEntry() {
     }));
   }, []);
 
+  // Photo upload management
+  const uploadPhoto = useCallback((imageUrl: string, imagePublicId: string) => {
+    setState((prev) => ({
+      ...prev,
+      imageUrl,
+      imagePublicId,
+    }));
+  }, []);
+
+  const removePhoto = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      imageUrl: undefined,
+      imagePublicId: undefined,
+    }));
+  }, []);
+
   // Save receipt
   const saveReceipt = useCallback(async () => {
     // Validate required fields
@@ -194,6 +215,10 @@ export function useManualEntry() {
           unitPrice: item.unitPrice,
           totalPrice: item.totalPrice,
         })),
+        ...(state.imageUrl && state.imagePublicId && {
+          imageUrl: state.imageUrl,
+          imagePublicId: state.imagePublicId,
+        }),
       };
 
       const response = await fetch("/api/receipts/manual", {
@@ -246,6 +271,8 @@ export function useManualEntry() {
     addItem,
     updateItem,
     removeItem,
+    uploadPhoto,
+    removePhoto,
     saveReceipt,
     reset,
   };

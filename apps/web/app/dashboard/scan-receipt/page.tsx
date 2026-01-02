@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { useReceiptUpload } from "@/hooks/use-receipt-upload";
 import { useFileHandler } from "@/hooks/use-file-handler";
 import { useRouter } from "next/navigation";
@@ -10,12 +10,28 @@ import { ProcessingState } from "@/components/receipt-upload/processing-state";
 import { CompletedState } from "@/components/receipt-upload/completed-state";
 import { ErrorState } from "@/components/receipt-upload/error-state";
 import { InfoSection } from "@/components/receipt-upload/info-section";
+import { ExtractionConfirmationDialog } from "@/components/receipt-upload/extraction-confirmation-dialog";
+import type { ReceiptExtractionResult } from "@/lib/ai/schemas";
 
 export default function ScanReceiptPage() {
-  const { progress, uploadReceipt, reset } = useReceiptUpload();
+  const {
+    progress,
+    uploadReceipt,
+    confirmExtraction,
+    cancelExtraction,
+    reset,
+  } = useReceiptUpload();
   const router = useRouter();
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const fileHandler = useFileHandler(uploadReceipt);
+
+  // Open dialog when awaiting confirmation
+  useEffect(() => {
+    if (progress.state === "awaiting_confirmation") {
+      setDialogOpen(true);
+    }
+  }, [progress.state]);
 
   // Redirect on completion only if items were extracted
   useEffect(() => {
@@ -45,6 +61,27 @@ export default function ScanReceiptPage() {
     reset();
     fileHandler.reset();
   }, [reset, fileHandler]);
+
+  // Handle confirmation
+  const handleConfirm = useCallback(
+    async (modifiedData: ReceiptExtractionResult) => {
+      try {
+        await confirmExtraction(modifiedData);
+        setDialogOpen(false);
+      } catch (error) {
+        console.error("Failed to confirm extraction:", error);
+        // Error will be handled by the dialog or we can show a toast
+      }
+    },
+    [confirmExtraction]
+  );
+
+  // Handle cancel
+  const handleCancel = useCallback(() => {
+    cancelExtraction();
+    setDialogOpen(false);
+    fileHandler.reset();
+  }, [cancelExtraction, fileHandler]);
 
   const displayImageUrl = fileHandler.previewUrl || progress.imageUrl;
 
@@ -99,6 +136,21 @@ export default function ScanReceiptPage() {
       {(progress.state === "idle" || progress.state === "error") && (
         <InfoSection />
       )}
+
+      {/* Confirmation Dialog */}
+      {progress.state === "awaiting_confirmation" &&
+        progress.extractedData &&
+        progress.receiptId && (
+          <ExtractionConfirmationDialog
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+            receiptId={progress.receiptId}
+            imageUrl={progress.imageUrl}
+            extractedData={progress.extractedData as ReceiptExtractionResult}
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
+          />
+        )}
     </div>
   );
 }

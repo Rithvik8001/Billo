@@ -22,6 +22,8 @@ export function ManualEntryWizard() {
     addItem,
     updateItem,
     removeItem,
+    uploadPhoto,
+    removePhoto,
     saveReceipt,
   } = useManualEntry();
 
@@ -32,6 +34,10 @@ export function ManualEntryWizard() {
           <StepReceiptDetails
             receiptDetails={state.receiptDetails}
             updateReceiptDetails={updateReceiptDetails}
+            imageUrl={state.imageUrl}
+            imagePublicId={state.imagePublicId}
+            uploadPhoto={uploadPhoto}
+            removePhoto={removePhoto}
           />
         );
       case 2:

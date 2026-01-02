@@ -36,60 +36,36 @@ export function createReceiptExtractionStream(
         // Get the final complete object (validated against schema)
         const fullObject = await result.output;
 
-        // Save to database if receiptId was provided
+        // Emit awaiting_confirmation instead of auto-saving
         if (fullObject && receiptId && receipt) {
-          try {
-            // Check if items were extracted
-            const itemCount = fullObject.items?.length || 0;
+          // Check if items were extracted
+          const itemCount = fullObject.items?.length || 0;
 
-            if (itemCount === 0) {
-              // No items extracted - mark as failed
-              await markReceiptExtractionFailed(
-                receiptId,
-                "No items detected in receipt image"
-              );
-
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({
-                    type: "completed",
-                    receiptId,
-                    itemCount: 0,
-                  })}\n\n`
-                )
-              );
-            } else {
-              // Items extracted - save normally
-              const result = await saveExtractedReceiptData(
-                receiptId,
-                fullObject
-              );
-
-              // Send completion message
-              controller.enqueue(
-                encoder.encode(
-                  `data: ${JSON.stringify({
-                    type: "completed",
-                    receiptId,
-                    itemCount: result.itemCount,
-                  })}\n\n`
-                )
-              );
-            }
-          } catch (dbError) {
-            console.error("Database save error:", dbError);
-            const errorMessage =
-              dbError instanceof Error
-                ? dbError.message
-                : "Database save failed";
-
-            await markReceiptExtractionFailed(receiptId, errorMessage);
+          if (itemCount === 0) {
+            // No items extracted - mark as failed
+            await markReceiptExtractionFailed(
+              receiptId,
+              "No items detected in receipt image"
+            );
 
             controller.enqueue(
               encoder.encode(
                 `data: ${JSON.stringify({
-                  type: "error",
-                  error: `Failed to save to database: ${errorMessage}`,
+                  type: "completed",
+                  receiptId,
+                  itemCount: 0,
+                })}\n\n`
+              )
+            );
+          } else {
+            // Items extracted - emit awaiting_confirmation for user review
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({
+                  type: "awaiting_confirmation",
+                  receiptId,
+                  itemCount,
+                  data: fullObject,
                 })}\n\n`
               )
             );

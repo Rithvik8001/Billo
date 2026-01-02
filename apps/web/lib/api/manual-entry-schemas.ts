@@ -19,6 +19,8 @@ export const createManualReceiptSchema = z.object({
     .regex(/^\d+(\.\d{1,2})?$/)
     .optional(),
   items: z.array(manualItemSchema).min(1, "At least one item required"),
+  imageUrl: z.string().optional(),
+  imagePublicId: z.string().optional(),
 });
 
 export const updateReceiptSchema = z.object({

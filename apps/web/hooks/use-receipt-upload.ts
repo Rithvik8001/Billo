@@ -7,6 +7,7 @@ export type UploadState =
   | "idle"
   | "uploading"
   | "processing"
+  | "awaiting_confirmation"
   | "completed"
   | "error";
 
@@ -23,6 +24,8 @@ export interface UploadProgress {
 export interface UseReceiptUploadReturn {
   progress: UploadProgress;
   uploadReceipt: (file: File) => Promise<void>;
+  confirmExtraction: (modifiedData: ReceiptExtractionResult) => Promise<void>;
+  cancelExtraction: () => void;
   reset: () => void;
 }
 
@@ -31,6 +34,51 @@ export function useReceiptUpload(): UseReceiptUploadReturn {
     state: "idle",
     progress: 0,
   });
+
+  const confirmExtraction = useCallback(
+    async (modifiedData: ReceiptExtractionResult) => {
+      if (!progress.receiptId) {
+        throw new Error("No receipt ID available");
+      }
+
+      const response = await fetch(`/api/receipts/${progress.receiptId}/confirm`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          extractedData: modifiedData,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage =
+          errorData.details ||
+          errorData.error ||
+          `Failed to confirm extraction: ${response.status}`;
+        throw new Error(errorMessage);
+      }
+
+      const result = await response.json();
+      setProgress((prev) => ({
+        ...prev,
+        state: "completed",
+        itemCount: result.itemCount || prev.itemCount || 0,
+      }));
+    },
+    [progress.receiptId]
+  );
+
+  const cancelExtraction = useCallback(() => {
+    setProgress((prev) => ({
+      ...prev,
+      state: "idle",
+      progress: 0,
+      extractedData: undefined,
+      itemCount: undefined,
+    }));
+  }, []);
 
   const reset = useCallback(() => {
     setProgress({
@@ -174,6 +222,15 @@ export function useReceiptUpload(): UseReceiptUploadReturn {
                   progress: 80,
                   extractedData: data.data,
                 }));
+              } else if (data.type === "awaiting_confirmation") {
+                // Extraction complete, waiting for user confirmation
+                setProgress((prev) => ({
+                  ...prev,
+                  state: "awaiting_confirmation",
+                  progress: 100,
+                  itemCount: data.itemCount || prev.extractedData?.items?.length || 0,
+                  extractedData: data.data || latestPartialData || prev.extractedData,
+                }));
               } else if (data.type === "completed") {
                 // Use the latest partial data or the completed data
                 const finalData = data.data || latestPartialData;
@@ -206,6 +263,8 @@ export function useReceiptUpload(): UseReceiptUploadReturn {
   return {
     progress,
     uploadReceipt,
+    confirmExtraction,
+    cancelExtraction,
     reset,
   };
 }

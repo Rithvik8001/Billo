@@ -45,13 +45,13 @@ export async function POST(request: Request) {
       : 0;
     const totalAmount = (itemsTotal + taxAmount).toFixed(2);
 
-    // Create receipt with manual sentinel values
+    // Create receipt with image fields if provided, otherwise use manual sentinel values
     const [receipt] = await db
       .insert(receipts)
       .values({
         userId,
-        imageUrl: "manual",
-        imagePublicId: "manual",
+        imageUrl: validatedData.imageUrl || "manual",
+        imagePublicId: validatedData.imagePublicId || "manual",
         merchantName: validatedData.merchantName || null,
         merchantAddress: validatedData.merchantAddress || null,
         purchaseDate: validatedData.purchaseDate

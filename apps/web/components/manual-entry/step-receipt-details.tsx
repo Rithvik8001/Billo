@@ -11,15 +11,24 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { ManualEntryReceiptDetails } from "@/hooks/use-manual-entry";
 import { cn } from "@/lib/utils";
+import { PhotoUploadField } from "./photo-upload-field";
 
 interface StepReceiptDetailsProps {
   receiptDetails: ManualEntryReceiptDetails;
   updateReceiptDetails: (updates: Partial<ManualEntryReceiptDetails>) => void;
+  imageUrl?: string;
+  imagePublicId?: string;
+  uploadPhoto: (imageUrl: string, imagePublicId: string) => void;
+  removePhoto: () => void;
 }
 
 export function StepReceiptDetails({
   receiptDetails,
   updateReceiptDetails,
+  imageUrl,
+  imagePublicId,
+  uploadPhoto,
+  removePhoto,
 }: StepReceiptDetailsProps) {
   const [datePickerOpen, setDatePickerOpen] = useState(false);
 
@@ -134,6 +143,14 @@ export function StepReceiptDetails({
             />
           </div>
         </div>
+
+        {/* Photo Upload */}
+        <PhotoUploadField
+          imageUrl={imageUrl}
+          imagePublicId={imagePublicId}
+          onUpload={uploadPhoto}
+          onRemove={removePhoto}
+        />
       </CardContent>
     </Card>
   );
