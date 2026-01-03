@@ -19,6 +19,7 @@ interface ItemAssignmentGridProps {
   assignments: Map<string, Set<string>>;
   onToggleAssignment: (itemId: string, userId: string) => void;
   onSplitEvenly: () => void;
+}
 
 export function ItemAssignmentGrid({
   items,
