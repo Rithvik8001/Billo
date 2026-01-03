@@ -47,7 +47,7 @@ export async function calculateSettlements(
       where: eq(receipts.id, receiptId),
       columns: { merchantName: true },
       with: {
-        owner: { columns: { name: true, email: true, currencyCode: true } },
+        user: { columns: { name: true, email: true, currencyCode: true } },
         group: { columns: { name: true } },
       },
     });
@@ -70,8 +70,8 @@ export async function calculateSettlements(
             fromUserName: fromUser?.name || "Unknown",
             fromUserEmail: fromUser?.email || "",
             toUserId: settlement.toUserId,
-            toUserName: receipt.owner.name || "Unknown",
-            toUserEmail: receipt.owner.email,
+            toUserName: receipt.user.name || "Unknown",
+            toUserEmail: receipt.user.email,
             amount: settlement.amount,
             formattedAmount: formatAmount(
               settlement.amount,
