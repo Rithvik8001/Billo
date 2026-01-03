@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Home, ScanLine, Edit3, Users, Wallet, Menu, X } from "lucide-react";
+import { Home, ScanLine, Edit3, Users, Wallet, Settings, Menu, X } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ const navItems = [
   { href: "/dashboard/manual", label: "Manual Entry", icon: Edit3 },
   { href: "/dashboard/groups", label: "Groups", icon: Users },
   { href: "/dashboard/settle", label: "Settle Up", icon: Wallet },
+  { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
 export function TopNav() {

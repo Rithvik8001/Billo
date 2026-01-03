@@ -11,4 +11,3 @@ export default async function SettleUpPage() {
 
   return <SettleUpClient userId={userId} />;
 }
-

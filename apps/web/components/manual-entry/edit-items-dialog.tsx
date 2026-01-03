@@ -14,7 +14,7 @@ import { ItemForm } from "./item-form";
 import { ItemRow } from "./item-row";
 import { Plus } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { formatCurrency } from "@/lib/receipt-helpers";
+import { useCurrency } from "@/contexts/currency-context";
 import { toast } from "sonner";
 import { ManualEntryItem } from "@/hooks/use-manual-entry";
 
@@ -41,6 +41,7 @@ export function EditItemsDialog({
   items: initialItems,
   onSuccess,
 }: EditItemsDialogProps) {
+  const { formatAmount } = useCurrency();
   const [items, setItems] = useState<Array<ReceiptItem & { tempId?: string }>>(
     initialItems.map((item) => ({ ...item, tempId: `existing-${item.id}` }))
   );
@@ -81,7 +82,10 @@ export function EditItemsDialog({
           const { id, ...updateFields } = updates;
           const updated = { ...item, ...updateFields };
           // Auto-calculate totalPrice
-          if (updates.quantity !== undefined || updates.unitPrice !== undefined) {
+          if (
+            updates.quantity !== undefined ||
+            updates.unitPrice !== undefined
+          ) {
             const qty = parseFloat(updated.quantity || "1");
             const unitPrice = parseFloat(updated.unitPrice || "0");
             updated.totalPrice = (qty * unitPrice).toFixed(2);
@@ -212,9 +216,11 @@ export function EditItemsDialog({
               <Separator />
 
               <div className="flex items-center justify-between">
-                <span className="text-body text-muted-foreground">Subtotal</span>
+                <span className="text-body text-muted-foreground">
+                  Subtotal
+                </span>
                 <span className="text-heading-2 font-semibold">
-                  {formatCurrency(subtotal.toFixed(2))}
+                  {formatAmount(subtotal.toFixed(2))}
                 </span>
               </div>
 
@@ -238,7 +244,10 @@ export function EditItemsDialog({
           >
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={isLoading || items.length === 0}>
+          <Button
+            onClick={handleSave}
+            disabled={isLoading || items.length === 0}
+          >
             {isLoading ? "Saving..." : "Save Changes"}
           </Button>
         </DialogFooter>
@@ -246,4 +255,3 @@ export function EditItemsDialog({
     </Dialog>
   );
 }
-

@@ -1,12 +1,14 @@
+"use client";
+
 import { AlertCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
   calculateSubtotal,
-  formatCurrency,
   getPriceEmoji,
   getItemCountEmoji,
 } from "@/lib/receipt-helpers";
+import { useCurrency } from "@/contexts/currency-context";
 
 interface ReceiptItemsSectionProps {
   items: Array<{
@@ -26,6 +28,8 @@ export function ReceiptItemsSection({
   tax,
   totalAmount,
 }: ReceiptItemsSectionProps) {
+  const { formatAmount } = useCurrency();
+
   if (!items || items.length === 0) {
     return (
       <Card>
@@ -66,10 +70,12 @@ export function ReceiptItemsSection({
                 )}
               </div>
               <div className="text-right">
-                <p className="font-semibold text-body">${item.totalPrice}</p>
+                <p className="font-semibold text-body">
+                  {formatAmount(item.totalPrice)}
+                </p>
                 {item.unitPrice && item.quantity !== "1" && (
                   <p className="text-small text-muted-foreground">
-                    ${item.unitPrice} each
+                    {formatAmount(item.unitPrice)} each
                   </p>
                 )}
               </div>
@@ -84,13 +90,13 @@ export function ReceiptItemsSection({
 
           <div className="flex items-center justify-between">
             <p className="text-body text-muted-foreground">Subtotal</p>
-            <p className="font-medium text-body">{formatCurrency(subtotal)}</p>
+            <p className="font-medium text-body">{formatAmount(subtotal)}</p>
           </div>
 
           {tax && (
             <div className="flex items-center justify-between">
               <p className="text-body text-muted-foreground">Tax</p>
-              <p className="font-medium text-body">{formatCurrency(tax)}</p>
+              <p className="font-medium text-body">{formatAmount(tax)}</p>
             </div>
           )}
 
@@ -98,7 +104,9 @@ export function ReceiptItemsSection({
 
           <div className="flex items-center justify-between">
             <p className="font-semibold text-heading-2">Total {priceEmoji}</p>
-            <p className="font-semibold text-heading-2">{formatCurrency(totalAmount)}</p>
+            <p className="font-semibold text-heading-2">
+              {formatAmount(totalAmount)}
+            </p>
           </div>
         </div>
       </CardContent>

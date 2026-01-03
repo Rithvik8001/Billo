@@ -8,10 +8,10 @@ export function calculateSubtotal(
   return sum.toFixed(2);
 }
 
-export function formatCurrency(amount: string | null): string {
-  if (!amount) return "$0.00";
-  const num = parseFloat(amount);
-  return `$${num.toFixed(2)}`;
+import { formatAmount } from "./currency";
+
+export function formatCurrency(amount: string | null, currencyCode: string = "USD"): string {
+  return formatAmount(amount, currencyCode);
 }
 
 export function getPriceEmoji(amount: string | null): string {

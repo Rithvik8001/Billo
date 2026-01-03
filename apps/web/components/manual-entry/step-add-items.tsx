@@ -1,14 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ItemForm } from "./item-form";
 import { ItemRow } from "./item-row";
 import { ManualEntryItem } from "@/hooks/use-manual-entry";
 import { Plus, ShoppingCart } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { formatCurrency } from "@/lib/receipt-helpers";
+import { useCurrency } from "@/contexts/currency-context";
 
 interface StepAddItemsProps {
   items: ManualEntryItem[];
@@ -25,6 +31,7 @@ export function StepAddItems({
   removeItem,
   subtotal,
 }: StepAddItemsProps) {
+  const { formatAmount } = useCurrency();
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const handleAddItem = () => {
@@ -100,11 +107,15 @@ export function StepAddItems({
             <div className="flex items-center justify-between">
               <span className="text-body text-muted-foreground">Subtotal</span>
               <span className="text-heading-2 font-semibold">
-                {formatCurrency(subtotal.toFixed(2))}
+                {formatAmount(subtotal.toFixed(2))}
               </span>
             </div>
 
-            <Button onClick={handleAddItem} variant="outline" className="w-full">
+            <Button
+              onClick={handleAddItem}
+              variant="outline"
+              className="w-full"
+            >
               <Plus className="size-4 mr-2" />
               Add Another Item
             </Button>
@@ -114,4 +125,3 @@ export function StepAddItems({
     </Card>
   );
 }
-

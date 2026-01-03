@@ -2,7 +2,12 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Store, DollarSign, Plus, X } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  Store,
+  DollarSign,
+  Plus,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +18,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Separator } from "@/components/ui/separator";
 import { ItemForm } from "@/components/manual-entry/item-form";
@@ -21,8 +30,8 @@ import { ItemRow } from "@/components/manual-entry/item-row";
 import { ManualEntryItem } from "@/hooks/use-manual-entry";
 import type { ReceiptExtractionResult } from "@/lib/ai/schemas";
 import { cn } from "@/lib/utils";
-import { formatCurrency } from "@/lib/receipt-helpers";
-
+import { useCurrency } from "@/contexts/currency-context";
+import Image from "next/image";
 interface ExtractionConfirmationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -42,8 +51,13 @@ export function ExtractionConfirmationDialog({
   onConfirm,
   onCancel,
 }: ExtractionConfirmationDialogProps) {
-  const [merchantName, setMerchantName] = useState(extractedData.merchantName || "");
-  const [purchaseDate, setPurchaseDate] = useState(extractedData.purchaseDate || "");
+  const { formatAmount } = useCurrency();
+  const [merchantName, setMerchantName] = useState(
+    extractedData.merchantName || ""
+  );
+  const [purchaseDate, setPurchaseDate] = useState(
+    extractedData.purchaseDate || ""
+  );
   const [tax, setTax] = useState(extractedData.tax || "");
   const [items, setItems] = useState<ManualEntryItem[]>(() =>
     extractedData.items.map((item, index) => ({
@@ -106,12 +120,15 @@ export function ExtractionConfirmationDialog({
     []
   );
 
-  const handleRemoveItem = useCallback((id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-    if (editingId === id) {
-      setEditingId(null);
-    }
-  }, [editingId]);
+  const handleRemoveItem = useCallback(
+    (id: string) => {
+      setItems((prev) => prev.filter((item) => item.id !== id));
+      if (editingId === id) {
+        setEditingId(null);
+      }
+    },
+    [editingId]
+  );
 
   const subtotal = useMemo(() => {
     return items.reduce(
@@ -197,7 +214,7 @@ export function ExtractionConfirmationDialog({
           {/* Receipt Image Preview */}
           {imageUrl && (
             <div className="border border-border rounded-lg overflow-hidden">
-              <img
+              <Image
                 src={imageUrl}
                 alt="Receipt"
                 className="w-full h-auto max-h-64 object-contain"
@@ -332,7 +349,7 @@ export function ExtractionConfirmationDialog({
 
             {items.length === 0 && (
               <div className="text-center py-8 text-muted-foreground">
-                <p>No items added. Click "Add Item" to add items.</p>
+                <p>No items added. Click &quot;Add Item&quot; to add items.</p>
               </div>
             )}
           </div>
@@ -344,16 +361,18 @@ export function ExtractionConfirmationDialog({
             <h3 className="text-heading-2">Summary</h3>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-body text-muted-foreground">Subtotal</span>
+                <span className="text-body text-muted-foreground">
+                  Subtotal
+                </span>
                 <span className="text-body font-medium">
-                  {formatCurrency(subtotal.toFixed(2))}
+                  {formatAmount(subtotal.toFixed(2))}
                 </span>
               </div>
               {taxAmount > 0 && (
                 <div className="flex items-center justify-between">
                   <span className="text-body text-muted-foreground">Tax</span>
                   <span className="text-body font-medium">
-                    {formatCurrency(taxAmount.toFixed(2))}
+                    {formatAmount(taxAmount.toFixed(2))}
                   </span>
                 </div>
               )}
@@ -361,7 +380,7 @@ export function ExtractionConfirmationDialog({
               <div className="flex items-center justify-between">
                 <span className="text-heading-2 font-semibold">Total</span>
                 <span className="text-heading-2 font-semibold">
-                  {formatCurrency(totalAmount.toFixed(2))}
+                  {formatAmount(totalAmount.toFixed(2))}
                 </span>
               </div>
             </div>
@@ -369,7 +388,11 @@ export function ExtractionConfirmationDialog({
 
           {/* Actions */}
           <div className="flex items-center justify-end gap-3 pt-4">
-            <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isSaving}
+            >
               Cancel
             </Button>
             <Button
@@ -392,4 +415,3 @@ export function ExtractionConfirmationDialog({
     </Dialog>
   );
 }
-

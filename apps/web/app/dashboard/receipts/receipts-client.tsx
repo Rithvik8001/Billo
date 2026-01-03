@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Receipt, ArrowRight } from "lucide-react";
-import { formatCurrency } from "@/lib/receipt-helpers";
+import { useCurrency } from "@/contexts/currency-context";
 
 interface ReceiptsClientProps {
   userId: string;
@@ -31,6 +31,7 @@ interface ReceiptItem {
 }
 
 export function ReceiptsClient({ userId }: ReceiptsClientProps) {
+  const { formatAmount } = useCurrency();
   const [receipts, setReceipts] = useState<ReceiptItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -196,7 +197,7 @@ export function ReceiptsClient({ userId }: ReceiptsClientProps) {
                     <TableCell className="text-right">
                       {receipt.totalAmount ? (
                         <p className="font-semibold text-body">
-                          {formatCurrency(receipt.totalAmount)}
+                          {formatAmount(receipt.totalAmount)}
                         </p>
                       ) : (
                         <span className="text-small text-muted-foreground">

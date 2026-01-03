@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/receipt-helpers";
+import { Card, CardContent } from "@/components/ui/card";
+import { useCurrency } from "@/contexts/currency-context";
 import type { BalanceSummary } from "@/lib/settlement-types";
 
 interface BalanceSummaryProps {
@@ -9,6 +9,7 @@ interface BalanceSummaryProps {
 }
 
 export function BalanceSummary({ summary }: BalanceSummaryProps) {
+  const { formatAmount } = useCurrency();
   const isPositive = summary.netBalance < 0; // Negative netBalance means you're owed
 
   return (
@@ -17,7 +18,7 @@ export function BalanceSummary({ summary }: BalanceSummaryProps) {
         <CardContent className="pt-6">
           <p className="text-small text-muted-foreground mb-2">You Owe</p>
           <p className="text-heading-1 text-red-600 mb-1">
-            {formatCurrency(summary.totalYouOwe.toFixed(2))}
+            {formatAmount(summary.totalYouOwe.toFixed(2))}
           </p>
           <p className="text-small text-muted-foreground">
             {summary.pendingYouOweCount ?? 0} pending settlement
@@ -28,9 +29,11 @@ export function BalanceSummary({ summary }: BalanceSummaryProps) {
 
       <Card className="interactive">
         <CardContent className="pt-6">
-          <p className="text-small text-muted-foreground mb-2">You&apos;re Owed</p>
+          <p className="text-small text-muted-foreground mb-2">
+            You&apos;re Owed
+          </p>
           <p className="text-heading-1 text-green-600 mb-1">
-            {formatCurrency(summary.totalOwedToYou.toFixed(2))}
+            {formatAmount(summary.totalOwedToYou.toFixed(2))}
           </p>
           <p className="text-small text-muted-foreground">
             {summary.pendingOwedToYouCount ?? 0} pending settlement
@@ -39,7 +42,13 @@ export function BalanceSummary({ summary }: BalanceSummaryProps) {
         </CardContent>
       </Card>
 
-      <Card className={`interactive ${isPositive ? "border-green-500/30 bg-green-500/5" : "border-red-500/30 bg-red-500/5"}`}>
+      <Card
+        className={`interactive ${
+          isPositive
+            ? "border-green-500/30 bg-green-500/5"
+            : "border-red-500/30 bg-red-500/5"
+        }`}
+      >
         <CardContent className="pt-6">
           <p className="text-small text-muted-foreground mb-2">Net Balance</p>
           <p
@@ -48,7 +57,7 @@ export function BalanceSummary({ summary }: BalanceSummaryProps) {
             }`}
           >
             {isPositive ? "+" : ""}
-            {formatCurrency(Math.abs(summary.netBalance).toFixed(2))}
+            {formatAmount(Math.abs(summary.netBalance).toFixed(2))}
           </p>
           <p className="text-small text-muted-foreground">
             {isPositive ? "You're owed" : "You owe"}
@@ -58,4 +67,3 @@ export function BalanceSummary({ summary }: BalanceSummaryProps) {
     </div>
   );
 }
-

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -11,9 +11,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Receipt, ArrowRight, Users, DollarSign, TrendingUp } from "lucide-react";
-import { formatCurrency } from "@/lib/receipt-helpers";
-import type { BalanceSummary } from "@/lib/settlement-types";
+import {
+  Receipt,
+  ArrowRight,
+  Users,
+  DollarSign,
+  TrendingUp,
+} from "lucide-react";
+import { useCurrency } from "@/contexts/currency-context";
+import type { BalanceSummary, Settlement } from "@/lib/settlement-types";
 
 interface DashboardClientProps {
   userId: string;
@@ -30,6 +36,7 @@ interface RecentReceipt {
 }
 
 export function DashboardClient({ userId, userName }: DashboardClientProps) {
+  const { formatAmount } = useCurrency();
   const [summary, setSummary] = useState<BalanceSummary>({
     totalYouOwe: 0,
     totalOwedToYou: 0,
@@ -42,31 +49,33 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
   const [groupsCount, setGroupsCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     setIsLoading(true);
     try {
       // Load balance summary
       const summaryRes = await fetch("/api/settlements");
       if (summaryRes.ok) {
         const summaryData = await summaryRes.json();
-        const allSettlements = summaryData.settlements || [];
-        const pending = allSettlements.filter((s: any) => s.status === "pending");
-        const completed = allSettlements.filter((s: any) => s.status === "completed");
+        const allSettlements = (summaryData.settlements || []) as Settlement[];
+        const pending = allSettlements.filter((s) => s.status === "pending");
+        const completed = allSettlements.filter(
+          (s) => s.status === "completed"
+        );
 
-        const youOweSettlements = pending.filter((s: any) => s.fromUserId === userId);
-        const owedToYouSettlements = pending.filter((s: any) => s.toUserId === userId);
+        const youOweSettlements = pending.filter(
+          (s) => s.fromUserId === userId
+        );
+        const owedToYouSettlements = pending.filter(
+          (s) => s.toUserId === userId
+        );
 
         const totalYouOwe = youOweSettlements.reduce(
-          (sum: number, s: any) => sum + parseFloat(s.amount),
+          (sum, s) => sum + parseFloat(s.amount),
           0
         );
 
         const totalOwedToYou = owedToYouSettlements.reduce(
-          (sum: number, s: any) => sum + parseFloat(s.amount),
+          (sum, s) => sum + parseFloat(s.amount),
           0
         );
 
@@ -98,15 +107,17 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   return (
     <div className="space-y-12">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-display">
-          Welcome back, {userName}
-        </h1>
+        <h1 className="text-display">Welcome back, {userName}</h1>
         <p className="text-body text-muted-foreground">
           Your bill splitting overview
         </p>
@@ -121,10 +132,11 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
               <DollarSign className="size-5 text-red-500" />
             </div>
             <p className="text-heading-1 text-red-600 mb-1">
-              {isLoading ? "..." : formatCurrency(summary.totalYouOwe.toFixed(2))}
+              {isLoading ? "..." : formatAmount(summary.totalYouOwe.toFixed(2))}
             </p>
             <p className="text-small text-muted-foreground">
-              {summary.pendingYouOweCount} pending settlement{summary.pendingYouOweCount !== 1 ? "s" : ""}
+              {summary.pendingYouOweCount} pending settlement
+              {summary.pendingYouOweCount !== 1 ? "s" : ""}
             </p>
           </CardContent>
         </Card>
@@ -132,14 +144,19 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
         <Card className="interactive">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-small text-muted-foreground">You&apos;re Owed</p>
+              <p className="text-small text-muted-foreground">
+                You&apos;re Owed
+              </p>
               <TrendingUp className="size-5 text-green-500" />
             </div>
             <p className="text-heading-1 text-green-600 mb-1">
-              {isLoading ? "..." : formatCurrency(summary.totalOwedToYou.toFixed(2))}
+              {isLoading
+                ? "..."
+                : formatAmount(summary.totalOwedToYou.toFixed(2))}
             </p>
             <p className="text-small text-muted-foreground">
-              {summary.completedCount} completed settlement{summary.completedCount !== 1 ? "s" : ""}
+              {summary.completedCount} completed settlement
+              {summary.completedCount !== 1 ? "s" : ""}
             </p>
           </CardContent>
         </Card>
@@ -229,22 +246,28 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
                       <TableCell>
                         <span className="text-small text-muted-foreground">
                           {receipt.purchaseDate
-                            ? new Date(receipt.purchaseDate).toLocaleDateString("en-US", {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              })
-                            : new Date(receipt.createdAt).toLocaleDateString("en-US", {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              })}
+                            ? new Date(receipt.purchaseDate).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                }
+                              )
+                            : new Date(receipt.createdAt).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                }
+                              )}
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
                         {receipt.totalAmount && (
                           <p className="font-semibold text-body">
-                            {formatCurrency(receipt.totalAmount)}
+                            {formatAmount(receipt.totalAmount)}
                           </p>
                         )}
                       </TableCell>
@@ -262,4 +285,3 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
     </div>
   );
 }
-

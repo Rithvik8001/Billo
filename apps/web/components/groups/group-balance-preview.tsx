@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Wallet } from "lucide-react";
-import { formatCurrency } from "@/lib/receipt-helpers";
+import { useCurrency } from "@/contexts/currency-context";
 import type { GroupBalance } from "@/lib/settlement-types";
 
 interface GroupBalancePreviewProps {
@@ -14,14 +14,11 @@ export function GroupBalancePreview({
   groupId,
   currentUserId,
 }: GroupBalancePreviewProps) {
+  const { formatAmount } = useCurrency();
   const [balances, setBalances] = useState<GroupBalance[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadBalances();
-  }, [groupId]);
-
-  const loadBalances = async () => {
+  const loadBalances = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch(`/api/groups/${groupId}/balances`);
@@ -36,7 +33,11 @@ export function GroupBalancePreview({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [groupId]);
+
+  useEffect(() => {
+    loadBalances();
+  }, [loadBalances]);
 
   if (isLoading) {
     return (
@@ -74,9 +75,8 @@ export function GroupBalancePreview({
             : "text-red-600 dark:text-red-400"
         }`}
       >
-        {formatCurrency(amount.toFixed(2))}
+        {formatAmount(amount.toFixed(2))}
       </span>
     </div>
   );
 }
-

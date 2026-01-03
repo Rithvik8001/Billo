@@ -15,6 +15,7 @@ export const users = pgTable('users', {
   email: text('email').notNull(),
   name: text('name'),
   imageUrl: text('image_url'),
+  currencyCode: text('currency_code').default('USD').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

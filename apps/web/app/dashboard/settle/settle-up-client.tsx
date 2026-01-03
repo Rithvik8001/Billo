@@ -31,13 +31,14 @@ import type {
   SettlementWithUsers,
   BalanceSummary as BalanceSummaryType,
 } from "@/lib/settlement-types";
-import { formatCurrency } from "@/lib/receipt-helpers";
+import { useCurrency } from "@/contexts/currency-context";
 
 interface SettleUpClientProps {
   userId: string;
 }
 
 export function SettleUpClient({ userId }: SettleUpClientProps) {
+  const { formatAmount } = useCurrency();
   const router = useRouter();
   const [settlements, setSettlements] = useState<SettlementWithUsers[]>([]);
   const [summary, setSummary] = useState<BalanceSummaryType>({
@@ -336,7 +337,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
           <div className="flex items-center justify-between">
             <h2 className="text-heading-2 text-red-600">You Owe</h2>
             <p className="text-body font-semibold text-red-600">
-              {formatCurrency(
+              {formatAmount(
                 youOwe
                   .reduce((sum, s) => sum + parseFloat(s.amount), 0)
                   .toFixed(2)
@@ -404,7 +405,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
                         </TableCell>
                         <TableCell className="text-right">
                           <span className="font-semibold text-body text-red-600">
-                            -{formatCurrency(settlement.amount)}
+                            -{formatAmount(settlement.amount)}
                           </span>
                         </TableCell>
                         <TableCell className="text-right">
@@ -435,7 +436,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
           <div className="flex items-center justify-between">
             <h2 className="text-heading-2 text-green-600">You&apos;re Owed</h2>
             <p className="text-body font-semibold text-green-600">
-              {formatCurrency(
+              {formatAmount(
                 youAreOwed
                   .reduce((sum, s) => sum + parseFloat(s.amount), 0)
                   .toFixed(2)
@@ -503,7 +504,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
                         </TableCell>
                         <TableCell className="text-right">
                           <span className="font-semibold text-body text-green-600">
-                            +{formatCurrency(settlement.amount)}
+                            +{formatAmount(settlement.amount)}
                           </span>
                         </TableCell>
                         <TableCell className="text-right">
@@ -607,7 +608,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
                             }`}
                           >
                             {isOwed ? "+" : "-"}
-                            {formatCurrency(settlement.amount)}
+                            {formatAmount(settlement.amount)}
                           </span>
                         </TableCell>
                         <TableCell className="text-right">
@@ -669,7 +670,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
           open={settleDialogOpen}
           onOpenChange={setSettleDialogOpen}
           onConfirm={confirmSettle}
-          amount={formatCurrency(settlementToSettle.amount)}
+          amount={formatAmount(settlementToSettle.amount)}
           userName={
             settlementToSettle.fromUserId === userId
               ? settlementToSettle.toUser.name ||

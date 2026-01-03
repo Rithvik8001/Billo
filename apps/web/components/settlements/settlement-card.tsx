@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Clock, Receipt } from "lucide-react";
 import type { SettlementWithUsers } from "@/lib/settlement-types";
-import { formatCurrency } from "@/lib/receipt-helpers";
+import { useCurrency } from "@/contexts/currency-context";
 
 interface SettlementCardProps {
   settlement: SettlementWithUsers;
@@ -22,6 +22,7 @@ export function SettlementCard({
   onSettle,
   isSettling = false,
 }: SettlementCardProps) {
+  const { formatAmount } = useCurrency();
   const isOwed = settlement.toUserId === currentUserId;
   const isOwing = settlement.fromUserId === currentUserId;
   const otherUser = isOwed ? settlement.fromUser : settlement.toUser;
@@ -75,7 +76,16 @@ export function SettlementCard({
                 <p className="font-semibold text-body truncate">
                   {otherUser.name || otherUser.email.split("@")[0]}
                 </p>
-                <Badge variant={settlement.status === "pending" ? "pending" : settlement.status === "completed" ? "completed" : "cancelled"} className="text-xs">
+                <Badge
+                  variant={
+                    settlement.status === "pending"
+                      ? "pending"
+                      : settlement.status === "completed"
+                      ? "completed"
+                      : "cancelled"
+                  }
+                  className="text-xs"
+                >
                   <StatusIcon className="size-3 mr-1" />
                   {status.label}
                 </Badge>
@@ -92,7 +102,7 @@ export function SettlementCard({
                   }`}
                 >
                   {isOwed ? "+" : "-"}
-                  {formatCurrency(settlement.amount)}
+                  {formatAmount(settlement.amount)}
                 </span>
 
                 {settlement.receipt && (
@@ -101,9 +111,7 @@ export function SettlementCard({
                     className="text-small text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
                   >
                     <Receipt className="size-3.5" />
-                    <span>
-                      {settlement.receipt.merchantName || "Receipt"}
-                    </span>
+                    <span>{settlement.receipt.merchantName || "Receipt"}</span>
                   </Link>
                 )}
 
@@ -116,11 +124,14 @@ export function SettlementCard({
                 {settlement.settledAt && (
                   <span className="text-small text-muted-foreground">
                     Settled{" "}
-                    {new Date(settlement.settledAt).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                    {new Date(settlement.settledAt).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      }
+                    )}
                   </span>
                 )}
               </div>
@@ -143,4 +154,3 @@ export function SettlementCard({
     </Card>
   );
 }
-
