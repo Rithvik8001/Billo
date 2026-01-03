@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Home, ScanLine, Edit3, Users, Wallet, Settings, Menu, X } from "lucide-react";
+import { Home, ScanLine, Edit3, Users, Wallet, Settings, Menu, X, Receipt } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/dashboard", label: "Home", icon: Home },
+  { href: "/dashboard/receipts", label: "Receipts", icon: Receipt },
   { href: "/dashboard/scan-receipt", label: "Scan Receipt", icon: ScanLine },
   { href: "/dashboard/manual", label: "Manual Entry", icon: Edit3 },
   { href: "/dashboard/groups", label: "Groups", icon: Users },

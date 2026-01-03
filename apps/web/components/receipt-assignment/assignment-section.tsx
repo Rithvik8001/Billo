@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GroupSelector } from "./group-selector";
 import { PersonManager } from "./person-manager";
@@ -24,6 +24,7 @@ interface AssignmentSectionProps {
   receiptId: string;
   tax: string | null;
   totalAmount: string | null;
+  onSaveSuccess?: () => void;
 }
 
 export function AssignmentSection({
@@ -31,6 +32,7 @@ export function AssignmentSection({
   receiptId,
   tax,
   totalAmount,
+  onSaveSuccess,
 }: AssignmentSectionProps) {
   const router = useRouter();
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -57,6 +59,9 @@ export function AssignmentSection({
       // Refresh the page to show updated data
       router.refresh();
 
+      // Call success callback if provided
+      onSaveSuccess?.();
+
       // Auto-close dialog after success
       setTimeout(() => {
         setConfirmDialogOpen(false);
@@ -74,7 +79,9 @@ export function AssignmentSection({
       {/* Group Selection */}
       <Card>
         <CardContent className="pt-6">
-          <h2 className="text-heading-2 mb-2">Who&apos;s Splitting This Bill?</h2>
+          <h2 className="text-heading-2 mb-2">
+            Who&apos;s Splitting This Bill?
+          </h2>
           <p className="text-body text-muted-foreground mb-6">
             Select a group and assign items to people
           </p>

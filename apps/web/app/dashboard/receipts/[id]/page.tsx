@@ -1,7 +1,13 @@
 import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
-import { receipts, groupMembers, itemAssignments, receiptItems } from "@/db/models/schema";
+import {
+  receipts,
+  groupMembers,
+  itemAssignments,
+  receiptItems,
+  groups,
+} from "@/db/models/schema";
 import { eq, asc, and, inArray } from "drizzle-orm";
 import { ReceiptClient } from "./receipt-client";
 
@@ -34,7 +40,7 @@ export default async function ReceiptPage({ params }: ReceiptPageProps) {
 
   // Check access: owner, group member, or has item assignments
   const isOwner = receipt.userId === userId;
-  
+
   let hasAccess = isOwner;
 
   // Check if user is a member of the receipt's group
@@ -72,6 +78,68 @@ export default async function ReceiptPage({ params }: ReceiptPageProps) {
     notFound();
   }
 
+  // Fetch existing assignments for this receipt
+  const itemIds = receipt.items.map((item) => item.id);
+  let existingAssignments: Array<{
+    receiptItemId: string;
+    userId: string;
+    userName: string | null;
+    userEmail: string | null;
+    userImageUrl: string | null;
+    calculatedAmount: string;
+  }> = [];
+  let groupInfo: { id: string; name: string; emoji: string | null } | null =
+    null;
+
+  if (itemIds.length > 0) {
+    const assignments = await db.query.itemAssignments.findMany({
+      where: inArray(itemAssignments.receiptItemId, itemIds),
+      with: {
+        user: {
+          columns: {
+            id: true,
+            name: true,
+            email: true,
+            imageUrl: true,
+          },
+        },
+        item: {
+          columns: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    existingAssignments = assignments.map((a) => ({
+      receiptItemId: a.item.id,
+      userId: a.userId,
+      userName: a.user.name,
+      userEmail: a.user.email,
+      userImageUrl: a.user.imageUrl,
+      calculatedAmount: a.calculatedAmount,
+    }));
+  }
+
+  // Fetch group info if receipt has a groupId
+  if (receipt.groupId) {
+    const group = await db.query.groups.findFirst({
+      where: eq(groups.id, receipt.groupId),
+      columns: {
+        id: true,
+        name: true,
+        emoji: true,
+      },
+    });
+    if (group) {
+      groupInfo = {
+        id: group.id,
+        name: group.name,
+        emoji: group.emoji,
+      };
+    }
+  }
+
   return (
     <ReceiptClient
       receipt={{
@@ -85,6 +153,8 @@ export default async function ReceiptPage({ params }: ReceiptPageProps) {
       }}
       items={receipt.items}
       isOwner={isOwner}
+      existingAssignments={existingAssignments}
+      groupInfo={groupInfo}
     />
   );
 }

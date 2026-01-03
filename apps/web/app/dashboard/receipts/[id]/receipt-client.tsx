@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ReceiptItemsSection } from "@/components/receipt-review/receipt-items-section";
 import { AssignmentSection } from "@/components/receipt-assignment/assignment-section";
+import { ExistingAssignmentsView } from "@/components/receipt-assignment/existing-assignments-view";
 import { EditItemsDialog } from "@/components/manual-entry/edit-items-dialog";
 import { Pencil } from "lucide-react";
 
@@ -32,11 +33,29 @@ interface ReceiptClientProps {
   };
   items: ReceiptItem[];
   isOwner: boolean;
+  existingAssignments: Array<{
+    receiptItemId: string;
+    userId: string;
+    userName: string | null;
+    userEmail: string | null;
+    userImageUrl: string | null;
+    calculatedAmount: string;
+  }>;
+  groupInfo: { id: string; name: string; emoji: string | null } | null;
 }
 
-export function ReceiptClient({ receipt, items, isOwner }: ReceiptClientProps) {
+export function ReceiptClient({
+  receipt,
+  items,
+  isOwner,
+  existingAssignments,
+  groupInfo,
+}: ReceiptClientProps) {
   const router = useRouter();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(
+    existingAssignments.length === 0
+  );
   const isManualReceipt = receipt.imageUrl === "manual";
 
   const handleEditSuccess = () => {
@@ -133,12 +152,32 @@ export function ReceiptClient({ receipt, items, isOwner }: ReceiptClientProps) {
         totalAmount={receipt.totalAmount}
       />
 
-      <AssignmentSection
-        items={items}
-        receiptId={receipt.id}
-        tax={receipt.tax}
-        totalAmount={receipt.totalAmount}
-      />
+      {existingAssignments.length > 0 && !isEditMode ? (
+        <ExistingAssignmentsView
+          assignments={existingAssignments}
+          items={items.map((item) => ({
+            id: item.id,
+            name: item.name,
+            totalPrice: item.totalPrice,
+          }))}
+          tax={receipt.tax}
+          totalAmount={receipt.totalAmount}
+          groupInfo={groupInfo}
+          receiptId={receipt.id}
+          onReSplit={() => setIsEditMode(true)}
+        />
+      ) : (
+        <AssignmentSection
+          items={items}
+          receiptId={receipt.id}
+          tax={receipt.tax}
+          totalAmount={receipt.totalAmount}
+          onSaveSuccess={() => {
+            setIsEditMode(false);
+            router.refresh();
+          }}
+        />
+      )}
 
       {isManualReceipt && isOwner && (
         <EditItemsDialog

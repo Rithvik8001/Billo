@@ -6,7 +6,7 @@ import {
   receipts,
   users,
 } from "@/db/models/schema";
-import { eq, and, sql, or } from "drizzle-orm";
+import { eq, and, sql, or, inArray } from "drizzle-orm";
 import type { PersonTotal } from "./assignment-types";
 import type { GroupBalance } from "./settlement-types";
 import type { SettlementEmailData } from "./email/email-types";
@@ -22,8 +22,32 @@ export async function calculateSettlements(
   personTotals: PersonTotal[],
   groupId: string | null
 ): Promise<void> {
-  // Delete existing settlements for this receipt (in case of re-assignment)
-  await db.delete(settlements).where(eq(settlements.receiptId, receiptId));
+  // Check for completed settlements - prevent re-split if any exist
+  const existingSettlements = await db.query.settlements.findMany({
+    where: eq(settlements.receiptId, receiptId),
+    columns: { status: true },
+  });
+
+  const hasCompletedSettlements = existingSettlements.some(
+    (s) => s.status === "completed"
+  );
+
+  if (hasCompletedSettlements) {
+    throw new Error(
+      "Cannot re-split receipt with completed settlements. Please mark all settlements as pending or cancelled first."
+    );
+  }
+
+  // Delete existing settlements for this receipt (only pending/cancelled)
+  // This allows re-assignment while preserving completed settlement history
+  await db
+    .delete(settlements)
+    .where(
+      and(
+        eq(settlements.receiptId, receiptId),
+        inArray(settlements.status, ["pending", "cancelled"])
+      )
+    );
 
   // Create settlement records for each person who owes money
   const settlementRecords = personTotals

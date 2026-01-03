@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
-import { receipts, receiptItems, itemAssignments, groupMembers } from "@/db/models/schema";
-import { eq, inArray } from "drizzle-orm";
+import {
+  receipts,
+  receiptItems,
+  itemAssignments,
+  groupMembers,
+} from "@/db/models/schema";
+import { eq, inArray, and } from "drizzle-orm";
 import { createAssignmentsSchema } from "@/lib/api/assignment-schemas";
 import { calculateSettlements } from "@/lib/settlement-helpers";
 import { calculatePersonTotals } from "@/lib/assignment-helpers";
@@ -149,7 +154,8 @@ export async function POST(request: Request, { params }: RouteParams) {
       // Build assignment map for calculation
       const assignmentMap = new Map<string, Set<string>>();
       assignments.forEach((a) => {
-        const existing = assignmentMap.get(a.receiptItemId) || new Set<string>();
+        const existing =
+          assignmentMap.get(a.receiptItemId) || new Set<string>();
         existing.add(a.userId);
         assignmentMap.set(a.receiptItemId, existing);
       });
@@ -204,7 +210,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
       );
     }
 
-    // Verify receipt ownership
+    // Verify receipt exists and check access
     const receipt = await db.query.receipts.findFirst({
       where: eq(receipts.id, receiptId),
     });
@@ -213,7 +219,41 @@ export async function GET(_request: Request, { params }: RouteParams) {
       return NextResponse.json({ error: "Receipt not found" }, { status: 404 });
     }
 
-    if (receipt.userId !== userId) {
+    // Check access: owner, group member, or has item assignments
+    const isOwner = receipt.userId === userId;
+    let hasAccess = isOwner;
+
+    // Check if user is a member of the receipt's group
+    if (!hasAccess && receipt.groupId) {
+      const groupMember = await db.query.groupMembers.findFirst({
+        where: and(
+          eq(groupMembers.groupId, receipt.groupId),
+          eq(groupMembers.userId, userId)
+        ),
+      });
+      hasAccess = !!groupMember;
+    }
+
+    // Check if user has item assignments on this receipt
+    if (!hasAccess) {
+      const receiptItemsList = await db.query.receiptItems.findMany({
+        where: eq(receiptItems.receiptId, receiptId),
+        columns: { id: true },
+      });
+
+      if (receiptItemsList.length > 0) {
+        const itemIds = receiptItemsList.map((item) => item.id);
+        const assignment = await db.query.itemAssignments.findFirst({
+          where: and(
+            eq(itemAssignments.userId, userId),
+            inArray(itemAssignments.receiptItemId, itemIds)
+          ),
+        });
+        hasAccess = !!assignment;
+      }
+    }
+
+    if (!hasAccess) {
       return NextResponse.json(
         { error: "Access denied to this receipt" },
         { status: 403 }
@@ -228,12 +268,17 @@ export async function GET(_request: Request, { params }: RouteParams) {
     const itemIds = items.map((item) => item.id);
 
     if (itemIds.length === 0) {
-      return NextResponse.json({ assignments: [] });
+      return NextResponse.json({ assignments: [], isOwner });
     }
 
-    // Fetch all assignments for these items
+    // Fetch assignments - owners see all, non-owners see only their own
     const assignments = await db.query.itemAssignments.findMany({
-      where: inArray(itemAssignments.receiptItemId, itemIds),
+      where: isOwner
+        ? inArray(itemAssignments.receiptItemId, itemIds)
+        : and(
+            inArray(itemAssignments.receiptItemId, itemIds),
+            eq(itemAssignments.userId, userId)
+          ),
       with: {
         user: {
           columns: {
@@ -253,7 +298,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
       },
     });
 
-    return NextResponse.json({ assignments });
+    return NextResponse.json({ assignments, isOwner });
   } catch (error) {
     console.error("Error fetching assignments:", error);
     return NextResponse.json(
