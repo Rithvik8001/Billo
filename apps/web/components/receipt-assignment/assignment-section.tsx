@@ -12,7 +12,7 @@ import { ConfirmationDialog } from "./confirmation-dialog";
 import { useItemAssignment } from "@/hooks/use-item-assignment";
 
 interface ReceiptItem {
-  id: number;
+  id: string;
   name: string;
   quantity: string;
   unitPrice: string;
@@ -21,7 +21,7 @@ interface ReceiptItem {
 
 interface AssignmentSectionProps {
   items: ReceiptItem[];
-  receiptId: number;
+  receiptId: string;
   tax: string | null;
   totalAmount: string | null;
 }

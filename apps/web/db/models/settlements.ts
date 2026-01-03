@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, decimal, index } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, uuid, decimal, index } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { receipts } from './receipts';
 import { groups } from './groups';
@@ -8,10 +8,10 @@ import { users } from './users';
 // SETTLEMENTS TABLE
 // =====================
 export const settlements = pgTable('settlements', {
-  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-  receiptId: integer('receipt_id')
+  id: uuid('id').primaryKey().defaultRandom(),
+  receiptId: uuid('receipt_id')
     .references(() => receipts.id, { onDelete: 'cascade' }),
-  groupId: integer('group_id')
+  groupId: uuid('group_id')
     .references(() => groups.id, { onDelete: 'cascade' }),
 
   // Payment details

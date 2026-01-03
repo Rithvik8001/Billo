@@ -50,14 +50,14 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
     completedCount: 0,
   });
   const [groups, setGroups] = useState<
-    Array<{ id: number; name: string; emoji: string }>
+    Array<{ id: string; name: string; emoji: string }>
   >([]);
-  const [selectedGroupId, setSelectedGroupId] = useState<number | "all">("all");
+  const [selectedGroupId, setSelectedGroupId] = useState<string | "all">("all");
   const [statusFilter, setStatusFilter] = useState<
     "all" | "pending" | "completed"
   >("all");
   const [isLoading, setIsLoading] = useState(true);
-  const [settlingId, setSettlingId] = useState<number | null>(null);
+  const [settlingId, setSettlingId] = useState<string | null>(null);
   const [settleDialogOpen, setSettleDialogOpen] = useState(false);
   const [settlementToSettle, setSettlementToSettle] =
     useState<SettlementWithUsers | null>(null);
@@ -67,8 +67,8 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const groupIdParam = params.get("groupId");
-      if (groupIdParam) {
-        setSelectedGroupId(parseInt(groupIdParam, 10));
+      if (groupIdParam && groupIdParam !== "all") {
+        setSelectedGroupId(groupIdParam);
       }
     }
   }, []);
@@ -292,7 +292,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
               selectedGroupId === "all" ? "all" : selectedGroupId.toString()
             }
             onValueChange={(value) =>
-              setSelectedGroupId(value === "all" ? "all" : parseInt(value, 10))
+              setSelectedGroupId(value === "all" ? "all" : value)
             }
           >
             <SelectTrigger>

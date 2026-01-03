@@ -3,6 +3,7 @@ import db from "@/db/config/connection";
 import { receipts, receiptItems } from "@/db/models/schema";
 import { updateReceiptSchema } from "@/lib/api/manual-entry-schemas";
 import { eq } from "drizzle-orm";
+import { isValidUUID } from "@/lib/utils";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -17,9 +18,9 @@ export async function GET(request: Request, { params }: RouteParams) {
 
   try {
     const { id } = await params;
-    const receiptId = parseInt(id, 10);
+    const receiptId = id;
 
-    if (isNaN(receiptId)) {
+    if (!isValidUUID(receiptId)) {
       return Response.json({ error: "Invalid receipt ID" }, { status: 400 });
     }
 
@@ -55,9 +56,9 @@ export async function PUT(request: Request, { params }: RouteParams) {
 
   try {
     const { id } = await params;
-    const receiptId = parseInt(id, 10);
+    const receiptId = id;
 
-    if (isNaN(receiptId)) {
+    if (!isValidUUID(receiptId)) {
       return Response.json({ error: "Invalid receipt ID" }, { status: 400 });
     }
 

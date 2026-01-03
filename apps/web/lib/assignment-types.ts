@@ -18,7 +18,7 @@ export interface PersonTotal {
 }
 
 export interface AssignmentPayload {
-  receiptItemId: number;
+  receiptItemId: string;
   userId: string;
   splitType: "full" | "percentage" | "amount";
   splitValue: string | null;
@@ -32,7 +32,7 @@ export interface AssignmentResponse {
 }
 
 export interface Group {
-  id: number;
+  id: string;
   name: string;
   description: string | null;
   emoji: string;

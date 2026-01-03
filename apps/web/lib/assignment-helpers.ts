@@ -1,7 +1,7 @@
 import type { GroupMember, PersonTotal, AssignmentPayload } from "./assignment-types";
 
 interface ReceiptItem {
-  id: number;
+  id: string;
   totalPrice: string;
 }
 
@@ -72,8 +72,8 @@ export function calculatePersonTotals(
 export function calculateEvenSplit(
   items: ReceiptItem[],
   memberIds: string[]
-): Map<number, Set<string>> {
-  const assignmentMap = new Map<number, Set<string>>();
+): Map<string, Set<string>> {
+  const assignmentMap = new Map<string, Set<string>>();
 
   items.forEach((item) => {
     assignmentMap.set(item.id, new Set(memberIds));
@@ -87,7 +87,7 @@ export function calculateEvenSplit(
  */
 export function validateAssignments(
   items: ReceiptItem[],
-  assignments: Map<number, Set<string>>
+  assignments: Map<string, Set<string>>
 ): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
@@ -109,7 +109,7 @@ export function validateAssignments(
  * Format assignments for API payload
  */
 export function formatAssignmentsForAPI(
-  assignments: Map<number, Set<string>>,
+  assignments: Map<string, Set<string>>,
   items: ReceiptItem[]
 ): AssignmentPayload[] {
   const payload: AssignmentPayload[] = [];

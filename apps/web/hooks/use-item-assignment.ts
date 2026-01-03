@@ -9,7 +9,7 @@ import {
 } from "@/lib/assignment-helpers";
 
 interface ReceiptItem {
-  id: number;
+  id: string;
   name: string;
   quantity: string;
   unitPrice: string;
@@ -17,9 +17,9 @@ interface ReceiptItem {
 }
 
 interface AssignmentState {
-  selectedGroupId: number | null;
+  selectedGroupId: string | null;
   groupMembers: GroupMember[];
-  assignments: Map<number, Set<string>>;
+  assignments: Map<string, Set<string>>;
   personTotals: PersonTotal[];
   isLoading: boolean;
   error: string | null;
@@ -41,7 +41,7 @@ export function useItemAssignment(
   /**
    * Load group members when a group is selected
    */
-  const loadGroupMembers = useCallback(async (groupId: number) => {
+  const loadGroupMembers = useCallback(async (groupId: string) => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
@@ -75,7 +75,7 @@ export function useItemAssignment(
    * Toggle person assignment to an item
    */
   const toggleAssignment = useCallback(
-    (itemId: number, userId: string) => {
+    (itemId: string, userId: string) => {
       setState((prev) => {
         const newAssignments = new Map(prev.assignments);
         const assigned = newAssignments.get(itemId) || new Set<string>();
@@ -133,7 +133,7 @@ export function useItemAssignment(
    * Save assignments to the database
    */
   const saveAssignments = useCallback(
-    async (receiptId: number) => {
+    async (receiptId: string) => {
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
       try {

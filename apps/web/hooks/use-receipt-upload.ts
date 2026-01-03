@@ -15,7 +15,7 @@ export interface UploadProgress {
   state: UploadState;
   progress: number; // 0-100
   imageUrl?: string;
-  receiptId?: number;
+  receiptId?: string;
   extractedData?: Partial<ReceiptExtractionResult>;
   itemCount?: number;
   error?: string;

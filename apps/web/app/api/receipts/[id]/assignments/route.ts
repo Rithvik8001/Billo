@@ -7,6 +7,7 @@ import { createAssignmentsSchema } from "@/lib/api/assignment-schemas";
 import { calculateSettlements } from "@/lib/settlement-helpers";
 import { calculatePersonTotals } from "@/lib/assignment-helpers";
 import type { GroupMember } from "@/lib/assignment-types";
+import { isValidUUID } from "@/lib/utils";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -21,9 +22,9 @@ export async function POST(request: Request, { params }: RouteParams) {
     }
 
     const { id } = await params;
-    const receiptId = parseInt(id, 10);
+    const receiptId = id;
 
-    if (isNaN(receiptId)) {
+    if (!isValidUUID(receiptId)) {
       return NextResponse.json(
         { error: "Invalid receipt ID" },
         { status: 400 }
@@ -146,7 +147,7 @@ export async function POST(request: Request, { params }: RouteParams) {
     // 4. Generate settlements (outside transaction to avoid deadlocks)
     if (groupId && groupMembersList.length > 0 && assignments.length > 0) {
       // Build assignment map for calculation
-      const assignmentMap = new Map<number, Set<string>>();
+      const assignmentMap = new Map<string, Set<string>>();
       assignments.forEach((a) => {
         const existing = assignmentMap.get(a.receiptItemId) || new Set<string>();
         existing.add(a.userId);
@@ -194,9 +195,9 @@ export async function GET(_request: Request, { params }: RouteParams) {
     }
 
     const { id } = await params;
-    const receiptId = parseInt(id, 10);
+    const receiptId = id;
 
-    if (isNaN(receiptId)) {
+    if (!isValidUUID(receiptId)) {
       return NextResponse.json(
         { error: "Invalid receipt ID" },
         { status: 400 }
@@ -275,9 +276,9 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     }
 
     const { id } = await params;
-    const receiptId = parseInt(id, 10);
+    const receiptId = id;
 
-    if (isNaN(receiptId)) {
+    if (!isValidUUID(receiptId)) {
       return NextResponse.json(
         { error: "Invalid receipt ID" },
         { status: 400 }

@@ -3,6 +3,7 @@ import db from "@/db/config/connection";
 import { receipts, receiptItems } from "@/db/models/schema";
 import { receiptExtractionSchema } from "@/lib/ai/schemas";
 import { eq } from "drizzle-orm";
+import { isValidUUID } from "@/lib/utils";
 
 export async function POST(
   request: Request,
@@ -16,9 +17,9 @@ export async function POST(
 
   try {
     const { id } = await params;
-    const receiptId = parseInt(id, 10);
+    const receiptId = id;
 
-    if (isNaN(receiptId)) {
+    if (!isValidUUID(receiptId)) {
       return Response.json({ error: "Invalid receipt ID" }, { status: 400 });
     }
 

@@ -11,8 +11,8 @@ import {
 import type { Group } from "@/lib/assignment-types";
 
 interface GroupSelectorProps {
-  selectedGroupId: number | null;
-  onGroupSelect: (groupId: number) => void;
+  selectedGroupId: string | null;
+  onGroupSelect: (groupId: string) => void;
 }
 
 export function GroupSelector({
@@ -81,10 +81,10 @@ export function GroupSelector({
         Select Group
       </label>
       <Select
-        value={selectedGroupId?.toString() || ""}
+        value={selectedGroupId || ""}
         onValueChange={(value) => {
           if (value) {
-            onGroupSelect(parseInt(value, 10));
+            onGroupSelect(value);
           }
         }}
       >

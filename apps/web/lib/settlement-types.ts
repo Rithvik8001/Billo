@@ -1,7 +1,7 @@
 export interface Settlement {
-  id: number;
-  receiptId: number | null;
-  groupId: number | null;
+  id: string;
+  receiptId: string | null;
+  groupId: string | null;
   fromUserId: string;
   toUserId: string;
   amount: string;
@@ -27,13 +27,13 @@ export interface SettlementWithUsers extends Settlement {
     imageUrl: string | null;
   };
   receipt?: {
-    id: number;
+    id: string;
     merchantName: string | null;
     purchaseDate: Date | null;
     totalAmount: string | null;
   } | null;
   group?: {
-    id: number;
+    id: string;
     name: string;
     emoji: string;
   } | null;
@@ -59,7 +59,7 @@ export interface BalanceSummary {
 }
 
 export interface SettlementFilters {
-  groupId?: number;
+  groupId?: string;
   status?: "pending" | "completed" | "cancelled";
   direction?: "owed" | "owing"; // "owed" = you're owed, "owing" = you owe
 }

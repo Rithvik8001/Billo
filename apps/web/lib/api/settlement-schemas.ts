@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const createSettlementSchema = z.object({
-  receiptId: z.number().int().positive().optional(),
-  groupId: z.number().int().positive().optional(),
+  receiptId: z.string().uuid().optional(),
+  groupId: z.string().uuid().optional(),
   fromUserId: z.string().min(1),
   toUserId: z.string().min(1),
   amount: z.string().regex(/^\d+\.\d{2}$/, "Amount must have 2 decimal places"),
@@ -17,13 +17,9 @@ export const updateSettlementSchema = z.object({
 
 export const settlementFiltersSchema = z.object({
   groupId: z
-    .union([z.string(), z.null()])
-    .optional()
-    .transform((val) => {
-      if (!val || val === "null" || val === "") return undefined;
-      const parsed = parseInt(val, 10);
-      return isNaN(parsed) ? undefined : parsed;
-    }),
+    .string()
+    .uuid()
+    .optional(),
   status: z
     .enum(["pending", "completed", "cancelled"])
     .optional(),

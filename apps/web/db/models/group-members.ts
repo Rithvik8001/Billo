@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, index, unique } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, uuid, index, unique } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { groups } from './groups';
 import { users } from './users';
@@ -7,8 +7,8 @@ import { users } from './users';
 // GROUP MEMBERS TABLE (Junction)
 // =====================
 export const groupMembers = pgTable('group_members', {
-  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-  groupId: integer('group_id')
+  id: uuid('id').primaryKey().defaultRandom(),
+  groupId: uuid('group_id')
     .references(() => groups.id, { onDelete: 'cascade' })
     .notNull(),
   userId: text('user_id')

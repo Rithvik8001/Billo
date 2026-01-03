@@ -4,13 +4,14 @@ import db from "@/db/config/connection";
 import { groups, groupMembers } from "@/db/models/schema";
 import { eq, and, sql } from "drizzle-orm";
 import { updateGroupSchema } from "@/lib/api/group-schemas";
+import { isValidUUID } from "@/lib/utils";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
 async function checkAdminAccess(
-  groupId: number,
+  groupId: string,
   userId: string
 ): Promise<boolean> {
   const member = await db.query.groupMembers.findFirst({
@@ -33,9 +34,9 @@ export async function GET(request: Request, { params }: RouteParams) {
     }
 
     const { id } = await params;
-    const groupId = parseInt(id, 10);
+    const groupId = id;
 
-    if (isNaN(groupId)) {
+    if (!isValidUUID(groupId)) {
       return NextResponse.json({ error: "Invalid group ID" }, { status: 400 });
     }
 
@@ -93,9 +94,9 @@ export async function PUT(request: Request, { params }: RouteParams) {
     }
 
     const { id } = await params;
-    const groupId = parseInt(id, 10);
+    const groupId = id;
 
-    if (isNaN(groupId)) {
+    if (!isValidUUID(groupId)) {
       return NextResponse.json({ error: "Invalid group ID" }, { status: 400 });
     }
 
@@ -162,9 +163,9 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     }
 
     const { id } = await params;
-    const groupId = parseInt(id, 10);
+    const groupId = id;
 
-    if (isNaN(groupId)) {
+    if (!isValidUUID(groupId)) {
       return NextResponse.json({ error: "Invalid group ID" }, { status: 400 });
     }
 

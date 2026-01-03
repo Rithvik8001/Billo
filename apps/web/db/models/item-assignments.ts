@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, decimal, index } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, uuid, decimal, index } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { receiptItems } from './receipt-items';
 import { users } from './users';
@@ -7,8 +7,8 @@ import { users } from './users';
 // ITEM ASSIGNMENTS TABLE
 // =====================
 export const itemAssignments = pgTable('item_assignments', {
-  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-  receiptItemId: integer('receipt_item_id')
+  id: uuid('id').primaryKey().defaultRandom(),
+  receiptItemId: uuid('receipt_item_id')
     .references(() => receiptItems.id, { onDelete: 'cascade' })
     .notNull(),
   userId: text('user_id')

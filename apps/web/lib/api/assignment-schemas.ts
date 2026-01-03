@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const assignmentItemSchema = z.object({
-  receiptItemId: z.number().int().positive(),
+  receiptItemId: z.string().uuid(),
   userId: z.string().min(1),
   splitType: z.enum(["full", "percentage", "amount"]),
   splitValue: z.string().nullable(),
@@ -10,7 +10,7 @@ export const assignmentItemSchema = z.object({
 
 export const createAssignmentsSchema = z.object({
   assignments: z.array(assignmentItemSchema).min(1),
-  groupId: z.number().int().positive().optional(),
+  groupId: z.string().uuid().optional(),
 });
 
 export type CreateAssignmentsInput = z.infer<typeof createAssignmentsSchema>;

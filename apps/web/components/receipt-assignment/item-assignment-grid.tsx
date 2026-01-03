@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { GroupMember } from "@/lib/assignment-types";
 
 interface ReceiptItem {
-  id: number;
+  id: string;
   name: string;
   quantity: string;
   unitPrice: string;
@@ -16,10 +16,9 @@ interface ReceiptItem {
 interface ItemAssignmentGridProps {
   items: ReceiptItem[];
   members: GroupMember[];
-  assignments: Map<number, Set<string>>;
-  onToggleAssignment: (itemId: number, userId: string) => void;
+  assignments: Map<string, Set<string>>;
+  onToggleAssignment: (itemId: string, userId: string) => void;
   onSplitEvenly: () => void;
-}
 
 export function ItemAssignmentGrid({
   items,

@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { users } from './users';
 import { groupMembers } from './group-members';
@@ -8,7 +8,7 @@ import { settlements } from './settlements';
 // GROUPS TABLE
 // =====================
 export const groups = pgTable('groups', {
-  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+  id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
   description: text('description'),
   emoji: text('emoji').default('👥').notNull(),

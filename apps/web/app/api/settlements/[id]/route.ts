@@ -4,6 +4,7 @@ import db from "@/db/config/connection";
 import { settlements } from "@/db/models/schema";
 import { eq, and, or } from "drizzle-orm";
 import { updateSettlementSchema } from "@/lib/api/settlement-schemas";
+import { isValidUUID } from "@/lib/utils";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -18,9 +19,9 @@ export async function GET(_request: Request, { params }: RouteParams) {
     }
 
     const { id } = await params;
-    const settlementId = parseInt(id, 10);
+    const settlementId = id;
 
-    if (isNaN(settlementId)) {
+    if (!isValidUUID(settlementId)) {
       return NextResponse.json(
         { error: "Invalid settlement ID" },
         { status: 400 }
@@ -94,9 +95,9 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     }
 
     const { id } = await params;
-    const settlementId = parseInt(id, 10);
+    const settlementId = id;
 
-    if (isNaN(settlementId)) {
+    if (!isValidUUID(settlementId)) {
       return NextResponse.json(
         { error: "Invalid settlement ID" },
         { status: 400 }
@@ -254,9 +255,9 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     }
 
     const { id } = await params;
-    const settlementId = parseInt(id, 10);
+    const settlementId = id;
 
-    if (isNaN(settlementId)) {
+    if (!isValidUUID(settlementId)) {
       return NextResponse.json(
         { error: "Invalid settlement ID" },
         { status: 400 }

@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, integer, decimal, jsonb, index } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, uuid, decimal, jsonb, index } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { users } from './users';
 import { receiptItems } from './receipt-items';
@@ -9,7 +9,7 @@ import { groups } from './groups';
 // RECEIPTS TABLE
 // =====================
 export const receipts = pgTable('receipts', {
-  id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
+  id: uuid('id').primaryKey().defaultRandom(),
   userId: text('user_id')
     .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),
@@ -32,7 +32,7 @@ export const receipts = pgTable('receipts', {
   }).default('pending').notNull(),
 
   // Group association (which group this receipt was split with)
-  groupId: integer('group_id')
+  groupId: uuid('group_id')
     .references(() => groups.id, { onDelete: 'set null' }),
 
   // AI extraction metadata

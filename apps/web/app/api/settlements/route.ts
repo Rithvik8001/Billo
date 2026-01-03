@@ -21,16 +21,13 @@ export async function GET(request: Request) {
     const directionParam = searchParams.get("direction");
     
     const filters: {
-      groupId?: number;
+      groupId?: string;
       status?: "pending" | "completed" | "cancelled";
       direction?: "owed" | "owing";
     } = {};
     
-    if (groupIdParam) {
-      const parsed = parseInt(groupIdParam, 10);
-      if (!isNaN(parsed)) {
-        filters.groupId = parsed;
-      }
+    if (groupIdParam && isValidUUID(groupIdParam)) {
+      filters.groupId = groupIdParam;
     }
     
     if (statusParam && ["pending", "completed", "cancelled"].includes(statusParam)) {

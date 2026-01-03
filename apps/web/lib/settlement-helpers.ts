@@ -17,10 +17,10 @@ import { formatAmount } from "./currency";
  * Receipt owner is the payer (toUserId), everyone else owes them
  */
 export async function calculateSettlements(
-  receiptId: number,
+  receiptId: string,
   ownerId: string,
   personTotals: PersonTotal[],
-  groupId: number | null
+  groupId: string | null
 ): Promise<void> {
   // Delete existing settlements for this receipt (in case of re-assignment)
   await db.delete(settlements).where(eq(settlements.receiptId, receiptId));
@@ -94,7 +94,7 @@ export async function calculateSettlements(
 /**
  * Get all settlements for a specific receipt
  */
-export async function getReceiptSettlements(receiptId: number) {
+export async function getReceiptSettlements(receiptId: string) {
   return await db.query.settlements.findMany({
     where: eq(settlements.receiptId, receiptId),
     with: {
@@ -122,7 +122,7 @@ export async function getReceiptSettlements(receiptId: number) {
  * Calculate aggregated balances for all members in a group
  * Returns net balances (positive = they owe, negative = they're owed)
  */
-export async function getGroupBalances(groupId: number, currentUserId: string): Promise<GroupBalance[]> {
+export async function getGroupBalances(groupId: string, currentUserId: string): Promise<GroupBalance[]> {
   // Get all pending settlements for this group
   const groupSettlements = await db.query.settlements.findMany({
     where: and(eq(settlements.groupId, groupId), eq(settlements.status, "pending")),

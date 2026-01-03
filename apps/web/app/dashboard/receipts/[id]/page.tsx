@@ -17,11 +17,7 @@ export default async function ReceiptPage({ params }: ReceiptPageProps) {
   }
 
   const { id } = await params;
-  const receiptId = parseInt(id, 10);
-
-  if (isNaN(receiptId)) {
-    notFound();
-  }
+  const receiptId = id;
 
   const receipt = await db.query.receipts.findFirst({
     where: eq(receipts.id, receiptId),

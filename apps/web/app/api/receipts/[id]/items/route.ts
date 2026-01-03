@@ -4,6 +4,7 @@ import { receipts, receiptItems } from "@/db/models/schema";
 import { manualItemSchema } from "@/lib/api/manual-entry-schemas";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
+import { isValidUUID } from "@/lib/utils";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -18,9 +19,9 @@ export async function GET(request: Request, { params }: RouteParams) {
 
   try {
     const { id } = await params;
-    const receiptId = parseInt(id, 10);
+    const receiptId = id;
 
-    if (isNaN(receiptId)) {
+    if (!isValidUUID(receiptId)) {
       return Response.json({ error: "Invalid receipt ID" }, { status: 400 });
     }
 
@@ -62,9 +63,9 @@ export async function PUT(request: Request, { params }: RouteParams) {
 
   try {
     const { id } = await params;
-    const receiptId = parseInt(id, 10);
+    const receiptId = id;
 
-    if (isNaN(receiptId)) {
+    if (!isValidUUID(receiptId)) {
       return Response.json({ error: "Invalid receipt ID" }, { status: 400 });
     }
 
@@ -159,9 +160,9 @@ export async function POST(request: Request, { params }: RouteParams) {
 
   try {
     const { id } = await params;
-    const receiptId = parseInt(id, 10);
+    const receiptId = id;
 
-    if (isNaN(receiptId)) {
+    if (!isValidUUID(receiptId)) {
       return Response.json({ error: "Invalid receipt ID" }, { status: 400 });
     }
 
@@ -256,9 +257,9 @@ export async function DELETE(request: Request, { params }: RouteParams) {
 
   try {
     const { id } = await params;
-    const receiptId = parseInt(id, 10);
+    const receiptId = id;
 
-    if (isNaN(receiptId)) {
+    if (!isValidUUID(receiptId)) {
       return Response.json({ error: "Invalid receipt ID" }, { status: 400 });
     }
 
