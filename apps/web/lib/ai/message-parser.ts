@@ -1,6 +1,6 @@
 export interface ParsedMessage {
   imageUrl?: string;
-  receiptId?: number;
+  receiptId?: string;
 }
 
 export function extractImageUrl(message: {
@@ -30,19 +30,22 @@ export function extractImageUrl(message: {
 export function extractReceiptId(
   message: { content?: string },
   bodyReceiptId?: unknown
-): number | undefined {
-  // Check body first
+): string | undefined {
+  // Check body first - validate as UUID
   if (bodyReceiptId) {
-    const parsed = parseInt(String(bodyReceiptId), 10);
-    if (!isNaN(parsed)) return parsed;
+    const idString = String(bodyReceiptId);
+    // UUID regex pattern
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (uuidRegex.test(idString)) {
+      return idString;
+    }
   }
 
-  // Try to extract from message text
+  // Try to extract from message text (UUID format only)
   if (typeof message.content === "string") {
-    const receiptIdMatch = message.content.match(/receipt[_\s]?id[:\s]+(\d+)/i);
-    if (receiptIdMatch) {
-      const parsed = parseInt(receiptIdMatch[1], 10);
-      if (!isNaN(parsed)) return parsed;
+    const uuidMatch = message.content.match(/receipt[_\s]?id[:\s]+([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
+    if (uuidMatch) {
+      return uuidMatch[1];
     }
   }
 

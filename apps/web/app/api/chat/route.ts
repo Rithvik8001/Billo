@@ -9,6 +9,7 @@ import {
   markReceiptAsProcessing,
 } from "@/lib/ai/receipt-validator";
 import { createReceiptExtractionStream } from "@/lib/ai/stream-handler";
+import { isValidUUID } from "@/lib/utils";
 
 export async function POST(request: Request) {
   const { userId } = await auth();
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
     // Validate receipt if ID provided
     let receipt: typeof receipts.$inferSelect | null = null;
     if (extractedReceiptId) {
-      if (isNaN(extractedReceiptId)) {
+      if (!isValidUUID(extractedReceiptId)) {
         return Response.json({ error: "Invalid receipt ID" }, { status: 400 });
       }
 

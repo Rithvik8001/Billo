@@ -4,10 +4,10 @@ import { eq } from "drizzle-orm";
 import type { ReceiptExtractionResult } from "./schemas";
 
 export async function saveExtractedReceiptData(
-  receiptId: number,
+  receiptId: string,
   extractedData: ReceiptExtractionResult
 ): Promise<{
-  receiptId: number;
+  receiptId: string;
   itemCount: number;
 }> {
   // Parse purchase date if available
@@ -128,7 +128,7 @@ export async function saveExtractedReceiptData(
 }
 
 export async function markReceiptExtractionFailed(
-  receiptId: number,
+  receiptId: string,
   errorMessage: string
 ): Promise<void> {
   await db

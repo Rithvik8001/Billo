@@ -3,7 +3,7 @@ import { receipts } from "@/db/models/schema";
 import { eq, and } from "drizzle-orm";
 
 export async function validateReceipt(
-  receiptId: number,
+  receiptId: string,
   userId: string
 ): Promise<{
   receipt: typeof receipts.$inferSelect;
@@ -39,7 +39,7 @@ export async function validateReceipt(
 }
 
 export async function markReceiptAsProcessing(
-  receiptId: number
+  receiptId: string
 ): Promise<void> {
   await db
     .update(receipts)

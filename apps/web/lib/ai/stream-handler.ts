@@ -13,8 +13,8 @@ export interface ReceiptExtractionStreamResult {
 
 export function createReceiptExtractionStream(
   result: ReceiptExtractionStreamResult,
-  receiptId: number | undefined,
-  receipt: { id: number } | null
+  receiptId: string | undefined,
+  receipt: { id: string } | null
 ): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder();
 
