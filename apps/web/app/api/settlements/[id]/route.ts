@@ -149,6 +149,47 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       .where(eq(settlements.id, settlementId))
       .returning();
 
+    // --- EMAIL NOTIFICATION: Payment Confirmation ---
+    // Only send when status changes TO "completed"
+    if (
+      validatedData.status === "completed" &&
+      existingSettlement.status !== "completed"
+    ) {
+      // Fetch settlement with full relations for email
+      const settlementForEmail = await db.query.settlements.findFirst({
+        where: eq(settlements.id, settlementId),
+        with: {
+          fromUser: { columns: { id: true, name: true, email: true, currencyCode: true } },
+          toUser: { columns: { id: true, name: true, email: true } },
+          receipt: { columns: { merchantName: true } },
+        },
+      });
+
+      if (settlementForEmail && settlementForEmail.settledAt) {
+        const { formatAmount } = await import("@/lib/currency");
+        const { sendPaymentConfirmationEmail } = await import(
+          "@/lib/email/email-helpers"
+        );
+
+        await sendPaymentConfirmationEmail({
+          settlementId: settlementForEmail.id,
+          fromUserId: settlementForEmail.fromUser.id,
+          fromUserName: settlementForEmail.fromUser.name || "Unknown",
+          fromUserEmail: settlementForEmail.fromUser.email,
+          toUserId: settlementForEmail.toUser.id,
+          toUserName: settlementForEmail.toUser.name || "Unknown",
+          toUserEmail: settlementForEmail.toUser.email,
+          formattedAmount: formatAmount(
+            settlementForEmail.amount,
+            settlementForEmail.fromUser.currencyCode || "USD"
+          ),
+          merchantName: settlementForEmail.receipt?.merchantName || "Unknown",
+          settledAt: new Date(settlementForEmail.settledAt).toLocaleDateString(),
+        });
+      }
+    }
+    // --- END EMAIL NOTIFICATION ---
+
     // Fetch with relations
     const settlementWithUsers = await db.query.settlements.findFirst({
       where: eq(settlements.id, settlementId),

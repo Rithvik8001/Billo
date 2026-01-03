@@ -161,6 +161,29 @@ export async function POST(request: Request, { params }: RouteParams) {
       })
       .returning();
 
+    // --- EMAIL NOTIFICATION: Group Invite ---
+    // Fetch admin details for email
+    const admin = await db.query.users.findFirst({
+      where: eq(users.id, userId),
+      columns: { name: true },
+    });
+
+    // Send group invite email
+    if (admin && group && user) {
+      const { sendGroupInviteEmail } = await import(
+        "@/lib/email/email-helpers"
+      );
+      await sendGroupInviteEmail({
+        newMemberId: user.id,
+        newMemberName: user.name || "there",
+        newMemberEmail: user.email,
+        groupName: group.name,
+        groupEmoji: group.emoji || "👥",
+        addedByName: admin.name || "Someone",
+      });
+    }
+    // --- END EMAIL NOTIFICATION ---
+
     // Fetch member with user details
     const memberWithUser = await db
       .select({

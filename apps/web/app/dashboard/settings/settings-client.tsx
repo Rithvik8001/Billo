@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { SUPPORTED_CURRENCIES } from "@/lib/currency";
 import { useCurrency } from "@/contexts/currency-context";
+import { EmailPreferencesSection } from "@/components/settings/email-preferences-section";
 
 interface SettingsClientProps {
   initialCurrency: string;
@@ -99,6 +100,8 @@ export function SettingsClient({
           </div>
         </CardContent>
       </Card>
+
+      <EmailPreferencesSection />
     </div>
   );
 }

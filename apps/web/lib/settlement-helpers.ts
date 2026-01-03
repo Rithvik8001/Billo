@@ -1,8 +1,16 @@
 import db from "@/db/config/connection";
-import { settlements, itemAssignments, receiptItems, receipts } from "@/db/models/schema";
+import {
+  settlements,
+  itemAssignments,
+  receiptItems,
+  receipts,
+  users,
+} from "@/db/models/schema";
 import { eq, and, sql, or } from "drizzle-orm";
 import type { PersonTotal } from "./assignment-types";
 import type { GroupBalance } from "./settlement-types";
+import type { SettlementEmailData } from "./email/email-types";
+import { formatAmount } from "./currency";
 
 /**
  * Calculate and create settlement records for a receipt
@@ -32,6 +40,54 @@ export async function calculateSettlements(
 
   if (settlementRecords.length > 0) {
     await db.insert(settlements).values(settlementRecords);
+
+    // --- EMAIL NOTIFICATION: New Settlements ---
+    // Fetch receipt details for emails
+    const receipt = await db.query.receipts.findFirst({
+      where: eq(receipts.id, receiptId),
+      columns: { merchantName: true },
+      with: {
+        owner: { columns: { name: true, email: true, currencyCode: true } },
+        group: { columns: { name: true } },
+      },
+    });
+
+    if (receipt) {
+      // Fetch all member emails and currency preferences from personTotals
+      const userIds = settlementRecords.map((s) => s.fromUserId);
+      const memberDetails = await db.query.users.findMany({
+        where: or(...userIds.map((id) => eq(users.id, id))),
+        columns: { id: true, name: true, email: true, currencyCode: true },
+      });
+
+      const emailData: SettlementEmailData[] = settlementRecords.map(
+        (settlement) => {
+          const fromUser = memberDetails.find(
+            (u) => u.id === settlement.fromUserId
+          );
+          return {
+            fromUserId: settlement.fromUserId,
+            fromUserName: fromUser?.name || "Unknown",
+            fromUserEmail: fromUser?.email || "",
+            toUserId: settlement.toUserId,
+            toUserName: receipt.owner.name || "Unknown",
+            toUserEmail: receipt.owner.email,
+            amount: settlement.amount,
+            formattedAmount: formatAmount(
+              settlement.amount,
+              fromUser?.currencyCode || "USD"
+            ),
+            currency: settlement.currency,
+            merchantName: receipt.merchantName || "Unknown",
+            groupName: receipt.group?.name,
+          };
+        }
+      );
+
+      const { sendSettlementEmails } = await import("./email/email-helpers");
+      await sendSettlementEmails(emailData);
+    }
+    // --- END EMAIL NOTIFICATION ---
   }
 }
 

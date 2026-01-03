@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, boolean } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { receipts } from './receipts';
 import { groups } from './groups';
@@ -16,6 +16,10 @@ export const users = pgTable('users', {
   name: text('name'),
   imageUrl: text('image_url'),
   currencyCode: text('currency_code').default('USD').notNull(),
+  emailGroupInvites: boolean('email_group_invites').default(true).notNull(),
+  emailSettlements: boolean('email_settlements').default(true).notNull(),
+  emailPayments: boolean('email_payments').default(true).notNull(),
+  emailWeeklySummary: boolean('email_weekly_summary').default(true).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
