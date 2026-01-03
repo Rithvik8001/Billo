@@ -30,8 +30,8 @@ export function AddedToGroupEmail({
       </Heading>
       <Text style={textStyle}>Hi {memberName},</Text>
       <Text style={textStyle}>
-        <strong>{addedByName}</strong> has added you to the group "
-        <strong>{groupName}</strong>".
+        <strong>{addedByName}</strong> has added you to the group &quot;
+        <strong>{groupName}</strong>&quot;.
       </Text>
       <Text style={textStyle}>
         You can now split bills with your group members and keep track of who
@@ -45,15 +45,17 @@ export function AddedToGroupEmail({
 export default AddedToGroupEmail;
 
 const headingStyle: React.CSSProperties = {
-  fontSize: "24px",
-  fontWeight: "bold",
+  fontSize: "28px",
+  fontWeight: "600",
   color: "#111827",
   margin: "0 0 24px 0",
+  lineHeight: "36px",
+  letterSpacing: "-0.01em",
 };
 
 const textStyle: React.CSSProperties = {
-  fontSize: "16px",
+  fontSize: "15px",
   color: "#374151",
-  lineHeight: "1.6",
+  lineHeight: "24px",
   margin: "0 0 16px 0",
 };

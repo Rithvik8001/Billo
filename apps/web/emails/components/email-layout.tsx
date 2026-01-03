@@ -6,6 +6,7 @@ import {
   Section,
   Text,
   Link,
+  Img,
 } from "@react-email/components";
 import * as React from "react";
 
@@ -20,6 +21,11 @@ export function EmailLayout({
   previewText,
   unsubscribeUrl,
 }: EmailLayoutProps) {
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (process.env.NODE_ENV === "development" ? "http://localhost:3000" : "");
+  const logoUrl = appUrl ? `${appUrl}/web-logo.png` : "";
+
   return (
     <Html>
       <Head>
@@ -27,11 +33,51 @@ export function EmailLayout({
         <meta name="x-apple-disable-message-reformatting" />
       </Head>
       <Body style={bodyStyle}>
+        <div
+          style={{
+            display: "none",
+            fontSize: "1px",
+            color: "#ffffff",
+            lineHeight: "1px",
+            maxHeight: "0px",
+            maxWidth: "0px",
+            opacity: 0,
+            overflow: "hidden",
+          }}
+        >
+          {previewText}
+        </div>
         <Container style={containerStyle}>
           {/* Billo Header */}
           <Section style={headerStyle}>
-            <Text style={logoStyle}>Billo</Text>
-            <Text style={taglineStyle}>Split bills, not friendships</Text>
+            <table
+              width="100%"
+              cellPadding="0"
+              cellSpacing="0"
+              style={{ borderCollapse: "collapse" }}
+            >
+              <tr>
+                <td
+                  style={{
+                    verticalAlign: "middle",
+                    width: "40px",
+                    paddingRight: "12px",
+                  }}
+                >
+                  <Img
+                    src={logoUrl}
+                    alt="Billo"
+                    width={32}
+                    height={32}
+                    style={logoImageStyle}
+                  />
+                </td>
+                <td style={{ verticalAlign: "middle" }}>
+                  <Text style={logoTextStyle}>Billo</Text>
+                  <Text style={taglineStyle}>Scan. Tap. Split.</Text>
+                </td>
+              </tr>
+            </table>
           </Section>
 
           {/* Main Content */}
@@ -74,20 +120,28 @@ const containerStyle: React.CSSProperties = {
 const headerStyle: React.CSSProperties = {
   backgroundColor: "#F97316",
   padding: "32px 40px",
-  textAlign: "center" as const,
 };
 
-const logoStyle: React.CSSProperties = {
+const logoImageStyle: React.CSSProperties = {
+  display: "block",
+  objectFit: "contain",
+  maxWidth: "32px",
+  height: "auto",
+};
+
+const logoTextStyle: React.CSSProperties = {
   fontSize: "32px",
-  fontWeight: "bold",
+  fontWeight: "600",
   color: "#ffffff",
-  margin: "0 0 8px 0",
+  margin: "0 0 4px 0",
+  lineHeight: "1.2",
 };
 
 const taglineStyle: React.CSSProperties = {
   fontSize: "14px",
   color: "rgba(255, 255, 255, 0.9)",
   margin: "0",
+  lineHeight: "1.4",
 };
 
 const contentStyle: React.CSSProperties = {

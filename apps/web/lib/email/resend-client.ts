@@ -7,8 +7,9 @@ if (!process.env.RESEND_API_KEY) {
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Email configuration constants
+// Use custom domain if RESEND_FROM_EMAIL is set, otherwise fallback to Resend default
 export const EMAIL_CONFIG = {
-  fromEmail: "onboarding@resend.dev",
+  fromEmail: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
   fromName: "Billo",
-  replyTo: "1017rithvik@gmail.com", // Users can still reply to your Gmail
+  replyTo: process.env.RESEND_REPLY_TO || "1017rithvik@gmail.com", // Users can still reply to your Gmail
 } as const;

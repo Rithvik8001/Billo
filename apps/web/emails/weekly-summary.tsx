@@ -80,16 +80,18 @@ export function WeeklySummaryEmail({
 export default WeeklySummaryEmail;
 
 const headingStyle: React.CSSProperties = {
-  fontSize: "24px",
-  fontWeight: "bold",
+  fontSize: "28px",
+  fontWeight: "600",
   color: "#111827",
   margin: "0 0 24px 0",
+  lineHeight: "36px",
+  letterSpacing: "-0.01em",
 };
 
 const textStyle: React.CSSProperties = {
-  fontSize: "16px",
+  fontSize: "15px",
   color: "#374151",
-  lineHeight: "1.6",
+  lineHeight: "24px",
   margin: "0 0 16px 0",
 };
 
@@ -103,8 +105,9 @@ const balanceCardStyle: React.CSSProperties = {
   flex: "1",
   backgroundColor: "#f9fafb",
   padding: "16px",
-  borderRadius: "8px",
+  borderRadius: "12px",
   textAlign: "center" as const,
+  border: "1px solid #e5e7eb",
 };
 
 const balanceLabelStyle: React.CSSProperties = {
@@ -112,13 +115,17 @@ const balanceLabelStyle: React.CSSProperties = {
   color: "#6b7280",
   textTransform: "uppercase" as const,
   margin: "0 0 8px 0",
+  letterSpacing: "0.05em",
+  fontWeight: "500",
+  lineHeight: "16px",
 };
 
 const balanceAmountStyle: React.CSSProperties = {
   fontSize: "20px",
-  fontWeight: "bold",
+  fontWeight: "600",
   color: "#111827",
   margin: "0",
+  lineHeight: "28px",
 };
 
 const hrStyle: React.CSSProperties = {
@@ -128,23 +135,26 @@ const hrStyle: React.CSSProperties = {
 };
 
 const sectionHeadingStyle: React.CSSProperties = {
-  fontSize: "16px",
+  fontSize: "20px",
   fontWeight: "600",
   color: "#111827",
   margin: "0 0 12px 0",
+  lineHeight: "28px",
 };
 
 const settlementItemStyle: React.CSSProperties = {
-  fontSize: "14px",
+  fontSize: "15px",
   color: "#374151",
   margin: "0 0 8px 0",
   padding: "8px 0",
-  borderBottom: "1px solid #f3f4f6",
+  borderBottom: "1px solid #e5e7eb",
+  lineHeight: "24px",
 };
 
 const moreTextStyle: React.CSSProperties = {
-  fontSize: "14px",
+  fontSize: "13px",
   color: "#6b7280",
   fontStyle: "italic" as const,
   margin: "12px 0 0 0",
+  lineHeight: "20px",
 };

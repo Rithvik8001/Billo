@@ -60,16 +60,18 @@ export function NewSettlementEmail({
 export default NewSettlementEmail;
 
 const headingStyle: React.CSSProperties = {
-  fontSize: "24px",
-  fontWeight: "bold",
+  fontSize: "28px",
+  fontWeight: "600",
   color: "#111827",
   margin: "0 0 24px 0",
+  lineHeight: "36px",
+  letterSpacing: "-0.01em",
 };
 
 const textStyle: React.CSSProperties = {
-  fontSize: "16px",
+  fontSize: "15px",
   color: "#374151",
-  lineHeight: "1.6",
+  lineHeight: "24px",
   margin: "0 0 16px 0",
 };
 
@@ -80,7 +82,8 @@ const hrStyle: React.CSSProperties = {
 };
 
 const metaTextStyle: React.CSSProperties = {
-  fontSize: "14px",
+  fontSize: "13px",
   color: "#6b7280",
   margin: "0 0 8px 0",
+  lineHeight: "20px",
 };

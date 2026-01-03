@@ -76,7 +76,14 @@ export async function sendGroupInviteEmail(
       return;
     }
 
-    const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?userId=${data.newMemberId}&type=group_invites`;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (!appUrl) {
+      console.error(
+        "[Email Error] NEXT_PUBLIC_APP_URL environment variable is not set. Email URLs will be broken."
+      );
+      return;
+    }
+    const unsubscribeUrl = `${appUrl}/api/email/unsubscribe?userId=${data.newMemberId}&type=group_invites`;
 
     await resend.emails.send({
       from: `${EMAIL_CONFIG.fromName} <${EMAIL_CONFIG.fromEmail}>`,
@@ -87,7 +94,7 @@ export async function sendGroupInviteEmail(
         groupName: data.groupName,
         groupEmoji: data.groupEmoji,
         addedByName: data.addedByName,
-        groupUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/groups`,
+        groupUrl: `${appUrl}/dashboard/groups`,
         unsubscribeUrl,
       }),
     });
@@ -114,9 +121,18 @@ export async function sendSettlementEmails(
 
         const emails = [];
 
+        // NEXT_PUBLIC_APP_URL should be set in environment variables
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+        if (!appUrl) {
+          console.error(
+            "[Email Error] NEXT_PUBLIC_APP_URL environment variable is not set. Skipping settlement emails."
+          );
+          return;
+        }
+
         // Email to person who owes (fromUser)
         if (fromUserEnabled) {
-          const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?userId=${settlement.fromUserId}&type=settlements`;
+          const unsubscribeUrl = `${appUrl}/api/email/unsubscribe?userId=${settlement.fromUserId}&type=settlements`;
           emails.push(
             resend.emails.send({
               from: `${EMAIL_CONFIG.fromName} <${EMAIL_CONFIG.fromEmail}>`,
@@ -130,7 +146,7 @@ export async function sendSettlementEmails(
                 isOwed: false,
                 otherPersonName: settlement.toUserName,
                 groupName: settlement.groupName,
-                settlementUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settle`,
+                settlementUrl: `${appUrl}/dashboard/settle`,
                 unsubscribeUrl,
               }),
             })
@@ -139,7 +155,7 @@ export async function sendSettlementEmails(
 
         // Email to person who is owed (toUser)
         if (toUserEnabled) {
-          const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?userId=${settlement.toUserId}&type=settlements`;
+          const unsubscribeUrl = `${appUrl}/api/email/unsubscribe?userId=${settlement.toUserId}&type=settlements`;
           emails.push(
             resend.emails.send({
               from: `${EMAIL_CONFIG.fromName} <${EMAIL_CONFIG.fromEmail}>`,
@@ -153,7 +169,7 @@ export async function sendSettlementEmails(
                 isOwed: true,
                 otherPersonName: settlement.fromUserName,
                 groupName: settlement.groupName,
-                settlementUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settle`,
+                settlementUrl: `${appUrl}/dashboard/settle`,
                 unsubscribeUrl,
               }),
             })
@@ -182,11 +198,19 @@ export async function sendPaymentConfirmationEmail(
       checkEmailPreference(data.toUserId, "emailPayments"),
     ]);
 
+    // NEXT_PUBLIC_APP_URL should be set in environment variables
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (!appUrl) {
+      console.error(
+        "[Email Error] NEXT_PUBLIC_APP_URL environment variable is not set. Skipping payment confirmation emails."
+      );
+      return;
+    }
     const emails = [];
 
     // Email to payer (fromUser)
     if (fromUserEnabled) {
-      const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?userId=${data.fromUserId}&type=payments`;
+      const unsubscribeUrl = `${appUrl}/api/email/unsubscribe?userId=${data.fromUserId}&type=payments`;
       emails.push(
         resend.emails.send({
           from: `${EMAIL_CONFIG.fromName} <${EMAIL_CONFIG.fromEmail}>`,
@@ -207,7 +231,7 @@ export async function sendPaymentConfirmationEmail(
 
     // Email to receiver (toUser)
     if (toUserEnabled) {
-      const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?userId=${data.toUserId}&type=payments`;
+      const unsubscribeUrl = `${appUrl}/api/email/unsubscribe?userId=${data.toUserId}&type=payments`;
       emails.push(
         resend.emails.send({
           from: `${EMAIL_CONFIG.fromName} <${EMAIL_CONFIG.fromEmail}>`,
@@ -252,7 +276,15 @@ export async function sendWeeklySummaryEmail(
       return;
     }
 
-    const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?userId=${data.userId}&type=weekly_summary`;
+    // NEXT_PUBLIC_APP_URL should be set in environment variables
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (!appUrl) {
+      console.error(
+        "[Email Error] NEXT_PUBLIC_APP_URL environment variable is not set. Skipping weekly summary email."
+      );
+      return;
+    }
+    const unsubscribeUrl = `${appUrl}/api/email/unsubscribe?userId=${data.userId}&type=weekly_summary`;
 
     await resend.emails.send({
       from: `${EMAIL_CONFIG.fromName} <${EMAIL_CONFIG.fromEmail}>`,
@@ -264,7 +296,7 @@ export async function sendWeeklySummaryEmail(
         totalOwedToYou: data.totalOwedToYou,
         netBalance: data.netBalance,
         pendingSettlements: data.pendingSettlements,
-        dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+        dashboardUrl: `${appUrl}/dashboard`,
         unsubscribeUrl,
       }),
     });
