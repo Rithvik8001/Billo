@@ -4,6 +4,7 @@ import db from "@/db/config/connection";
 import { settlements, users } from "@/db/models/schema";
 import { eq, or, and } from "drizzle-orm";
 import { settlementFiltersSchema, createSettlementSchema } from "@/lib/api/settlement-schemas";
+import { isValidUUID } from "@/lib/utils";
 
 export async function GET(request: Request) {
   try {
