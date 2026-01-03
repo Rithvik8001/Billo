@@ -10,12 +10,29 @@ import {
 } from "@/lib/ai/receipt-validator";
 import { createReceiptExtractionStream } from "@/lib/ai/stream-handler";
 import { isValidUUID } from "@/lib/utils";
+import { checkAiScanLimit } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   const { userId } = await auth();
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Check rate limit before processing
+  const rateLimitResult = await checkAiScanLimit(userId);
+
+  if (!rateLimitResult.allowed) {
+    return Response.json(
+      {
+        error: "Daily scan limit reached",
+        code: "RATE_LIMIT_EXCEEDED",
+        remaining: 0,
+        limit: rateLimitResult.limit,
+        resetsAt: rateLimitResult.resetsAt.toISOString(),
+      },
+      { status: 429 }
+    );
   }
 
   try {

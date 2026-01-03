@@ -211,22 +211,20 @@ export function ExtractionConfirmationDialog({
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Receipt Image Preview */}
           {imageUrl && (
-            <div className="border border-border rounded-lg overflow-hidden">
+            <div className="border border-border rounded-lg overflow-hidden relative w-full h-64">
               <Image
                 src={imageUrl}
                 alt="Receipt"
-                className="w-full h-auto max-h-64 object-contain"
+                fill
+                className="object-contain"
               />
             </div>
           )}
 
-          {/* Receipt Details */}
           <div className="space-y-3">
             <h3 className="text-heading-2">Receipt Details</h3>
 
-            {/* Merchant Name */}
             <div className="flex items-center gap-2.5">
               <div className="shrink-0">
                 <Store className="size-4 text-muted-foreground" />
@@ -247,7 +245,6 @@ export function ExtractionConfirmationDialog({
               </div>
             </div>
 
-            {/* Purchase Date */}
             <div className="flex items-center gap-2.5">
               <div className="shrink-0">
                 <CalendarIcon className="size-4 text-muted-foreground" />
@@ -283,7 +280,6 @@ export function ExtractionConfirmationDialog({
               </div>
             </div>
 
-            {/* Tax Amount */}
             <div className="flex items-center gap-2.5">
               <div className="shrink-0">
                 <DollarSign className="size-4 text-muted-foreground" />
@@ -311,7 +307,6 @@ export function ExtractionConfirmationDialog({
 
           <Separator />
 
-          {/* Items Section */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-heading-2">Items ({items.length})</h3>
@@ -356,7 +351,6 @@ export function ExtractionConfirmationDialog({
 
           <Separator />
 
-          {/* Summary */}
           <div className="space-y-2">
             <h3 className="text-heading-2">Summary</h3>
             <div className="space-y-2">
@@ -386,7 +380,6 @@ export function ExtractionConfirmationDialog({
             </div>
           </div>
 
-          {/* Actions */}
           <div className="flex items-center justify-end gap-3 pt-4">
             <Button
               variant="outline"

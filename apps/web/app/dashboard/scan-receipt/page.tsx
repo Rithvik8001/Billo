@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback } from "react";
 import { useReceiptUpload } from "@/hooks/use-receipt-upload";
 import { useFileHandler } from "@/hooks/use-file-handler";
+import { useAiUsage } from "@/hooks/use-ai-usage";
 import { useRouter } from "next/navigation";
 import { UploadDropzone } from "@/components/receipt-upload/upload-dropzone";
 import { UploadProgress } from "@/components/receipt-upload/upload-progress";
@@ -11,6 +12,8 @@ import { CompletedState } from "@/components/receipt-upload/completed-state";
 import { ErrorState } from "@/components/receipt-upload/error-state";
 import { InfoSection } from "@/components/receipt-upload/info-section";
 import { ExtractionConfirmationDialog } from "@/components/receipt-upload/extraction-confirmation-dialog";
+import { UsageIndicator } from "@/components/receipt-upload/usage-indicator";
+import { LimitReachedState } from "@/components/receipt-upload/limit-reached-state";
 import type { ReceiptExtractionResult } from "@/lib/ai/schemas";
 
 export default function ScanReceiptPage() {
@@ -21,17 +24,14 @@ export default function ScanReceiptPage() {
     cancelExtraction,
     reset,
   } = useReceiptUpload();
+  const {
+    usage,
+    isLoading: usageLoading,
+    refetch: refetchUsage,
+  } = useAiUsage();
   const router = useRouter();
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const fileHandler = useFileHandler(uploadReceipt);
-
-  // Open dialog when awaiting confirmation
-  useEffect(() => {
-    if (progress.state === "awaiting_confirmation") {
-      setDialogOpen(true);
-    }
-  }, [progress.state]);
 
   // Redirect on completion only if items were extracted
   useEffect(() => {
@@ -40,12 +40,20 @@ export default function ScanReceiptPage() {
       progress.receiptId &&
       (progress.itemCount || 0) > 0
     ) {
+      // Refetch usage after successful scan
+      refetchUsage();
       const timer = setTimeout(() => {
         router.push(`/dashboard/receipts/${progress.receiptId}`);
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [progress.state, progress.receiptId, progress.itemCount, router]);
+  }, [
+    progress.state,
+    progress.receiptId,
+    progress.itemCount,
+    router,
+    refetchUsage,
+  ]);
 
   // Cleanup preview URL
   useEffect(() => {
@@ -67,31 +75,58 @@ export default function ScanReceiptPage() {
     async (modifiedData: ReceiptExtractionResult) => {
       try {
         await confirmExtraction(modifiedData);
-        setDialogOpen(false);
+        // Refetch usage after successful confirmation
+        await refetchUsage();
       } catch (error) {
         console.error("Failed to confirm extraction:", error);
         // Error will be handled by the dialog or we can show a toast
       }
     },
-    [confirmExtraction]
+    [confirmExtraction, refetchUsage]
   );
 
   // Handle cancel
   const handleCancel = useCallback(() => {
     cancelExtraction();
-    setDialogOpen(false);
     fileHandler.reset();
   }, [cancelExtraction, fileHandler]);
 
   const displayImageUrl = fileHandler.previewUrl || progress.imageUrl;
 
+  // Show limit reached state if user has no remaining scans
+  if (usage && usage.remaining === 0 && progress.state === "idle") {
+    return (
+      <div className="space-y-12">
+        <div className="space-y-2">
+          <h1 className="text-display">Scan Receipt</h1>
+          <p className="text-body text-muted-foreground">
+            Take a photo of your receipt to automatically extract items
+          </p>
+        </div>
+        <LimitReachedState resetsAt={usage.resetsAt} />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-12">
       <div className="space-y-2">
-        <h1 className="text-display">Scan Receipt</h1>
-        <p className="text-body text-muted-foreground">
-          Take a photo of your receipt to automatically extract items
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-display">Scan Receipt</h1>
+            <p className="text-body text-muted-foreground">
+              Take a photo of your receipt to automatically extract items
+            </p>
+          </div>
+          {usage && (
+            <UsageIndicator
+              remaining={usage.remaining}
+              limit={usage.limit}
+              resetsAt={usage.resetsAt}
+              isLoading={usageLoading}
+            />
+          )}
+        </div>
       </div>
 
       {progress.state === "idle" && (
@@ -142,8 +177,12 @@ export default function ScanReceiptPage() {
         progress.extractedData &&
         progress.receiptId && (
           <ExtractionConfirmationDialog
-            open={dialogOpen}
-            onOpenChange={setDialogOpen}
+            open={true}
+            onOpenChange={(open) => {
+              if (!open) {
+                handleCancel();
+              }
+            }}
             receiptId={progress.receiptId}
             imageUrl={progress.imageUrl}
             extractedData={progress.extractedData as ReceiptExtractionResult}

@@ -41,15 +41,18 @@ export function useReceiptUpload(): UseReceiptUploadReturn {
         throw new Error("No receipt ID available");
       }
 
-      const response = await fetch(`/api/receipts/${progress.receiptId}/confirm`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          extractedData: modifiedData,
-        }),
-      });
+      const response = await fetch(
+        `/api/receipts/${progress.receiptId}/confirm`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            extractedData: modifiedData,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -186,6 +189,18 @@ export function useReceiptUpload(): UseReceiptUploadReturn {
         }),
       });
 
+      if (chatResponse.status === 429) {
+        const errorData = await chatResponse.json().catch(() => ({}));
+        const resetTime = errorData.resetsAt
+          ? new Date(errorData.resetsAt).toLocaleTimeString()
+          : "soon";
+        throw new Error(
+          errorData.code === "RATE_LIMIT_EXCEEDED"
+            ? `Daily limit reached. Resets at ${resetTime}`
+            : "Rate limit exceeded"
+        );
+      }
+
       if (!chatResponse.ok) {
         throw new Error("Failed to start AI extraction");
       }
@@ -228,8 +243,10 @@ export function useReceiptUpload(): UseReceiptUploadReturn {
                   ...prev,
                   state: "awaiting_confirmation",
                   progress: 100,
-                  itemCount: data.itemCount || prev.extractedData?.items?.length || 0,
-                  extractedData: data.data || latestPartialData || prev.extractedData,
+                  itemCount:
+                    data.itemCount || prev.extractedData?.items?.length || 0,
+                  extractedData:
+                    data.data || latestPartialData || prev.extractedData,
                 }));
               } else if (data.type === "completed") {
                 // Use the latest partial data or the completed data
@@ -238,7 +255,8 @@ export function useReceiptUpload(): UseReceiptUploadReturn {
                   ...prev,
                   state: "completed",
                   progress: 100,
-                  itemCount: data.itemCount || prev.extractedData?.items?.length || 0,
+                  itemCount:
+                    data.itemCount || prev.extractedData?.items?.length || 0,
                   extractedData: finalData || prev.extractedData,
                 }));
               } else if (data.type === "error") {
@@ -268,4 +286,3 @@ export function useReceiptUpload(): UseReceiptUploadReturn {
     reset,
   };
 }
-
