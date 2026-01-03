@@ -9,7 +9,7 @@ interface WeeklySummaryEmailProps {
   totalOwedToYou: string;
   netBalance: string;
   pendingSettlements: Array<{
-    id: number;
+    id: string;
     otherPersonName: string;
     amount: string;
     merchantName: string;

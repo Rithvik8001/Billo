@@ -22,7 +22,7 @@ export interface SettlementEmailData {
 }
 
 export interface PaymentEmailData {
-  settlementId: number;
+  settlementId: string;
   fromUserId: string;
   fromUserName: string;
   fromUserEmail: string;
@@ -42,7 +42,7 @@ export interface WeeklySummaryData {
   totalOwedToYou: string;
   netBalance: string;
   pendingSettlements: Array<{
-    id: number;
+    id: string;
     otherPersonName: string;
     amount: string;
     merchantName: string;
