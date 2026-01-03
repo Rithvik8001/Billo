@@ -5,7 +5,7 @@ export interface PendingReceipt {
   file: File;
   timestamp: number;
   status: "pending" | "uploading" | "processing" | "completed" | "error";
-  receiptId?: number;
+  receiptId?: string;
   imageUrl?: string;
   error?: string;
 }

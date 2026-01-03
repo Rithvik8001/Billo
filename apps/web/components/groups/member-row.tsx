@@ -26,7 +26,7 @@ import Image from "next/image";
 
 interface MemberRowProps {
   member: GroupMember;
-  groupId: number;
+  groupId: string;
   isAdmin: boolean;
   onRemoved: () => void;
   onRoleChanged: () => void;

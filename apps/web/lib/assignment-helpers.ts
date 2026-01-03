@@ -10,7 +10,7 @@ interface ReceiptItem {
  */
 export function calculatePersonTotals(
   items: ReceiptItem[],
-  assignments: Map<number, Set<string>>,
+  assignments: Map<string, Set<string>>,
   members: GroupMember[],
   tax: string | null = null
 ): PersonTotal[] {

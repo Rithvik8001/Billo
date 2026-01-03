@@ -27,12 +27,12 @@ interface DashboardClientProps {
 }
 
 interface RecentReceipt {
-  id: number;
+  id: string;
   merchantName: string | null;
   totalAmount: string | null;
   purchaseDate: Date | null;
   createdAt: Date;
-  groupId: number | null;
+  groupId: string | null;
 }
 
 export function DashboardClient({ userId, userName }: DashboardClientProps) {

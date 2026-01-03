@@ -21,7 +21,7 @@ interface ReceiptsClientProps {
 }
 
 interface ReceiptItem {
-  id: number;
+  id: string;
   merchantName: string | null;
   totalAmount: string | null;
   purchaseDate: Date | null;

@@ -12,7 +12,7 @@ import { EditItemsDialog } from "@/components/manual-entry/edit-items-dialog";
 import { Pencil } from "lucide-react";
 
 interface ReceiptItem {
-  id: number;
+  id: string;
   name: string;
   quantity: string;
   unitPrice: string;
@@ -22,7 +22,7 @@ interface ReceiptItem {
 
 interface ReceiptClientProps {
   receipt: {
-    id: number;
+    id: string;
     userId: string;
     imageUrl: string | null;
     merchantName: string | null;

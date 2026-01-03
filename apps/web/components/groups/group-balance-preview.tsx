@@ -6,7 +6,7 @@ import { useCurrency } from "@/contexts/currency-context";
 import type { GroupBalance } from "@/lib/settlement-types";
 
 interface GroupBalancePreviewProps {
-  groupId: number;
+  groupId: string;
   currentUserId: string;
 }
 

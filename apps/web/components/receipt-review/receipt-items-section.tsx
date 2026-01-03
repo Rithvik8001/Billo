@@ -12,7 +12,7 @@ import { useCurrency } from "@/contexts/currency-context";
 
 interface ReceiptItemsSectionProps {
   items: Array<{
-    id: number;
+    id: string;
     name: string;
     quantity: string;
     unitPrice: string;

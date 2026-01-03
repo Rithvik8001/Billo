@@ -32,7 +32,7 @@ interface User {
 interface AddMemberDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  groupId: number;
+  groupId: string;
   onSuccess: () => void;
 }
 

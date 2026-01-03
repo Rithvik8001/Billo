@@ -35,7 +35,7 @@ import Image from "next/image";
 interface ExtractionConfirmationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  receiptId: number;
+  receiptId: string;
   imageUrl?: string;
   extractedData: ReceiptExtractionResult;
   onConfirm: (modifiedData: ReceiptExtractionResult) => Promise<void>;

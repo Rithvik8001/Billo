@@ -12,7 +12,7 @@ import { useCurrency } from "@/contexts/currency-context";
 interface SettlementCardProps {
   settlement: SettlementWithUsers;
   currentUserId: string;
-  onSettle?: (settlementId: number) => void;
+  onSettle?: (settlementId: string) => void;
   isSettling?: boolean;
 }
 

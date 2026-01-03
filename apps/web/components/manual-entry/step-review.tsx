@@ -27,7 +27,7 @@ export function StepReview({
   totalAmount,
 }: StepReviewProps) {
   const receiptItems = items.map((item, index) => ({
-    id: index + 1,
+    id: `temp-${index}`,
     name: item.name,
     quantity: item.quantity,
     unitPrice: item.unitPrice,

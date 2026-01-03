@@ -35,7 +35,7 @@ interface User {
 interface AddMemberSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  groupId: number;
+  groupId: string;
   onSuccess: () => void;
 }
 

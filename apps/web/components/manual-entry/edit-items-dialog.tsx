@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { ManualEntryItem } from "@/hooks/use-manual-entry";
 
 interface ReceiptItem {
-  id: number;
+  id: string;
   name: string;
   quantity: string;
   unitPrice: string;
@@ -29,7 +29,7 @@ interface ReceiptItem {
 interface EditItemsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  receiptId: number;
+  receiptId: string;
   items: ReceiptItem[];
   onSuccess: () => void;
 }
@@ -59,13 +59,14 @@ export function EditItemsDialog({
   }, [open, initialItems]);
 
   const handleAddItem = () => {
+    const tempId = `temp-${Date.now()}-${Math.random()}`;
     const newItem: ReceiptItem & { tempId: string } = {
-      id: 0,
+      id: tempId,
       name: "",
       quantity: "1",
       unitPrice: "",
       totalPrice: "0.00",
-      tempId: `temp-${Date.now()}-${Math.random()}`,
+      tempId,
     };
     setItems([...items, newItem]);
     setEditingId(newItem.tempId);
