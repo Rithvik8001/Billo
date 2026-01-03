@@ -79,7 +79,8 @@ export function EditItemsDialog({
       items.map((item) => {
         if (item.tempId === tempId) {
           // Exclude 'id' from updates since we use tempId for identification
-          const { id, ...updateFields } = updates;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { id: _id, ...updateFields } = updates;
           const updated = { ...item, ...updateFields };
           // Auto-calculate totalPrice
           if (

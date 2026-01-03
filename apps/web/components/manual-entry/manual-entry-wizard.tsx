@@ -55,8 +55,6 @@ export function ManualEntryWizard() {
           <StepReview
             receiptDetails={state.receiptDetails}
             items={state.items}
-            subtotal={subtotal}
-            taxAmount={taxAmount}
             totalAmount={totalAmount}
           />
         );

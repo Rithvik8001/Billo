@@ -45,7 +45,7 @@ interface ExtractionConfirmationDialogProps {
 export function ExtractionConfirmationDialog({
   open,
   onOpenChange,
-  receiptId,
+  receiptId: _receiptId, // eslint-disable-line @typescript-eslint/no-unused-vars
   imageUrl,
   extractedData,
   onConfirm,
