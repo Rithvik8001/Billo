@@ -13,6 +13,7 @@ import {
 
 import { BalanceSummary } from "@/components/settlements/balance-summary";
 import { SettleDialog } from "@/components/settlements/settle-dialog";
+import { UnmarkSettlementDialog } from "@/components/settlements/unmark-settlement-dialog";
 import {
   Table,
   TableBody,
@@ -60,6 +61,10 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
   const [settlingId, setSettlingId] = useState<string | null>(null);
   const [settleDialogOpen, setSettleDialogOpen] = useState(false);
   const [settlementToSettle, setSettlementToSettle] =
+    useState<SettlementWithUsers | null>(null);
+  const [unmarkingId, setUnmarkingId] = useState<string | null>(null);
+  const [unmarkDialogOpen, setUnmarkDialogOpen] = useState(false);
+  const [settlementToUnmark, setSettlementToUnmark] =
     useState<SettlementWithUsers | null>(null);
 
   // Initialize from URL params
@@ -231,6 +236,42 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
       console.error(error);
     } finally {
       setSettlingId(null);
+    }
+  };
+
+  const handleUnmark = (settlement: SettlementWithUsers) => {
+    setSettlementToUnmark(settlement);
+    setUnmarkDialogOpen(true);
+  };
+
+  const confirmUnmark = async () => {
+    if (!settlementToUnmark) return;
+
+    setUnmarkingId(settlementToUnmark.id);
+    try {
+      const response = await fetch(
+        `/api/settlements/${settlementToUnmark.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: "pending" }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to mark as unpaid");
+      }
+
+      toast.success("Settlement marked as unpaid and notifications sent");
+      setUnmarkDialogOpen(false);
+      setSettlementToUnmark(null);
+      router.refresh();
+      loadData();
+    } catch (error) {
+      toast.error("Failed to mark settlement as unpaid");
+      console.error(error);
+    } finally {
+      setUnmarkingId(null);
     }
   };
 
@@ -543,6 +584,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Amount</TableHead>
                     <TableHead className="text-right">Settled Date</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -628,6 +670,18 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
                             </span>
                           )}
                         </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleUnmark(settlement)}
+                            disabled={unmarkingId === settlement.id}
+                          >
+                            {unmarkingId === settlement.id
+                              ? "Unmarking..."
+                              : "Mark as Unpaid"}
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     );
                   })}
@@ -679,6 +733,24 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
                 settlementToSettle.fromUser.email.split("@")[0]
           }
           isLoading={settlingId === settlementToSettle.id}
+        />
+      )}
+
+      {/* Unmark Settlement Dialog */}
+      {settlementToUnmark && (
+        <UnmarkSettlementDialog
+          open={unmarkDialogOpen}
+          onOpenChange={setUnmarkDialogOpen}
+          onConfirm={confirmUnmark}
+          amount={formatAmount(settlementToUnmark.amount)}
+          userName={
+            settlementToUnmark.fromUserId === userId
+              ? settlementToUnmark.toUser.name ||
+                settlementToUnmark.toUser.email.split("@")[0]
+              : settlementToUnmark.fromUser.name ||
+                settlementToUnmark.fromUser.email.split("@")[0]
+          }
+          isLoading={unmarkingId === settlementToUnmark.id}
         />
       )}
     </div>

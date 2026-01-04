@@ -34,6 +34,19 @@ export interface PaymentEmailData {
   settledAt: string;
 }
 
+export interface PaymentUnmarkedEmailData {
+  settlementId: string;
+  fromUserId: string;
+  fromUserName: string;
+  fromUserEmail: string;
+  toUserId: string;
+  toUserName: string;
+  toUserEmail: string;
+  formattedAmount: string;
+  merchantName: string;
+  unmarkedAt: string;
+}
+
 export interface WeeklySummaryData {
   userId: string;
   userName: string;

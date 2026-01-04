@@ -134,7 +134,10 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     };
 
     // Set settledAt when marking as completed
-    if (validatedData.status === "completed" && existingSettlement.status !== "completed") {
+    if (
+      validatedData.status === "completed" &&
+      existingSettlement.status !== "completed"
+    ) {
       updateData.settledAt = new Date();
     } else if (validatedData.status !== "completed") {
       updateData.settledAt = null;
@@ -144,7 +147,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       updateData.notes = validatedData.notes || null;
     }
 
-    const [updatedSettlement] = await db
+    await db
       .update(settlements)
       .set(updateData)
       .where(eq(settlements.id, settlementId))
@@ -160,7 +163,9 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       const settlementForEmail = await db.query.settlements.findFirst({
         where: eq(settlements.id, settlementId),
         with: {
-          fromUser: { columns: { id: true, name: true, email: true, currencyCode: true } },
+          fromUser: {
+            columns: { id: true, name: true, email: true, currencyCode: true },
+          },
           toUser: { columns: { id: true, name: true, email: true } },
           receipt: { columns: { merchantName: true } },
         },
@@ -168,9 +173,8 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
       if (settlementForEmail && settlementForEmail.settledAt) {
         const { formatAmount } = await import("@/lib/currency");
-        const { sendPaymentConfirmationEmail } = await import(
-          "@/lib/email/email-helpers"
-        );
+        const { sendPaymentConfirmationEmail } =
+          await import("@/lib/email/email-helpers");
 
         await sendPaymentConfirmationEmail({
           settlementId: settlementForEmail.id,
@@ -185,7 +189,51 @@ export async function PATCH(request: Request, { params }: RouteParams) {
             settlementForEmail.fromUser.currencyCode || "USD"
           ),
           merchantName: settlementForEmail.receipt?.merchantName || "Unknown",
-          settledAt: new Date(settlementForEmail.settledAt).toLocaleDateString(),
+          settledAt: new Date(
+            settlementForEmail.settledAt
+          ).toLocaleDateString(),
+        });
+      }
+    }
+    // --- END EMAIL NOTIFICATION ---
+
+    // --- EMAIL NOTIFICATION: Payment Unmarked ---
+    // Only send when status changes FROM "completed" TO "pending"
+    if (
+      existingSettlement.status === "completed" &&
+      validatedData.status === "pending"
+    ) {
+      // Fetch settlement with full relations for email
+      const settlementForEmail = await db.query.settlements.findFirst({
+        where: eq(settlements.id, settlementId),
+        with: {
+          fromUser: {
+            columns: { id: true, name: true, email: true, currencyCode: true },
+          },
+          toUser: { columns: { id: true, name: true, email: true } },
+          receipt: { columns: { merchantName: true } },
+        },
+      });
+
+      if (settlementForEmail) {
+        const { formatAmount } = await import("@/lib/currency");
+        const { sendPaymentUnmarkedEmail } =
+          await import("@/lib/email/email-helpers");
+
+        await sendPaymentUnmarkedEmail({
+          settlementId: settlementForEmail.id,
+          fromUserId: settlementForEmail.fromUser.id,
+          fromUserName: settlementForEmail.fromUser.name || "Unknown",
+          fromUserEmail: settlementForEmail.fromUser.email,
+          toUserId: settlementForEmail.toUser.id,
+          toUserName: settlementForEmail.toUser.name || "Unknown",
+          toUserEmail: settlementForEmail.toUser.email,
+          formattedAmount: formatAmount(
+            settlementForEmail.amount,
+            settlementForEmail.fromUser.currencyCode || "USD"
+          ),
+          merchantName: settlementForEmail.receipt?.merchantName || "Unknown",
+          unmarkedAt: new Date().toLocaleDateString(),
         });
       }
     }
@@ -298,4 +346,3 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     );
   }
 }
-

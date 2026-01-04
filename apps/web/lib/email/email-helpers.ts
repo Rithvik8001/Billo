@@ -6,11 +6,13 @@ import type {
   GroupInviteEmailData,
   SettlementEmailData,
   PaymentEmailData,
+  PaymentUnmarkedEmailData,
   WeeklySummaryData,
 } from "./email-types";
 import { AddedToGroupEmail } from "@/emails/added-to-group";
 import { NewSettlementEmail } from "@/emails/new-settlement";
 import { SettlementPaidEmail } from "@/emails/settlement-paid";
+import { SettlementUnmarkedEmail } from "@/emails/settlement-unmarked";
 import { WeeklySummaryEmail } from "@/emails/weekly-summary";
 
 /**
@@ -255,6 +257,76 @@ export async function sendPaymentConfirmationEmail(
       `[Email] Payment confirmation emails sent for settlement ${data.settlementId}`
     );
   }, "Payment Confirmation");
+}
+
+/**
+ * Send payment unmarked emails (to both parties)
+ */
+export async function sendPaymentUnmarkedEmail(
+  data: PaymentUnmarkedEmailData
+): Promise<void> {
+  await sendEmailSafely(async () => {
+    // Check preferences for both parties
+    const [fromUserEnabled, toUserEnabled] = await Promise.all([
+      checkEmailPreference(data.fromUserId, "emailPayments"),
+      checkEmailPreference(data.toUserId, "emailPayments"),
+    ]);
+
+    // NEXT_PUBLIC_APP_URL should be set in environment variables
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    if (!appUrl) {
+      console.error(
+        "[Email Error] NEXT_PUBLIC_APP_URL environment variable is not set. Skipping payment unmarked emails."
+      );
+      return;
+    }
+    const emails = [];
+
+    // Email to payer (fromUser)
+    if (fromUserEnabled) {
+      const unsubscribeUrl = `${appUrl}/api/email/unsubscribe?userId=${data.fromUserId}&type=payments`;
+      emails.push(
+        resend.emails.send({
+          from: `${EMAIL_CONFIG.fromName} <${EMAIL_CONFIG.fromEmail}>`,
+          to: data.fromUserEmail,
+          subject: `Payment Unmarked - You owe ${data.formattedAmount} to ${data.toUserName}`,
+          react: SettlementUnmarkedEmail({
+            recipientName: data.fromUserName,
+            amount: data.formattedAmount,
+            otherPersonName: data.toUserName,
+            merchantName: data.merchantName,
+            isPayer: true,
+            unsubscribeUrl,
+          }),
+        })
+      );
+    }
+
+    // Email to receiver (toUser)
+    if (toUserEnabled) {
+      const unsubscribeUrl = `${appUrl}/api/email/unsubscribe?userId=${data.toUserId}&type=payments`;
+      emails.push(
+        resend.emails.send({
+          from: `${EMAIL_CONFIG.fromName} <${EMAIL_CONFIG.fromEmail}>`,
+          to: data.toUserEmail,
+          subject: `Payment Unmarked - ${data.fromUserName} owes you ${data.formattedAmount}`,
+          react: SettlementUnmarkedEmail({
+            recipientName: data.toUserName,
+            amount: data.formattedAmount,
+            otherPersonName: data.fromUserName,
+            merchantName: data.merchantName,
+            isPayer: false,
+            unsubscribeUrl,
+          }),
+        })
+      );
+    }
+
+    await Promise.all(emails);
+    console.log(
+      `[Email] Payment unmarked emails sent for settlement ${data.settlementId}`
+    );
+  }, "Payment Unmarked");
 }
 
 /**
