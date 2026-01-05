@@ -8,6 +8,8 @@ import { UserButton } from "@clerk/nextjs";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "motion/react";
+import { slideDown, staggerContainerFast } from "@/lib/motion";
 
 const navItems = [
   { href: "/dashboard", label: "Home", icon: Home },
@@ -88,37 +90,64 @@ export function TopNav() {
       </div>
 
       {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-border shadow-lg">
-          <div className="px-6 py-4 space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-                    isActive
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                  )}
-                >
-                  <Icon className="size-5" />
-                  {item.label}
-                </Link>
-              );
-            })}
-            <div className="pt-4 border-t border-border">
-              <div className="px-4">
-                <UserButton />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-border shadow-lg overflow-hidden"
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={slideDown}
+          >
+            <motion.div
+              className="px-6 py-4 space-y-1"
+              variants={staggerContainerFast}
+              initial="initial"
+              animate="animate"
+            >
+              {navItems.map((item, index) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href;
+                return (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.2,
+                      delay: index * 0.05,
+                    }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
+                        isActive
+                          ? "bg-primary/10 text-primary"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      )}
+                    >
+                      <Icon className="size-5" />
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                );
+              })}
+              <motion.div
+                className="pt-4 border-t border-border"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: navItems.length * 0.05 + 0.1 }}
+              >
+                <div className="px-4">
+                  <UserButton />
+                </div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

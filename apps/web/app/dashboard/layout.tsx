@@ -2,6 +2,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { TopNav } from "@/components/top-nav";
 import { CurrencyProviderWrapper } from "@/components/currency-provider-wrapper";
+import { PageTransition } from "@/components/ui/page-transition";
 import db from "@/db/config/connection";
 import { users } from "@/db/models/schema";
 import { eq } from "drizzle-orm";
@@ -77,7 +78,9 @@ export default async function DashboardLayout({
       <div className="min-h-screen bg-white">
         <TopNav />
         <main className="pt-16">
-          <div className="max-w-3xl mx-auto px-6 py-8">{children}</div>
+          <div className="max-w-3xl mx-auto px-6 py-8">
+            <PageTransition>{children}</PageTransition>
+          </div>
         </main>
       </div>
     </CurrencyProviderWrapper>

@@ -19,6 +19,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useCurrency } from "@/contexts/currency-context";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 import type { BalanceSummary, Settlement } from "@/lib/settlement-types";
 
 interface DashboardClientProps {
@@ -132,7 +133,14 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
               <DollarSign className="size-5 text-red-500" />
             </div>
             <p className="text-heading-1 text-red-600 mb-1">
-              {isLoading ? "..." : formatAmount(summary.totalYouOwe.toFixed(2))}
+              {isLoading ? (
+                "..."
+              ) : (
+                <AnimatedNumber
+                  value={summary.totalYouOwe}
+                  formatValue={(num) => formatAmount(num.toFixed(2))}
+                />
+              )}
             </p>
             <p className="text-small text-muted-foreground">
               {summary.pendingYouOweCount} pending settlement
@@ -150,9 +158,14 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
               <TrendingUp className="size-5 text-green-500" />
             </div>
             <p className="text-heading-1 text-green-600 mb-1">
-              {isLoading
-                ? "..."
-                : formatAmount(summary.totalOwedToYou.toFixed(2))}
+              {isLoading ? (
+                "..."
+              ) : (
+                <AnimatedNumber
+                  value={summary.totalOwedToYou}
+                  formatValue={(num) => formatAmount(num.toFixed(2))}
+                />
+              )}
             </p>
             <p className="text-small text-muted-foreground">
               {summary.completedCount} completed settlement

@@ -1,6 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion } from "motion/react";
+import { scaleIn, fadeInUp } from "@/lib/motion";
 
 interface CompletedStateProps {
   imageUrl?: string;
@@ -23,56 +27,120 @@ export function CompletedState({
       <div className="flex flex-col items-center text-center">
         {hasItems ? (
           <>
-            <div className="bg-primary/10 rounded-full p-6 mb-4">
+            <motion.div
+              className="bg-primary/10 rounded-full p-6 mb-4"
+              initial={scaleIn.initial}
+              animate={scaleIn.animate}
+              transition={scaleIn.transition}
+            >
               <CheckCircle2 className="size-12 text-primary" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Receipt Processed!</h3>
-            <p className="text-muted-foreground mb-6">
+            </motion.div>
+            <motion.h3
+              className="text-xl font-semibold mb-2"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.3 }}
+            >
+              Receipt Processed!
+            </motion.h3>
+            <motion.p
+              className="text-muted-foreground mb-6"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.3 }}
+            >
               Successfully extracted {actualItemCount} {actualItemCount === 1 ? "item" : "items"}
-            </p>
+            </motion.p>
             {imageUrl && (
-              <Image
-                src={imageUrl}
-                alt="Receipt"
-                width={512}
-                height={512}
-                className="w-full max-w-md h-auto rounded-lg object-contain border mb-6"
-                unoptimized
-              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.4, duration: 0.3 }}
+                className="mb-6"
+              >
+                <Image
+                  src={imageUrl}
+                  alt="Receipt"
+                  width={512}
+                  height={512}
+                  className="w-full max-w-md h-auto rounded-lg object-contain border"
+                  unoptimized
+                />
+              </motion.div>
             )}
-            <p className="text-sm text-muted-foreground">
+            <motion.p
+              className="text-sm text-muted-foreground"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.3 }}
+            >
               Redirecting to receipt review...
-            </p>
+            </motion.p>
           </>
         ) : (
           <>
-            <div className="bg-yellow-500/10 rounded-full p-6 mb-4">
+            <motion.div
+              className="bg-yellow-500/10 rounded-full p-6 mb-4"
+              initial={scaleIn.initial}
+              animate={scaleIn.animate}
+              transition={scaleIn.transition}
+            >
               <AlertCircle className="size-12 text-yellow-600" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">No Receipt Detected</h3>
-            <p className="text-muted-foreground mb-2">
+            </motion.div>
+            <motion.h3
+              className="text-xl font-semibold mb-2"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.3 }}
+            >
+              No Receipt Detected
+            </motion.h3>
+            <motion.p
+              className="text-muted-foreground mb-2"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.3 }}
+            >
               Image uploaded successfully, but no items were detected.
-            </p>
-            <p className="text-sm text-muted-foreground mb-6">
+            </motion.p>
+            <motion.p
+              className="text-sm text-muted-foreground mb-6"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.3 }}
+            >
               This might not be a receipt, or the image quality is too low. Please try uploading a clear receipt image.
-            </p>
+            </motion.p>
             {imageUrl && (
-              <Image
-                src={imageUrl}
-                alt="Uploaded image"
-                width={512}
-                height={512}
-                className="w-full max-w-md h-auto rounded-lg object-contain border mb-6"
-                unoptimized
-              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.5, duration: 0.3 }}
+                className="mb-6"
+              >
+                <Image
+                  src={imageUrl}
+                  alt="Uploaded image"
+                  width={512}
+                  height={512}
+                  className="w-full max-w-md h-auto rounded-lg object-contain border"
+                  unoptimized
+                />
+              </motion.div>
             )}
             {onRetry && (
-              <Button
-                onClick={onRetry}
-                className="rounded-2xl"
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.3 }}
               >
-                Try Another Image
-              </Button>
+                <Button
+                  onClick={onRetry}
+                  className="rounded-2xl"
+                >
+                  Try Another Image
+                </Button>
+              </motion.div>
             )}
           </>
         )}

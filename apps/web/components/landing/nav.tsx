@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { motion } from "motion/react";
+import { fadeInUp } from "@/lib/motion";
 
 export default function Nav() {
   const { isSignedIn } = useAuth();
@@ -17,7 +19,12 @@ export default function Nav() {
 
   return (
     <>
-      <nav className="border-b h-16 flex items-center justify-between px-4 md:px-6 relative z-40 bg-[#F4EDEB]">
+      <motion.nav
+        className="border-b h-16 flex items-center justify-between px-4 md:px-6 relative z-40 bg-[#F4EDEB]"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      >
         <div className="flex items-center h-full">
           <Image
             src="/web-logo.png"
@@ -63,7 +70,7 @@ export default function Nav() {
             <Menu className="w-6 h-6" />
           )}
         </button>
-      </nav>
+      </motion.nav>
 
       <div
         className={`sm:hidden fixed inset-0 bg-[#F4EDEB] z-30 transition-all duration-300 ${

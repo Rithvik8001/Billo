@@ -7,6 +7,8 @@ import { StepReceiptDetails } from "./step-receipt-details";
 import { StepAddItems } from "./step-add-items";
 import { StepReview } from "./step-review";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { fadeInUpFast, springConfigFast } from "@/lib/motion";
 
 export function ManualEntryWizard() {
   const {
@@ -85,7 +87,7 @@ export function ManualEntryWizard() {
             {[1, 2, 3].map((step) => (
               <div key={step} className="flex items-center flex-1">
                 <div className="flex flex-col items-center flex-1">
-                  <div
+                  <motion.div
                     className={`size-10 rounded-full flex items-center justify-center font-semibold transition-colors ${
                       state.step === step
                         ? "bg-primary text-primary-foreground"
@@ -93,9 +95,13 @@ export function ManualEntryWizard() {
                         ? "bg-primary/20 text-primary"
                         : "bg-muted text-muted-foreground"
                     }`}
+                    animate={{
+                      scale: state.step === step ? 1.1 : 1,
+                    }}
+                    transition={springConfigFast}
                   >
                     {step}
-                  </div>
+                  </motion.div>
                   <p
                     className={`text-small mt-2 ${
                       state.step === step
@@ -111,10 +117,13 @@ export function ManualEntryWizard() {
                   </p>
                 </div>
                 {step < 3 && (
-                  <div
+                  <motion.div
                     className={`h-0.5 flex-1 mx-2 ${
                       state.step > step ? "bg-primary" : "bg-muted"
                     }`}
+                    initial={{ scaleX: state.step > step ? 1 : 0 }}
+                    animate={{ scaleX: state.step > step ? 1 : 0 }}
+                    transition={{ duration: 0.3 }}
                   />
                 )}
               </div>
@@ -124,7 +133,17 @@ export function ManualEntryWizard() {
       </Card>
 
       {/* Step Content */}
-      {renderStep()}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={state.step}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.25, ease: "easeInOut" }}
+        >
+          {renderStep()}
+        </motion.div>
+      </AnimatePresence>
 
       {/* Error Display */}
       {error && (
