@@ -65,7 +65,7 @@ export function ReceiptClient({
   return (
     <div className="space-y-12">
       <div className="space-y-1">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-h1">Receipt Review</h1>
             <p className="text-body text-muted-foreground">
@@ -73,7 +73,7 @@ export function ReceiptClient({
             </p>
           </div>
           {isManualReceipt && isOwner && (
-            <Button variant="outline" onClick={() => setEditDialogOpen(true)}>
+            <Button variant="outline" onClick={() => setEditDialogOpen(true)} className="w-full md:w-auto">
               <Pencil className="size-4 mr-2" />
               Edit Items
             </Button>

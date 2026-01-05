@@ -1,9 +1,10 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { CurrencyProviderWrapper } from "@/components/currency-provider-wrapper";
 import { PageTransition } from "@/components/ui/page-transition";
+import { UserButton } from "@clerk/nextjs";
 import db from "@/db/config/connection";
 import { users } from "@/db/models/schema";
 import { eq } from "drizzle-orm";
@@ -80,8 +81,21 @@ export default async function DashboardLayout({
         <AppSidebar />
         <SidebarInset>
           <div className="flex flex-1 flex-col">
+            {/* Mobile Header */}
+            <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-border/60 bg-background">
+              <SidebarTrigger />
+              <UserButton
+                afterSignOutUrl="/"
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: "size-8",
+                    userButtonPopoverCard: "shadow-lg",
+                  },
+                }}
+              />
+            </div>
             <main className="flex-1">
-              <div className="max-w-[900px] mx-auto px-8 py-12">
+              <div className="max-w-[900px] mx-auto px-4 md:px-8 py-6 md:py-12">
                 <PageTransition>{children}</PageTransition>
               </div>
             </main>

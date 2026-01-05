@@ -385,7 +385,65 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
               )}
             </p>
           </div>
-          <Card>
+          
+          {/* Mobile Card Layout */}
+          <div className="md:hidden space-y-3">
+            {youOwe.map((settlement) => {
+              const otherUser = settlement.toUser;
+              return (
+                <Card key={settlement.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3 mb-3">
+                      {renderUserAvatar(otherUser)}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-body">
+                          {otherUser.name || otherUser.email.split("@")[0]}
+                        </p>
+                        <p className="text-small text-muted-foreground">
+                          {otherUser.email}
+                        </p>
+                      </div>
+                      <span className="font-medium text-body font-mono shrink-0">
+                        -{formatAmount(settlement.amount)}
+                      </span>
+                    </div>
+                    <div className="space-y-2 mb-3">
+                      {settlement.receipt && (
+                        <Link
+                          href={`/dashboard/receipts/${settlement.receipt.id}`}
+                          className="text-small text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+                        >
+                          <Receipt className="size-3.5" />
+                          <span>
+                            {settlement.receipt.merchantName || "Receipt"}
+                          </span>
+                        </Link>
+                      )}
+                      {settlement.group && (
+                        <p className="text-small text-muted-foreground">
+                          {settlement.group.emoji} {settlement.group.name}
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleSettle(settlement)}
+                      disabled={settlingId === settlement.id}
+                      className="w-full"
+                    >
+                      {settlingId === settlement.id
+                        ? "Marking..."
+                        : "Mark as Paid"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table Layout */}
+          <Card className="hidden md:block">
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
@@ -484,7 +542,64 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
               )}
             </p>
           </div>
-          <Card>
+          
+          {/* Mobile Card Layout */}
+          <div className="md:hidden space-y-3">
+            {youAreOwed.map((settlement) => {
+              const otherUser = settlement.fromUser;
+              return (
+                <Card key={settlement.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3 mb-3">
+                      {renderUserAvatar(otherUser)}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-body">
+                          {otherUser.name || otherUser.email.split("@")[0]}
+                        </p>
+                        <p className="text-small text-muted-foreground">
+                          {otherUser.email}
+                        </p>
+                      </div>
+                      <span className="font-medium text-body font-mono shrink-0">
+                        +{formatAmount(settlement.amount)}
+                      </span>
+                    </div>
+                    <div className="space-y-2 mb-3">
+                      {settlement.receipt && (
+                        <Link
+                          href={`/dashboard/receipts/${settlement.receipt.id}`}
+                          className="text-small text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+                        >
+                          <Receipt className="size-3.5" />
+                          <span>
+                            {settlement.receipt.merchantName || "Receipt"}
+                          </span>
+                        </Link>
+                      )}
+                      {settlement.group && (
+                        <p className="text-small text-muted-foreground">
+                          {settlement.group.emoji} {settlement.group.name}
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      size="sm"
+                      onClick={() => handleSettle(settlement)}
+                      disabled={settlingId === settlement.id}
+                      className="w-full"
+                    >
+                      {settlingId === settlement.id
+                        ? "Marking..."
+                        : "Mark as Paid"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table Layout */}
+          <Card className="hidden md:block">
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
@@ -573,7 +688,88 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
       {completedSettlements.length > 0 && statusFilter !== "pending" && (
         <div className="space-y-4">
           <h2 className="text-h2">Completed Settlements</h2>
-          <Card>
+          
+          {/* Mobile Card Layout */}
+          <div className="md:hidden space-y-3">
+            {completedSettlements.map((settlement) => {
+              const isOwed = settlement.toUserId === userId;
+              const otherUser = isOwed
+                ? settlement.fromUser
+                : settlement.toUser;
+              return (
+                <Card key={settlement.id}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3 mb-3">
+                      {renderUserAvatar(otherUser)}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-body">
+                          {otherUser.name || otherUser.email.split("@")[0]}
+                        </p>
+                        <p className="text-small text-muted-foreground">
+                          {otherUser.email}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-end gap-1 shrink-0">
+                        <Badge variant="completed" className="text-xs">
+                          <CheckCircle2 className="size-3 mr-1" />
+                          Paid
+                        </Badge>
+                        <span className="font-medium text-body font-mono">
+                          {isOwed ? "+" : "-"}
+                          {formatAmount(settlement.amount)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="space-y-2 mb-3">
+                      {settlement.receipt && (
+                        <Link
+                          href={`/dashboard/receipts/${settlement.receipt.id}`}
+                          className="text-small text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1.5"
+                        >
+                          <Receipt className="size-3.5" />
+                          <span>
+                            {settlement.receipt.merchantName || "Receipt"}
+                          </span>
+                        </Link>
+                      )}
+                      {settlement.group && (
+                        <p className="text-small text-muted-foreground">
+                          {settlement.group.emoji} {settlement.group.name}
+                        </p>
+                      )}
+                      {settlement.settledAt && (
+                        <p className="text-small text-muted-foreground">
+                          Settled:{" "}
+                          {new Date(settlement.settledAt).toLocaleDateString(
+                            "en-US",
+                            {
+                              month: "short",
+                              day: "numeric",
+                              year: "numeric",
+                            }
+                          )}
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleUnmark(settlement)}
+                      disabled={unmarkingId === settlement.id}
+                      className="w-full"
+                    >
+                      {unmarkingId === settlement.id
+                        ? "Unmarking..."
+                        : "Unmark"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table Layout */}
+          <Card className="hidden md:block">
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
@@ -675,7 +871,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
                           >
                             {unmarkingId === settlement.id
                               ? "Unmarking..."
-                              : "Mark as Unpaid"}
+                              : "Unmark"}
                           </Button>
                         </TableCell>
                       </TableRow>

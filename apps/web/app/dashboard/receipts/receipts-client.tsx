@@ -124,33 +124,37 @@ export function ReceiptsClient({ userId }: ReceiptsClientProps) {
           </div>
         </div>
       ) : (
-        <Card>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Merchant</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead className="text-right"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {receipts.map((receipt) => (
-                  <TableRow
-                    key={receipt.id}
-                    className="cursor-pointer"
-                    onClick={() => {
-                      window.location.href = `/dashboard/receipts/${receipt.id}`;
-                    }}
-                  >
-                    <TableCell>
-                      <p className="font-medium text-body">
-                        {receipt.merchantName || "Receipt"}
-                      </p>
-                    </TableCell>
-                    <TableCell>
+        <>
+          {/* Mobile Card Layout */}
+          <div className="md:hidden space-y-3">
+            {receipts.map((receipt) => (
+              <Card
+                key={receipt.id}
+                className="cursor-pointer transition-colors hover:bg-muted/50"
+                onClick={() => {
+                  window.location.href = `/dashboard/receipts/${receipt.id}`;
+                }}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <p className="font-medium text-body truncate">
+                          {receipt.merchantName || "Receipt"}
+                        </p>
+                        <Badge
+                          variant={
+                            receipt.status === "completed"
+                              ? "completed"
+                              : receipt.status === "failed"
+                              ? "cancelled"
+                              : "pending"
+                          }
+                          className="capitalize shrink-0"
+                        >
+                          {receipt.status}
+                        </Badge>
+                      </div>
                       <span className="text-small text-muted-foreground">
                         {receipt.purchaseDate
                           ? new Date(receipt.purchaseDate).toLocaleDateString(
@@ -170,41 +174,104 @@ export function ReceiptsClient({ userId }: ReceiptsClientProps) {
                               }
                             )}
                       </span>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          receipt.status === "completed"
-                            ? "completed"
-                            : receipt.status === "failed"
-                            ? "cancelled"
-                            : "pending"
-                        }
-                        className="capitalize"
-                      >
-                        {receipt.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {receipt.totalAmount ? (
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {receipt.totalAmount && (
                         <p className="font-medium text-body font-mono">
                           {formatAmount(receipt.totalAmount)}
                         </p>
-                      ) : (
-                        <span className="text-small text-muted-foreground">
-                          —
-                        </span>
                       )}
-                    </TableCell>
-                    <TableCell className="text-right">
                       <ArrowRight className="size-4 text-muted-foreground opacity-40" />
-                    </TableCell>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Desktop Table Layout */}
+          <Card className="hidden md:block">
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Merchant</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead className="text-right"></TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                </TableHeader>
+                <TableBody>
+                  {receipts.map((receipt) => (
+                    <TableRow
+                      key={receipt.id}
+                      className="cursor-pointer"
+                      onClick={() => {
+                        window.location.href = `/dashboard/receipts/${receipt.id}`;
+                      }}
+                    >
+                      <TableCell>
+                        <p className="font-medium text-body">
+                          {receipt.merchantName || "Receipt"}
+                        </p>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-small text-muted-foreground">
+                          {receipt.purchaseDate
+                            ? new Date(receipt.purchaseDate).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                }
+                              )
+                            : new Date(receipt.createdAt).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                }
+                              )}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            receipt.status === "completed"
+                              ? "completed"
+                              : receipt.status === "failed"
+                              ? "cancelled"
+                              : "pending"
+                          }
+                          className="capitalize"
+                        >
+                          {receipt.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {receipt.totalAmount ? (
+                          <p className="font-medium text-body font-mono">
+                            {formatAmount(receipt.totalAmount)}
+                          </p>
+                        ) : (
+                          <span className="text-small text-muted-foreground">
+                            —
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <ArrowRight className="size-4 text-muted-foreground opacity-40" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </>
       )}
     </div>
   );

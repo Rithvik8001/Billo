@@ -61,15 +61,17 @@ export function ItemAssignmentGrid({
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle>Assign Items</CardTitle>
-          <Button variant="outline" size="sm" onClick={onSplitEvenly}>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <CardTitle>Assign Items</CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Click on people to assign items
+            </p>
+          </div>
+          <Button variant="outline" size="sm" onClick={onSplitEvenly} className="w-full md:w-auto">
             Split Evenly
           </Button>
         </div>
-        <p className="text-sm text-muted-foreground mt-1">
-          Click on people to assign items
-        </p>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -79,18 +81,18 @@ export function ItemAssignmentGrid({
             return (
               <div
                 key={item.id}
-                className="rounded-lg border border-border bg-card p-4 transition-colors hover:bg-muted/50"
+                className="rounded-lg border border-border bg-card p-3 md:p-4 transition-colors hover:bg-muted/50"
               >
-                <div className="mb-3 flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="font-medium">{item.name}</p>
+                <div className="mb-3 flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium break-words">{item.name}</p>
                     {item.quantity !== "1" && (
                       <p className="text-sm text-muted-foreground">
                         Qty: {item.quantity}
                       </p>
                     )}
                   </div>
-                  <p className="ml-4 font-semibold">${item.totalPrice}</p>
+                  <p className="ml-2 font-semibold shrink-0">${item.totalPrice}</p>
                 </div>
 
                 {/* Person badges */}

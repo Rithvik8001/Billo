@@ -59,14 +59,14 @@ export default function GroupsPage() {
 
   return (
     <div className="space-y-12">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-h1">Groups</h1>
           <p className="text-body text-muted-foreground">
             Manage your groups and split bills with others
           </p>
         </div>
-        <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
+        <Button onClick={() => setCreateDialogOpen(true)} className="gap-2 w-full md:w-auto">
           <Plus className="size-4" />
           Create Group
         </Button>

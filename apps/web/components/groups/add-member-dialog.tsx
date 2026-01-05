@@ -126,101 +126,103 @@ export function AddMemberDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
+      <DialogContent className="max-h-[90vh] flex flex-col">
+        <DialogHeader className="shrink-0">
           <DialogTitle>Add Member</DialogTitle>
           <DialogDescription>
             Search for a user by email to add them to this group.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="user-search">Search by Email</Label>
-            <Combobox
-              value={selectedUserId || ""}
-              onValueChange={(value) => {
-                if (!value) {
-                  setSelectedUserId(null);
-                  setSearchQuery("");
-                } else {
-                  setSelectedUserId(value);
-                }
-              }}
-            >
-              <ComboboxInput
-                id="user-search"
-                placeholder="Type email to search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                showTrigger
-                showClear={!!selectedUserId}
-              />
-              <ComboboxContent>
-                <ComboboxList>
-                  {isSearching ? (
-                    <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                      Searching...
-                    </div>
-                  ) : users.length === 0 && searchQuery.length >= 2 ? (
-                    <ComboboxEmpty>No users found</ComboboxEmpty>
-                  ) : (
-                    users.map((user) => (
-                      <ComboboxItem key={user.id} value={user.id}>
-                        <div className="flex items-center gap-2">
-                          {user.imageUrl && (
-                            <Image
-                              src={user.imageUrl}
-                              alt={user.name || user.email}
-                              width={20}
-                              height={20}
-                              className="size-5 rounded-full"
-                            />
-                          )}
-                          <div className="flex flex-col">
-                            <span className="font-medium">
-                              {user.name || user.email.split("@")[0]}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {user.email}
-                            </span>
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="user-search">Search by Email</Label>
+              <Combobox
+                value={selectedUserId || ""}
+                onValueChange={(value) => {
+                  if (!value) {
+                    setSelectedUserId(null);
+                    setSearchQuery("");
+                  } else {
+                    setSelectedUserId(value);
+                  }
+                }}
+              >
+                <ComboboxInput
+                  id="user-search"
+                  placeholder="Type email to search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  showTrigger
+                  showClear={!!selectedUserId}
+                />
+                <ComboboxContent className="max-h-[200px]">
+                  <ComboboxList>
+                    {isSearching ? (
+                      <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                        Searching...
+                      </div>
+                    ) : users.length === 0 && searchQuery.length >= 2 ? (
+                      <ComboboxEmpty>No users found</ComboboxEmpty>
+                    ) : (
+                      users.map((user) => (
+                        <ComboboxItem key={user.id} value={user.id}>
+                          <div className="flex items-center gap-2">
+                            {user.imageUrl && (
+                              <Image
+                                src={user.imageUrl}
+                                alt={user.name || user.email}
+                                width={20}
+                                height={20}
+                                className="size-5 rounded-full"
+                              />
+                            )}
+                            <div className="flex flex-col">
+                              <span className="font-medium">
+                                {user.name || user.email.split("@")[0]}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {user.email}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      </ComboboxItem>
-                    ))
-                  )}
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
-          </div>
+                        </ComboboxItem>
+                      ))
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            </div>
 
-          {selectedUser && (
-            <div className="rounded-lg border bg-muted/50 p-3">
-              <p className="text-sm font-medium mb-1">Selected:</p>
-              <div className="flex items-center gap-2">
-                {selectedUser.imageUrl && (
-                  <Image
-                    src={selectedUser.imageUrl}
-                    alt={selectedUser.name || selectedUser.email}
-                    width={24}
-                    height={24}
-                    className="size-6 rounded-full"
-                  />
-                )}
-                <div>
-                  <p className="text-sm font-medium">
-                    {selectedUser.name || selectedUser.email.split("@")[0]}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {selectedUser.email}
-                  </p>
+            {selectedUser && (
+              <div className="rounded-lg border bg-muted/50 p-3">
+                <p className="text-sm font-medium mb-1">Selected:</p>
+                <div className="flex items-center gap-2">
+                  {selectedUser.imageUrl && (
+                    <Image
+                      src={selectedUser.imageUrl}
+                      alt={selectedUser.name || selectedUser.email}
+                      width={24}
+                      height={24}
+                      className="size-6 rounded-full"
+                    />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium">
+                      {selectedUser.name || selectedUser.email.split("@")[0]}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {selectedUser.email}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="shrink-0 border-t pt-4 mt-4">
           <Button
             type="button"
             variant="outline"

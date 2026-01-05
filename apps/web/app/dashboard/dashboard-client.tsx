@@ -106,7 +106,7 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
     <div className="space-y-16">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-[#F9FAFB] rounded-lg p-6">
+        <div className="bg-[#F9FAFB] rounded-lg p-4 md:p-6">
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-3">
             You Owe
           </p>
@@ -126,7 +126,7 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
           </p>
         </div>
 
-        <div className="bg-[#F9FAFB] rounded-lg p-6">
+        <div className="bg-[#F9FAFB] rounded-lg p-4 md:p-6">
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-3">
             You&apos;re Owed
           </p>
@@ -146,7 +146,7 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
           </p>
         </div>
 
-        <div className="bg-[#F9FAFB] rounded-lg p-6">
+        <div className="bg-[#F9FAFB] rounded-lg p-4 md:p-6">
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-3">
             Active Groups
           </p>
