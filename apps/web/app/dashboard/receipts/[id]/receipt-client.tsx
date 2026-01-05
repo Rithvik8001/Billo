@@ -64,10 +64,10 @@ export function ReceiptClient({
 
   return (
     <div className="space-y-12">
-      <div className="space-y-2">
+      <div className="space-y-1">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-display">Receipt Review</h1>
+            <h1 className="text-h1">Receipt Review</h1>
             <p className="text-body text-muted-foreground">
               Review and assign items from your receipt
             </p>

@@ -60,8 +60,8 @@ export default function GroupsPage() {
   return (
     <div className="space-y-12">
       <div className="flex items-center justify-between">
-        <div className="space-y-2">
-          <h1 className="text-display">Groups</h1>
+        <div className="space-y-1">
+          <h1 className="text-h1">Groups</h1>
           <p className="text-body text-muted-foreground">
             Manage your groups and split bills with others
           </p>
@@ -84,19 +84,17 @@ export default function GroupsPage() {
           ))}
         </div>
       ) : groups.length === 0 ? (
-        <Card>
-          <CardContent className="py-16 text-center">
-            <Users className="size-16 mx-auto mb-6 text-muted-foreground opacity-50" />
-            <h2 className="text-heading-2 mb-2">No groups yet</h2>
-            <p className="text-body text-muted-foreground mb-8">
-              Create your first group to start splitting bills with others
-            </p>
-            <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
-              <Plus className="size-4" />
-              Create Your First Group
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="py-20 text-center">
+          <Users className="size-16 mx-auto mb-6 text-muted-foreground opacity-40" />
+          <h2 className="text-h2 mb-2">No groups yet</h2>
+          <p className="text-body text-muted-foreground mb-8">
+            Create your first group to start splitting bills with others
+          </p>
+          <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
+            <Plus className="size-4" />
+            Create Your First Group
+          </Button>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {groups.map((group) => (

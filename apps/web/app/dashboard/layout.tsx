@@ -1,6 +1,7 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { TopNav } from "@/components/top-nav";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { CurrencyProviderWrapper } from "@/components/currency-provider-wrapper";
 import { PageTransition } from "@/components/ui/page-transition";
 import db from "@/db/config/connection";
@@ -75,14 +76,18 @@ export default async function DashboardLayout({
 
   return (
     <CurrencyProviderWrapper initialCurrency={currencyCode}>
-      <div className="min-h-screen bg-white">
-        <TopNav />
-        <main className="pt-16">
-          <div className="max-w-3xl mx-auto px-6 py-8">
-            <PageTransition>{children}</PageTransition>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <div className="flex flex-1 flex-col">
+            <main className="flex-1">
+              <div className="max-w-[900px] mx-auto px-8 py-12">
+                <PageTransition>{children}</PageTransition>
+              </div>
+            </main>
           </div>
-        </main>
-      </div>
+        </SidebarInset>
+      </SidebarProvider>
     </CurrencyProviderWrapper>
   );
 }

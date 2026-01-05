@@ -49,7 +49,7 @@ export function SettlementCard({
   const StatusIcon = status.icon;
 
   return (
-    <Card className="interactive">
+    <Card className="transition-colors hover:bg-[#F9FAFB]">
       <CardContent className="py-4">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -96,11 +96,7 @@ export function SettlementCard({
               </p>
 
               <div className="flex items-center gap-4 flex-wrap">
-                <span
-                  className={`font-semibold text-body ${
-                    isOwed ? "text-green-600" : "text-red-600"
-                  }`}
-                >
+                <span className="font-medium text-body font-mono">
                   {isOwed ? "+" : "-"}
                   {formatAmount(settlement.amount)}
                 </span>

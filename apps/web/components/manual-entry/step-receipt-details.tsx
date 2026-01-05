@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, Store, DollarSign } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -48,23 +47,22 @@ export function StepReceiptDetails({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Receipt Details</CardTitle>
-        <CardDescription>
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h2 className="text-h2">Receipt Details</h2>
+        <p className="text-body text-muted-foreground">
           Enter basic information about your receipt
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3">
+        </p>
+      </div>
+      
+      <div className="space-y-5">
         {/* Merchant Name */}
-        <div className="flex items-center gap-2.5">
-          <div className="shrink-0">
-            <Store className="size-4 text-muted-foreground" />
-          </div>
-          <div className="flex-1 space-y-1.5">
-            <Label htmlFor="merchant-name" className="text-small">
-              Merchant Name <span className="text-destructive">*</span>
-            </Label>
+        <div className="space-y-2">
+          <Label htmlFor="merchant-name" className="text-small font-medium">
+            Merchant Name <span className="text-destructive">*</span>
+          </Label>
+          <div className="relative">
+            <Store className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
             <Input
               id="merchant-name"
               value={receiptDetails.merchantName}
@@ -73,6 +71,7 @@ export function StepReceiptDetails({
               }
               placeholder="e.g., Joe's Pizza"
               className={cn(
+                "pl-10",
                 !receiptDetails.merchantName.trim() && "border-destructive/50"
               )}
             />
@@ -80,53 +79,46 @@ export function StepReceiptDetails({
         </div>
 
         {/* Purchase Date */}
-        <div className="flex items-center gap-2.5">
-          <div className="shrink-0">
-            <CalendarIcon className="size-4 text-muted-foreground" />
-          </div>
-          <div className="flex-1 space-y-1.5">
-            <Label className="text-small">
-              Purchase Date <span className="text-destructive">*</span>
-            </Label>
-            <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal h-11",
-                    !selectedDate && "text-muted-foreground",
-                    !selectedDate && "border-destructive/50"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
-                  {selectedDate ? (
-                    format(selectedDate, "PPP")
-                  ) : (
-                    <span>Pick a date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={handleDateSelect}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+        <div className="space-y-2">
+          <Label className="text-small font-medium">
+            Purchase Date <span className="text-destructive">*</span>
+          </Label>
+          <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal h-10 pl-10 relative",
+                  !selectedDate && "text-muted-foreground",
+                  !selectedDate && "border-destructive/50"
+                )}
+              >
+                <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 shrink-0 pointer-events-none" />
+                {selectedDate ? (
+                  format(selectedDate, "PPP")
+                ) : (
+                  <span>Pick a date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
         {/* Tax Amount */}
-        <div className="flex items-center gap-2.5">
-          <div className="shrink-0">
-            <DollarSign className="size-4 text-muted-foreground" />
-          </div>
-          <div className="flex-1 space-y-1.5">
-            <Label htmlFor="tax" className="text-small">
-              Tax Amount ($)
-            </Label>
+        <div className="space-y-2">
+          <Label htmlFor="tax" className="text-small font-medium">
+            Tax Amount ($)
+          </Label>
+          <div className="relative">
+            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
             <Input
               id="tax"
               type="text"
@@ -140,6 +132,7 @@ export function StepReceiptDetails({
                 }
               }}
               placeholder="0.00"
+              className="pl-10"
             />
           </div>
         </div>
@@ -151,8 +144,8 @@ export function StepReceiptDetails({
           onUpload={uploadPhoto}
           onRemove={removePhoto}
         />
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
 

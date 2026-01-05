@@ -23,20 +23,20 @@ export function CompletedState({
   const actualItemCount = itemCount || extractedData?.items?.length || 0;
 
   return (
-    <div className="bg-white border rounded-2xl p-6 md:p-8 shadow-sm">
+    <div className="bg-background border rounded-xl p-6 md:p-8">
       <div className="flex flex-col items-center text-center">
         {hasItems ? (
           <>
             <motion.div
-              className="bg-primary/10 rounded-full p-6 mb-4"
+              className="bg-muted rounded-full p-6 mb-4"
               initial={scaleIn.initial}
               animate={scaleIn.animate}
               transition={scaleIn.transition}
             >
-              <CheckCircle2 className="size-12 text-primary" />
+              <CheckCircle2 className="size-12 text-muted-foreground" />
             </motion.div>
             <motion.h3
-              className="text-xl font-semibold mb-2"
+              className="text-h3 mb-2"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.3 }}
@@ -44,7 +44,7 @@ export function CompletedState({
               Receipt Processed!
             </motion.h3>
             <motion.p
-              className="text-muted-foreground mb-6"
+              className="text-body text-muted-foreground mb-6"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.3 }}
@@ -80,15 +80,15 @@ export function CompletedState({
         ) : (
           <>
             <motion.div
-              className="bg-yellow-500/10 rounded-full p-6 mb-4"
+              className="bg-muted rounded-full p-6 mb-4"
               initial={scaleIn.initial}
               animate={scaleIn.animate}
               transition={scaleIn.transition}
             >
-              <AlertCircle className="size-12 text-yellow-600" />
+              <AlertCircle className="size-12 text-muted-foreground" />
             </motion.div>
             <motion.h3
-              className="text-xl font-semibold mb-2"
+              className="text-h3 mb-2"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.3 }}
@@ -96,7 +96,7 @@ export function CompletedState({
               No Receipt Detected
             </motion.h3>
             <motion.p
-              className="text-muted-foreground mb-2"
+              className="text-body text-muted-foreground mb-2"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.3 }}
@@ -104,7 +104,7 @@ export function CompletedState({
               Image uploaded successfully, but no items were detected.
             </motion.p>
             <motion.p
-              className="text-sm text-muted-foreground mb-6"
+              className="text-small text-muted-foreground mb-6"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.3 }}
@@ -136,7 +136,6 @@ export function CompletedState({
               >
                 <Button
                   onClick={onRetry}
-                  className="rounded-2xl"
                 >
                   Try Another Image
                 </Button>

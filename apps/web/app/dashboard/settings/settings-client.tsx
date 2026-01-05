@@ -65,8 +65,8 @@ export function SettingsClient({
 
   return (
     <div className="space-y-12">
-      <div className="space-y-2">
-        <h1 className="text-display">Settings</h1>
+      <div className="space-y-1">
+        <h1 className="text-h1">Settings</h1>
         <p className="text-body text-muted-foreground">
           Manage your account preferences
         </p>

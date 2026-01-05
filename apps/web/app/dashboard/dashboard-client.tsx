@@ -2,21 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Receipt,
   ArrowRight,
-  Users,
-  DollarSign,
-  TrendingUp,
 } from "lucide-react";
 import { useCurrency } from "@/contexts/currency-context";
 import { AnimatedNumber } from "@/components/ui/animated-number";
@@ -115,88 +103,69 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
   }, [loadDashboardData]);
 
   return (
-    <div className="space-y-12">
-      {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-display">Welcome back, {userName}</h1>
-        <p className="text-body text-muted-foreground">
-          Your bill splitting overview
-        </p>
-      </div>
-
+    <div className="space-y-16">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="interactive">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-small text-muted-foreground">You Owe</p>
-              <DollarSign className="size-5 text-red-500" />
-            </div>
-            <p className="text-heading-1 text-red-600 mb-1">
-              {isLoading ? (
-                "..."
-              ) : (
-                <AnimatedNumber
-                  value={summary.totalYouOwe}
-                  formatValue={(num) => formatAmount(num.toFixed(2))}
-                />
-              )}
-            </p>
-            <p className="text-small text-muted-foreground">
-              {summary.pendingYouOweCount} pending settlement
-              {summary.pendingYouOweCount !== 1 ? "s" : ""}
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-[#F9FAFB] rounded-lg p-6">
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-3">
+            You Owe
+          </p>
+          <p className="text-[28px] font-mono font-semibold mb-1 leading-tight">
+            {isLoading ? (
+              "..."
+            ) : (
+              <AnimatedNumber
+                value={summary.totalYouOwe}
+                formatValue={(num) => formatAmount(num.toFixed(2))}
+              />
+            )}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {summary.pendingYouOweCount} pending settlement
+            {summary.pendingYouOweCount !== 1 ? "s" : ""}
+          </p>
+        </div>
 
-        <Card className="interactive">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-small text-muted-foreground">
-                You&apos;re Owed
-              </p>
-              <TrendingUp className="size-5 text-green-500" />
-            </div>
-            <p className="text-heading-1 text-green-600 mb-1">
-              {isLoading ? (
-                "..."
-              ) : (
-                <AnimatedNumber
-                  value={summary.totalOwedToYou}
-                  formatValue={(num) => formatAmount(num.toFixed(2))}
-                />
-              )}
-            </p>
-            <p className="text-small text-muted-foreground">
-              {summary.completedCount} completed settlement
-              {summary.completedCount !== 1 ? "s" : ""}
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-[#F9FAFB] rounded-lg p-6">
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-3">
+            You&apos;re Owed
+          </p>
+          <p className="text-[28px] font-mono font-semibold mb-1 leading-tight">
+            {isLoading ? (
+              "..."
+            ) : (
+              <AnimatedNumber
+                value={summary.totalOwedToYou}
+                formatValue={(num) => formatAmount(num.toFixed(2))}
+              />
+            )}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {summary.completedCount} completed settlement
+            {summary.completedCount !== 1 ? "s" : ""}
+          </p>
+        </div>
 
-        <Card className="interactive">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-small text-muted-foreground">Active Groups</p>
-              <Users className="size-5 text-primary" />
-            </div>
-            <p className="text-heading-1 mb-1">
-              {isLoading ? "..." : groupsCount}
-            </p>
-            <p className="text-small text-muted-foreground">
-              {groupsCount === 1 ? "group" : "groups"} total
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-[#F9FAFB] rounded-lg p-6">
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-3">
+            Active Groups
+          </p>
+          <p className="text-[28px] font-mono font-semibold mb-1 leading-tight">
+            {isLoading ? "..." : groupsCount}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {groupsCount === 1 ? "group" : "groups"} total
+          </p>
+        </div>
       </div>
 
       {/* Recent Activity */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-heading-2">Recent Activity</h2>
+          <h2 className="text-h2">Recent Activity</h2>
           <Link
             href="/dashboard/receipts"
-            className="text-small text-primary hover:underline flex items-center gap-1"
+            className="text-xs text-accent hover:underline flex items-center gap-1 transition-opacity hover:opacity-80"
           >
             View all
             <ArrowRight className="size-3" />
@@ -204,95 +173,63 @@ export function DashboardClient({ userId, userName }: DashboardClientProps) {
         </div>
 
         {isLoading ? (
-          <div className="space-y-3">
+          <div className="space-y-0">
             {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardContent className="py-4">
-                  <div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
-                </CardContent>
-              </Card>
+              <div key={i} className="py-4 border-b border-border/40 last:border-0">
+                <div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
+              </div>
             ))}
           </div>
         ) : recentReceipts.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <Receipt className="size-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <p className="text-body text-muted-foreground mb-2">
-                No receipts yet
-              </p>
-              <p className="text-small text-muted-foreground">
-                Start by scanning or entering a receipt manually
-              </p>
-            </CardContent>
-          </Card>
+          <div className="py-16 text-center">
+            <Receipt className="size-12 mx-auto mb-4 text-muted-foreground opacity-40" />
+            <p className="text-body text-muted-foreground mb-1">
+              No receipts yet
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Start by scanning or entering a receipt manually
+            </p>
+          </div>
         ) : (
-          <Card>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Merchant</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                    <TableHead className="text-right"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentReceipts.map((receipt) => (
-                    <TableRow
-                      key={receipt.id}
-                      className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => {
-                        window.location.href = `/dashboard/receipts/${receipt.id}`;
-                      }}
-                    >
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="size-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                            <Receipt className="size-4 text-muted-foreground" />
-                          </div>
-                          <p className="font-medium text-body">
-                            {receipt.merchantName || "Receipt"}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-small text-muted-foreground">
-                          {receipt.purchaseDate
-                            ? new Date(receipt.purchaseDate).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                }
-                              )
-                            : new Date(receipt.createdAt).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                }
-                              )}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {receipt.totalAmount && (
-                          <p className="font-semibold text-body">
-                            {formatAmount(receipt.totalAmount)}
-                          </p>
+          <div className="space-y-0">
+            {recentReceipts.map((receipt, index) => (
+              <Link
+                key={receipt.id}
+                href={`/dashboard/receipts/${receipt.id}`}
+                className="flex items-center justify-between py-4 border-b border-border/40 last:border-0 hover:bg-[#F9FAFB] transition-colors -mx-2 px-2 rounded"
+              >
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <p className="font-medium text-body truncate">
+                    {receipt.merchantName || "Receipt"}
+                  </p>
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    {receipt.purchaseDate
+                      ? new Date(receipt.purchaseDate).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          }
+                        )
+                      : new Date(receipt.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          }
                         )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <ArrowRight className="size-4 text-muted-foreground" />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                  </span>
+                </div>
+                {receipt.totalAmount && (
+                  <p className="text-body font-mono text-foreground ml-4 shrink-0">
+                    {formatAmount(receipt.totalAmount)}
+                  </p>
+                )}
+              </Link>
+            ))}
+          </div>
         )}
       </div>
     </div>

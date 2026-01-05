@@ -68,13 +68,7 @@ export function GroupBalancePreview({
       <span className="text-muted-foreground">
         {isOwed ? "You're owed" : "You owe"}:
       </span>
-      <span
-        className={`font-semibold ${
-          isOwed
-            ? "text-green-600 dark:text-green-400"
-            : "text-red-600 dark:text-red-400"
-        }`}
-      >
+      <span className="font-medium font-mono">
         {formatAmount(amount.toFixed(2))}
       </span>
     </div>

@@ -30,9 +30,9 @@ export function UsageIndicator({
   // Show Pro badge for Pro users
   if (isPro) {
     return (
-      <Badge variant="default" className="gap-1.5 bg-primary">
+      <Badge variant="default" className="gap-1.5 bg-foreground text-background border-0">
         <Crown className="size-3" />
-        <span>Pro</span>
+        <span className="font-medium">Pro</span>
       </Badge>
     );
   }

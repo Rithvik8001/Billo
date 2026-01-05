@@ -2,13 +2,12 @@
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { GitHub } from "@/components/github";
 import Link from "next/link";
 import { useAuth } from "@clerk/nextjs";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion } from "motion/react";
-import { fadeInUp } from "@/lib/motion";
+import { GitHub } from "@/components/github";
 
 export default function Nav() {
   const { isSignedIn } = useAuth();
@@ -20,39 +19,45 @@ export default function Nav() {
   return (
     <>
       <motion.nav
-        className="border-b h-16 flex items-center justify-between px-4 md:px-6 relative z-40 bg-[#F4EDEB]"
+        className="sticky top-0 z-50 h-16 flex items-center justify-between px-6 md:px-12 bg-background/80 backdrop-blur-md border-b border-border/60"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" as const }}
       >
         <div className="flex items-center h-full">
-          <Image
-            src="/web-logo.png"
-            alt="Billo"
-            width={50}
-            height={50}
-            className="object-contain self-center mt-3"
-          />
+          <Link href="/">
+            <Image
+              src="/web-logo.png"
+              alt="Billo"
+              width={32}
+              height={32}
+              className="object-contain"
+            />
+          </Link>
         </div>
 
-        <div className="hidden sm:flex items-center h-full gap-2 md:gap-3">
-          <Button variant={"destructive"} size="sm" asChild>
-            <Link href="https://github.com/Rithvik8001/Billo" target="_blank">
-              <GitHub className="size-4 mr-2" />
-              <span className="hidden md:inline">Star on GitHub</span>
+        <div className="hidden sm:flex items-center h-full gap-3">
+          <Button variant="ghost" size="sm" asChild>
+            <Link
+              href="https://github.com/Rithvik8001/Billo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2"
+            >
+              <GitHub className="size-4" />
+              <span>Star on GitHub</span>
             </Link>
           </Button>
-
           {!isSignedIn && (
             <>
-              <Button variant="outline" size="sm" asChild>
+              <Button variant="ghost" size="sm" asChild>
                 <Link href="/sign-in">
-                  <span>Login</span>
+                  Sign In
                 </Link>
               </Button>
               <Button size="sm" asChild>
                 <Link href="/sign-up">
-                  <span>Sign Up</span>
+                  Get Started
                 </Link>
               </Button>
             </>
@@ -73,47 +78,34 @@ export default function Nav() {
       </motion.nav>
 
       <div
-        className={`sm:hidden fixed inset-0 bg-[#F4EDEB] z-30 transition-all duration-300 ${
+        className={`sm:hidden fixed inset-0 bg-background z-30 transition-all duration-300 ${
           isMenuOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
       >
-        <div className="flex flex-col pt-20 px-6 gap-4">
-          <Button
-            variant={"destructive"}
-            size="lg"
-            asChild
-            className="w-full h-14 text-base rounded-2xl"
-            onClick={closeMenu}
-          >
-            <Link href="https://github.com/Rithvik8001/Billo" target="_blank">
-              <GitHub className="size-5 mr-2" />
-              <span>Star on GitHub</span>
-            </Link>
-          </Button>
-
+        <div className="flex flex-col pt-20 px-6 gap-3">
           {!isSignedIn && (
             <>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="lg"
                 asChild
-                className="w-full h-14 text-base rounded-2xl bg-white"
+                className="w-full justify-start text-muted-foreground hover:text-foreground"
                 onClick={closeMenu}
               >
                 <Link href="/sign-in">
-                  <span>Login</span>
+                  <span>Sign In</span>
                 </Link>
               </Button>
               <Button
                 size="lg"
                 asChild
-                className="w-full h-14 text-base rounded-2xl"
+                className="w-full"
                 onClick={closeMenu}
               >
                 <Link href="/sign-up">
-                  <span>Sign Up</span>
+                  <span>Get Started</span>
                 </Link>
               </Button>
             </>

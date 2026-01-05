@@ -97,8 +97,8 @@ export default function ScanReceiptPage() {
   if (usage && usage.remaining === 0 && progress.state === "idle") {
     return (
       <div className="space-y-12">
-        <div className="space-y-2">
-          <h1 className="text-display">Scan Receipt</h1>
+        <div className="space-y-1">
+          <h1 className="text-h1">Scan Receipt</h1>
           <p className="text-body text-muted-foreground">
             Take a photo of your receipt to automatically extract items
           </p>
@@ -110,10 +110,10 @@ export default function ScanReceiptPage() {
 
   return (
     <div className="space-y-12">
-      <div className="space-y-2">
+      <div className="space-y-1">
         <div className="flex items-start justify-between gap-4">
-          <div className="space-y-2">
-            <h1 className="text-display">Scan Receipt</h1>
+          <div className="space-y-1">
+            <h1 className="text-h1">Scan Receipt</h1>
             <p className="text-body text-muted-foreground">
               Take a photo of your receipt to automatically extract items
             </p>

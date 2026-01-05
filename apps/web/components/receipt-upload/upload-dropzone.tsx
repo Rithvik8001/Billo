@@ -22,19 +22,19 @@ export function UploadDropzone({
 }: UploadDropzoneProps) {
   return (
     <div
-      className={`bg-white border-2 border-dashed rounded-2xl p-12 md:p-16 flex flex-col items-center justify-center text-center shadow-sm transition-colors ${
-        dragActive ? "border-primary bg-primary/5" : "border-border"
+      className={`bg-background border-2 border-dashed rounded-xl p-12 md:p-16 flex flex-col items-center justify-center text-center transition-colors ${
+        dragActive ? "border-accent bg-accent/5" : "border-border"
       }`}
       onDragEnter={onDrag}
       onDragLeave={onDrag}
       onDragOver={onDrag}
       onDrop={onDrop}
     >
-      <div className="bg-primary/10 rounded-full p-6 mb-4">
-        <Upload className="size-12 text-primary" />
+      <div className="bg-muted rounded-full p-6 mb-4">
+        <Upload className="size-10 text-muted-foreground" />
       </div>
-      <h3 className="text-xl font-semibold mb-2">Upload Your Receipt</h3>
-      <p className="text-foreground/60 max-w-md mb-6">
+      <h3 className="text-h3 mb-2">Upload Your Receipt</h3>
+      <p className="text-body text-muted-foreground max-w-md mb-6">
         Drag and drop your receipt image here, or click the button below
       </p>
       <Button onClick={onFileClick}>

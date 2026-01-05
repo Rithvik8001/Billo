@@ -312,8 +312,8 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
   return (
     <div className="space-y-12">
       {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-display">Settle Up</h1>
+      <div className="space-y-1">
+        <h1 className="text-h1">Settle Up</h1>
         <p className="text-body text-muted-foreground">
           Track who owes what and mark payments as settled
         </p>
@@ -376,8 +376,8 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
       {youOwe.length > 0 && statusFilter !== "completed" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-heading-2 text-red-600">You Owe</h2>
-            <p className="text-body font-semibold text-red-600">
+            <h2 className="text-h2">You Owe</h2>
+            <p className="text-body font-medium font-mono">
               {formatAmount(
                 youOwe
                   .reduce((sum, s) => sum + parseFloat(s.amount), 0)
@@ -445,7 +445,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
                           )}
                         </TableCell>
                         <TableCell className="text-right">
-                          <span className="font-semibold text-body text-red-600">
+                          <span className="font-medium text-body font-mono">
                             -{formatAmount(settlement.amount)}
                           </span>
                         </TableCell>
@@ -475,8 +475,8 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
       {youAreOwed.length > 0 && statusFilter !== "completed" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-heading-2 text-green-600">You&apos;re Owed</h2>
-            <p className="text-body font-semibold text-green-600">
+            <h2 className="text-h2">You&apos;re Owed</h2>
+            <p className="text-body font-medium font-mono">
               {formatAmount(
                 youAreOwed
                   .reduce((sum, s) => sum + parseFloat(s.amount), 0)
@@ -544,7 +544,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
                           )}
                         </TableCell>
                         <TableCell className="text-right">
-                          <span className="font-semibold text-body text-green-600">
+                          <span className="font-medium text-body font-mono">
                             +{formatAmount(settlement.amount)}
                           </span>
                         </TableCell>
@@ -572,7 +572,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
       {/* Completed Settlements */}
       {completedSettlements.length > 0 && statusFilter !== "pending" && (
         <div className="space-y-4">
-          <h2 className="text-heading-2">Completed Settlements</h2>
+          <h2 className="text-h2">Completed Settlements</h2>
           <Card>
             <CardContent className="p-0">
               <Table>
@@ -644,11 +644,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                          <span
-                            className={`font-semibold text-body ${
-                              isOwed ? "text-green-600" : "text-red-600"
-                            }`}
-                          >
+                          <span className="font-medium text-body font-mono">
                             {isOwed ? "+" : "-"}
                             {formatAmount(settlement.amount)}
                           </span>

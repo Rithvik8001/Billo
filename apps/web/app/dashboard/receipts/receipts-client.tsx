@@ -59,19 +59,17 @@ export function ReceiptsClient({ userId }: ReceiptsClientProps) {
 
   return (
     <div className="space-y-12">
-      <div className="space-y-2">
-        <h1 className="text-display">Receipts</h1>
+      <div className="space-y-1">
+        <h1 className="text-h1">Receipts</h1>
         <p className="text-body text-muted-foreground">
           View and manage all your receipts
         </p>
       </div>
 
       {error && (
-        <Card className="border-destructive/50 bg-destructive/10">
-          <CardContent className="py-4">
-            <p className="text-body text-destructive">{error}</p>
-          </CardContent>
-        </Card>
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3">
+          <p className="text-body text-destructive">{error}</p>
+        </div>
       )}
 
       {isLoading ? (
@@ -110,23 +108,21 @@ export function ReceiptsClient({ userId }: ReceiptsClientProps) {
           </CardContent>
         </Card>
       ) : receipts.length === 0 ? (
-        <Card>
-          <CardContent className="py-16 text-center">
-            <Receipt className="size-16 mx-auto mb-6 text-muted-foreground opacity-50" />
-            <h2 className="text-heading-2 mb-2">No receipts yet</h2>
-            <p className="text-body text-muted-foreground mb-8">
-              Start by scanning or entering a receipt manually
-            </p>
-            <div className="flex gap-3 justify-center">
-              <Button asChild>
-                <Link href="/dashboard/scan-receipt">Scan Receipt</Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/dashboard/manual">Manual Entry</Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="py-20 text-center">
+          <Receipt className="size-16 mx-auto mb-6 text-muted-foreground opacity-40" />
+          <h2 className="text-h2 mb-2">No receipts yet</h2>
+          <p className="text-body text-muted-foreground mb-8">
+            Start by scanning or entering a receipt manually
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Button asChild>
+              <Link href="/dashboard/scan-receipt">Scan Receipt</Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link href="/dashboard/manual">Manual Entry</Link>
+            </Button>
+          </div>
+        </div>
       ) : (
         <Card>
           <CardContent className="p-0">
@@ -144,20 +140,15 @@ export function ReceiptsClient({ userId }: ReceiptsClientProps) {
                 {receipts.map((receipt) => (
                   <TableRow
                     key={receipt.id}
-                    className="cursor-pointer hover:bg-muted/50"
+                    className="cursor-pointer"
                     onClick={() => {
                       window.location.href = `/dashboard/receipts/${receipt.id}`;
                     }}
                   >
                     <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="size-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                          <Receipt className="size-4 text-muted-foreground" />
-                        </div>
-                        <p className="font-medium text-body">
-                          {receipt.merchantName || "Receipt"}
-                        </p>
-                      </div>
+                      <p className="font-medium text-body">
+                        {receipt.merchantName || "Receipt"}
+                      </p>
                     </TableCell>
                     <TableCell>
                       <span className="text-small text-muted-foreground">
@@ -196,7 +187,7 @@ export function ReceiptsClient({ userId }: ReceiptsClientProps) {
                     </TableCell>
                     <TableCell className="text-right">
                       {receipt.totalAmount ? (
-                        <p className="font-semibold text-body">
+                        <p className="font-medium text-body font-mono">
                           {formatAmount(receipt.totalAmount)}
                         </p>
                       ) : (
@@ -206,7 +197,7 @@ export function ReceiptsClient({ userId }: ReceiptsClientProps) {
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <ArrowRight className="size-4 text-muted-foreground" />
+                      <ArrowRight className="size-4 text-muted-foreground opacity-40" />
                     </TableCell>
                   </TableRow>
                 ))}

@@ -23,14 +23,14 @@ export function GroupCard({ group, onClick }: GroupCardProps) {
 
   return (
     <Card
-      className="cursor-pointer interactive"
+      className="cursor-pointer transition-colors hover:bg-[#F9FAFB]"
       onClick={onClick}
     >
-      <CardContent className="pt-4">
+      <CardContent className="pt-5">
         <div className="flex items-start gap-3 mb-4">
-          <div className="text-3xl shrink-0">{group.emoji}</div>
+          <div className="text-2xl shrink-0">{group.emoji}</div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-heading-2 mb-0.5">{group.name}</h3>
+            <h3 className="text-h3 mb-1">{group.name}</h3>
             {group.description && (
               <p className="text-small text-muted-foreground line-clamp-2">
                 {group.description}
@@ -38,9 +38,9 @@ export function GroupCard({ group, onClick }: GroupCardProps) {
             )}
           </div>
         </div>
-        <div className="space-y-2 pt-3 border-t border-border">
+        <div className="space-y-2 pt-3 border-t border-border/40">
           <div className="flex items-center gap-2 text-small text-muted-foreground">
-            <Users className="size-4 shrink-0" />
+            <Users className="size-3.5 shrink-0 opacity-60" />
             <span>
               {group.memberCount} member{group.memberCount !== 1 ? "s" : ""}
             </span>
@@ -50,7 +50,7 @@ export function GroupCard({ group, onClick }: GroupCardProps) {
               <GroupBalancePreview groupId={group.id} currentUserId={user.id} />
               <Link
                 href={`/dashboard/settle?groupId=${group.id}`}
-                className="text-small text-muted-foreground hover:text-foreground transition-colors"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
                 View →
