@@ -46,7 +46,7 @@ export default function Header() {
             transition={{
               duration: 0.6,
               delay: index * 0.1,
-              ease: "easeOut",
+              ease: "easeOut" as const,
             }}
           >
             {word}
@@ -61,7 +61,7 @@ export default function Header() {
         transition={{
           duration: 0.5,
           delay: 0.4,
-          ease: "easeOut",
+          ease: "easeOut" as const,
         }}
       >
         Snap the receipt, tap your items, see who owes what.

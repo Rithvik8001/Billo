@@ -23,7 +23,7 @@ export default function Nav() {
         className="border-b h-16 flex items-center justify-between px-4 md:px-6 relative z-40 bg-[#F4EDEB]"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        transition={{ duration: 0.4, ease: "easeOut" as const }}
       >
         <div className="flex items-center h-full">
           <Image
