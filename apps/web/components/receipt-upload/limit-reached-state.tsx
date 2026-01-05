@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
+import { UpgradeCta } from "@/components/subscription/upgrade-cta";
 
 interface LimitReachedStateProps {
   resetsAt: Date;
@@ -23,7 +24,8 @@ export function LimitReachedState({ resetsAt }: LimitReachedStateProps) {
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold">Daily Scan Limit Reached</h2>
           <p className="text-muted-foreground max-w-md">
-            You've used all 3 of your free AI scans for today. Your limit will reset automatically.
+            You've used all 3 of your free AI scans for today. Upgrade to Pro
+            for 50 scans per day, or wait for your limit to reset.
           </p>
         </div>
 
@@ -33,6 +35,7 @@ export function LimitReachedState({ resetsAt }: LimitReachedStateProps) {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <UpgradeCta variant="inline" />
           <Button asChild variant="outline" className="rounded-xl">
             <Link href="/dashboard/manual">
               <FileText className="size-4 mr-2" />
@@ -43,11 +46,16 @@ export function LimitReachedState({ resetsAt }: LimitReachedStateProps) {
 
         <div className="pt-4 border-t w-full">
           <p className="text-xs text-muted-foreground">
-            Free users get 3 AI scans per day. Upgrade to Pro for unlimited scans.
+            Free users get 3 AI scans per day.{" "}
+            <Link
+              href="/dashboard/settings"
+              className="text-primary hover:underline"
+            >
+              Upgrade to Pro for $2.99/mo
+            </Link>
           </p>
         </div>
       </div>
     </Card>
   );
 }
-

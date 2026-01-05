@@ -20,6 +20,12 @@ export const users = pgTable('users', {
   emailSettlements: boolean('email_settlements').default(true).notNull(),
   emailPayments: boolean('email_payments').default(true).notNull(),
   emailWeeklySummary: boolean('email_weekly_summary').default(true).notNull(),
+  // Subscription fields (Polar.sh integration)
+  subscriptionTier: text('subscription_tier').default('free').notNull(), // 'free' | 'pro'
+  polarCustomerId: text('polar_customer_id'),
+  polarSubscriptionId: text('polar_subscription_id'),
+  subscriptionStatus: text('subscription_status'), // 'active' | 'canceled' | null
+  subscriptionCurrentPeriodEnd: timestamp('subscription_current_period_end'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

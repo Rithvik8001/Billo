@@ -17,6 +17,8 @@
     "@ai-sdk/react": "^3.0.5",
     "@base-ui/react": "^1.0.0",
     "@clerk/nextjs": "^6.36.5",
+    "@polar-sh/nextjs": "^0.9.3",
+    "@polar-sh/sdk": "^0.42.1",
     "@react-email/components": "^1.0.3",
     "@upstash/ratelimit": "^2.0.7",
     "@upstash/redis": "^1.36.0",

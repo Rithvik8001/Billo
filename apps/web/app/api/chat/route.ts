@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { streamText, Output } from "ai";
-import { receipts } from "@/db/models/schema";
+import { receipts, users } from "@/db/models/schema";
 import { receiptExtractionSchema } from "@/lib/ai/schemas";
 import { RECEIPT_EXTRACTION_PROMPT } from "@/lib/ai/prompts";
 import { parseChatMessage } from "@/lib/ai/message-parser";
@@ -11,6 +11,9 @@ import {
 import { createReceiptExtractionStream } from "@/lib/ai/stream-handler";
 import { isValidUUID } from "@/lib/utils";
 import { checkAiScanLimit } from "@/lib/rate-limit";
+import db from "@/db/config/connection";
+import { eq } from "drizzle-orm";
+import type { SubscriptionTier } from "@/lib/polar";
 
 export async function POST(request: Request) {
   const { userId } = await auth();
@@ -19,8 +22,15 @@ export async function POST(request: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Get user's subscription tier for rate limiting
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, userId),
+    columns: { subscriptionTier: true },
+  });
+  const tier = (user?.subscriptionTier as SubscriptionTier) || "free";
+
   // Check rate limit before processing
-  const rateLimitResult = await checkAiScanLimit(userId);
+  const rateLimitResult = await checkAiScanLimit(userId, tier);
 
   if (!rateLimitResult.allowed) {
     return Response.json(

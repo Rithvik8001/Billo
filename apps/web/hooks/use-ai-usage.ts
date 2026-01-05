@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import type { SubscriptionTier } from "@/lib/polar";
 
 export interface AiUsage {
   remaining: number;
@@ -8,6 +9,8 @@ export interface AiUsage {
   used: number;
   resetsAt: Date;
   isLimited: boolean;
+  isPro: boolean;
+  tier: SubscriptionTier;
 }
 
 export interface UseAiUsageReturn {
@@ -38,6 +41,8 @@ export function useAiUsage(): UseAiUsageReturn {
         used: aiScans.used,
         resetsAt: new Date(aiScans.resetsAt),
         isLimited: aiScans.isLimited,
+        isPro: aiScans.isPro || false,
+        tier: aiScans.tier || "free",
       });
     } catch (error) {
       console.error("Error fetching AI usage:", error);
@@ -48,6 +53,8 @@ export function useAiUsage(): UseAiUsageReturn {
         used: 0,
         resetsAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         isLimited: false,
+        isPro: false,
+        tier: "free",
       });
     } finally {
       setIsLoading(false);

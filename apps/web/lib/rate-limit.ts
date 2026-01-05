@@ -1,5 +1,6 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import { SCAN_LIMITS, type SubscriptionTier } from "./polar";
 
 // Create Redis client (lazy initialization)
 const redis = new Redis({
@@ -7,19 +8,37 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-// Rate limiter: 3 AI scans per 24 hours per user
-export const aiScanRateLimiter = new Ratelimit({
+// Rate limiters for each tier
+const freeRateLimiter = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(3, "24 h"),
-  prefix: "billo:ai-scan",
+  limiter: Ratelimit.slidingWindow(SCAN_LIMITS.free, "24 h"),
+  prefix: "billo:ai-scan:free",
 });
 
-export async function getAiScanUsage(userId: string) {
+const proRateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(SCAN_LIMITS.pro, "24 h"),
+  prefix: "billo:ai-scan:pro",
+});
+
+// Get the appropriate rate limiter for a tier
+function getRateLimiter(tier: SubscriptionTier) {
+  return tier === "pro" ? proRateLimiter : freeRateLimiter;
+}
+
+// Get scan limit for a tier
+export function getScanLimit(tier: SubscriptionTier): number {
+  return SCAN_LIMITS[tier] || SCAN_LIMITS.free;
+}
+
+export async function getAiScanUsage(
+  userId: string,
+  tier: SubscriptionTier = "free"
+) {
   try {
-    // Upstash Ratelimit uses a specific key format for sliding window
-    // Format: {prefix}:{identifier}:sliding_window
-    const identifier = userId;
-    const windowKey = `billo:ai-scan:${identifier}:sliding_window`;
+    const limit = getScanLimit(tier);
+    const prefix = tier === "pro" ? "billo:ai-scan:pro" : "billo:ai-scan:free";
+    const windowKey = `${prefix}:${userId}:sliding_window`;
 
     // Get current timestamp and window size (24 hours)
     const now = Date.now();
@@ -27,46 +46,56 @@ export async function getAiScanUsage(userId: string) {
     const windowStart = now - windowSizeMs;
 
     // Use zcount to count entries in the sliding window without consuming
-    // zcount returns the number of elements in the sorted set with scores between min and max
     const count = await redis.zcount(windowKey, windowStart, now);
-    const remaining = Math.max(0, 3 - count);
+    const remaining = Math.max(0, limit - count);
     const resetsAt = new Date(now + windowSizeMs);
+
     return {
       remaining,
-      limit: 3,
+      limit,
       used: count,
       resetsAt,
+      tier,
     };
   } catch (error) {
     // Fail open: if Redis is unavailable, allow the request
     console.error("Error checking AI scan usage:", error);
+    const limit = getScanLimit(tier);
     return {
-      remaining: 3,
-      limit: 3,
+      remaining: limit,
+      limit,
       used: 0,
       resetsAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+      tier,
     };
   }
 }
 
 // Check and consume quota
-export async function checkAiScanLimit(userId: string) {
+export async function checkAiScanLimit(
+  userId: string,
+  tier: SubscriptionTier = "free"
+) {
   try {
-    const { success, remaining, reset } = await aiScanRateLimiter.limit(userId);
+    const limiter = getRateLimiter(tier);
+    const { success, remaining, reset } = await limiter.limit(userId);
     return {
       allowed: success,
       remaining,
-      limit: 3,
+      limit: getScanLimit(tier),
       resetsAt: new Date(reset),
+      tier,
     };
   } catch (error) {
     // Fail open: if Redis is unavailable, allow the request
     console.error("Error checking AI scan limit:", error);
+    const limit = getScanLimit(tier);
     return {
       allowed: true,
-      remaining: 3,
-      limit: 3,
+      remaining: limit,
+      limit,
       resetsAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
+      tier,
     };
   }
 }

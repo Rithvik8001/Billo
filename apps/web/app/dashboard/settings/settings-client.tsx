@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -20,6 +21,8 @@ import { Button } from "@/components/ui/button";
 import { SUPPORTED_CURRENCIES } from "@/lib/currency";
 import { useCurrency } from "@/contexts/currency-context";
 import { EmailPreferencesSection } from "@/components/settings/email-preferences-section";
+import { SubscriptionSection } from "@/components/subscription/subscription-section";
+import { toast } from "sonner";
 
 interface SettingsClientProps {
   initialCurrency: string;
@@ -32,6 +35,18 @@ export function SettingsClient({
   const { currency, setCurrency, formatAmount } = useCurrency();
   const [selectedCurrency, setSelectedCurrency] = useState(currency);
   const [isSaving, setIsSaving] = useState(false);
+  const searchParams = useSearchParams();
+
+  // Handle checkout success redirect
+  useEffect(() => {
+    if (searchParams.get("checkout_success") === "true") {
+      toast.success("Welcome to Billo Pro!", {
+        description: "Your subscription is now active. Enjoy 50 scans per day!",
+      });
+      // Clean up URL
+      window.history.replaceState({}, "", "/dashboard/settings");
+    }
+  }, [searchParams]);
 
   const handleSave = async () => {
     if (selectedCurrency === currency) {
@@ -56,6 +71,8 @@ export function SettingsClient({
           Manage your account preferences
         </p>
       </div>
+
+      <SubscriptionSection />
 
       <Card>
         <CardHeader>

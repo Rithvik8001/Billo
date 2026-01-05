@@ -124,6 +124,7 @@ export default function ScanReceiptPage() {
               limit={usage.limit}
               resetsAt={usage.resetsAt}
               isLoading={usageLoading}
+              isPro={usage.isPro}
             />
           )}
         </div>
