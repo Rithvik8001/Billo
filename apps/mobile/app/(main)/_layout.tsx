@@ -13,6 +13,12 @@ export default function MainLayout() {
     >
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="index" />
+      <Stack.Screen
+        name="group/[id]"
+        options={{
+          presentation: "card",
+        }}
+      />
     </Stack>
   );
 }

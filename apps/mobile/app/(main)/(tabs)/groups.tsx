@@ -1,21 +1,36 @@
-import { View, StyleSheet, FlatList } from "react-native";
+import { useState } from "react";
+import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { useRouter } from "expo-router";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
 import { GroupCard } from "@/components/dashboard";
+import { CreateGroupSheet } from "@/components/groups";
+import { useGroups } from "@/hooks/useGroups";
 import { colors, spacing } from "@/constants/theme";
 import { Users, Plus } from "lucide-react-native";
+import type { Group } from "@/types/groups";
 
 export default function GroupsTab() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
-  // Mock data - will be replaced with API calls later
-  const groups: any[] = [];
+  const { groups, isLoading, error, refreshing, refresh } = useGroups();
+  const [createSheetVisible, setCreateSheetVisible] = useState(false);
+
   // Tab bar height (60) + safe area bottom + extra padding
   const bottomPadding = 60 + insets.bottom + spacing.xl;
+
+  const handleCreateSuccess = (groupId: string) => {
+    refresh();
+  };
+
+  const handleGroupPress = (group: Group) => {
+    router.push(`/group/${group.id}`);
+  };
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
@@ -28,15 +43,22 @@ export default function GroupsTab() {
       </Text>
       <Button
         variant="default"
-        onPress={() => {
-          // Open create group dialog later
-        }}
+        onPress={() => setCreateSheetVisible(true)}
         icon={<Plus size={20} color={colors.primaryForeground} />}
         style={styles.createButton}
       >
         Create Group
       </Button>
     </View>
+  );
+
+  const renderGroupCard = ({ item }: { item: Group }) => (
+    <GroupCard
+      emoji={item.emoji}
+      name={item.name}
+      memberCount={item.memberCount}
+      onPress={() => handleGroupPress(item)}
+    />
   );
 
   return (
@@ -54,9 +76,7 @@ export default function GroupsTab() {
           </View>
           <Button
             variant="card"
-            onPress={() => {
-              // Open create group dialog later
-            }}
+            onPress={() => setCreateSheetVisible(true)}
             accessibilityLabel="Create group"
           >
             <Plus size={20} color={colors.primaryForeground} />
@@ -64,21 +84,45 @@ export default function GroupsTab() {
         </View>
       </View>
 
-      {groups.length === 0 ? (
+      {isLoading && groups.length === 0 ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      ) : error && groups.length === 0 ? (
+        <View style={styles.errorContainer}>
+          <Text variant="body" color="destructive" style={styles.errorText}>
+            {error}
+          </Text>
+          <Button
+            variant="outline"
+            onPress={refresh}
+            style={styles.retryButton}
+          >
+            Retry
+          </Button>
+        </View>
+      ) : groups.length === 0 ? (
         renderEmptyState()
       ) : (
         <FlatList
           data={groups}
-          renderItem={({ item }) => <GroupCard {...item} />}
-          keyExtractor={(item, index) => `group-${index}`}
+          renderItem={renderGroupCard}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={[
             styles.listContent,
             { paddingBottom: bottomPadding },
           ]}
           showsVerticalScrollIndicator={false}
-          numColumns={1}
+          refreshing={refreshing}
+          onRefresh={refresh}
         />
       )}
+
+      <CreateGroupSheet
+        visible={createSheetVisible}
+        onClose={() => setCreateSheetVisible(false)}
+        onSuccess={handleCreateSuccess}
+      />
     </SafeAreaView>
   );
 }
@@ -119,6 +163,24 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   createButton: {
+    marginTop: spacing.md,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  errorContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: spacing.xl,
+  },
+  errorText: {
+    textAlign: "center",
+    marginBottom: spacing.md,
+  },
+  retryButton: {
     marginTop: spacing.md,
   },
 });

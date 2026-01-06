@@ -59,7 +59,6 @@ export default function HomeTab() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Balance Summary */}
         <View style={styles.balanceSection}>
           <BalanceCard
             label="You Owe"
@@ -87,7 +86,6 @@ export default function HomeTab() {
           />
         </View>
 
-        {/* Quick Actions */}
         <View style={styles.section}>
           <Text variant="h3" color="foreground" style={styles.sectionTitle}>
             Quick Actions
@@ -124,7 +122,6 @@ export default function HomeTab() {
           </View>
         </View>
 
-        {/* Recent Activity */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text variant="h3" color="foreground" style={styles.sectionTitle}>
@@ -160,10 +157,8 @@ export default function HomeTab() {
         </View>
       </ScrollView>
 
-      {/* Floating Action Button */}
       <FloatingActionButton onPress={() => setManualEntryVisible(true)} />
 
-      {/* Manual Entry Sheet */}
       <ManualEntrySheet
         visible={manualEntryVisible}
         onClose={() => setManualEntryVisible(false)}
