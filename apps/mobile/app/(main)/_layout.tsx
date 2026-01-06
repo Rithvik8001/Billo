@@ -11,6 +11,7 @@ export default function MainLayout() {
         },
       }}
     >
+      <Stack.Screen name="(tabs)" />
       <Stack.Screen name="index" />
     </Stack>
   );

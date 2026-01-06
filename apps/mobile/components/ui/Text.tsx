@@ -2,7 +2,7 @@ import { Text as RNText, StyleSheet, type TextProps as RNTextProps } from "react
 import { colors, typography } from "@/constants/theme";
 
 type TextVariant = "display" | "h1" | "h2" | "h3" | "body" | "bodyLarge" | "small" | "caption";
-type TextColor = "foreground" | "muted" | "primary" | "accent" | "destructive" | "primaryForeground";
+type TextColor = "foreground" | "muted" | "primary" | "accent" | "destructive" | "primaryForeground" | "success";
 
 interface TextProps extends RNTextProps {
   /** Typography variant */
@@ -20,6 +20,7 @@ const colorMap: Record<TextColor, string> = {
   accent: colors.accent,
   destructive: colors.destructive,
   primaryForeground: colors.primaryForeground,
+  success: colors.success,
 };
 
 export function Text({

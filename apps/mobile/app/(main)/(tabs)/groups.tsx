@@ -1,0 +1,124 @@
+import { View, StyleSheet, FlatList } from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+import { Text } from "@/components/ui/Text";
+import { Button } from "@/components/ui/Button";
+import { GroupCard } from "@/components/dashboard";
+import { colors, spacing } from "@/constants/theme";
+import { Users, Plus } from "lucide-react-native";
+
+export default function GroupsTab() {
+  const insets = useSafeAreaInsets();
+  // Mock data - will be replaced with API calls later
+  const groups: any[] = [];
+  // Tab bar height (60) + safe area bottom + extra padding
+  const bottomPadding = 60 + insets.bottom + spacing.xl;
+
+  const renderEmptyState = () => (
+    <View style={styles.emptyState}>
+      <Users size={64} color={colors.mutedForeground} />
+      <Text variant="h3" color="foreground" style={styles.emptyTitle}>
+        No groups yet
+      </Text>
+      <Text variant="body" color="muted" style={styles.emptyDescription}>
+        Create your first group to split bills
+      </Text>
+      <Button
+        variant="default"
+        onPress={() => {
+          // Open create group dialog later
+        }}
+        icon={<Plus size={20} color={colors.primaryForeground} />}
+        style={styles.createButton}
+      >
+        Create Group
+      </Button>
+    </View>
+  );
+
+  return (
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <StatusBar style="dark" />
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          <View>
+            <Text variant="h2" color="foreground">
+              Groups
+            </Text>
+            <Text variant="body" color="muted" style={styles.subtitle}>
+              Manage your groups
+            </Text>
+          </View>
+          <Button
+            variant="card"
+            onPress={() => {
+              // Open create group dialog later
+            }}
+            accessibilityLabel="Create group"
+          >
+            <Plus size={20} color={colors.primaryForeground} />
+          </Button>
+        </View>
+      </View>
+
+      {groups.length === 0 ? (
+        renderEmptyState()
+      ) : (
+        <FlatList
+          data={groups}
+          renderItem={({ item }) => <GroupCard {...item} />}
+          keyExtractor={(item, index) => `group-${index}`}
+          contentContainerStyle={[
+            styles.listContent,
+            { paddingBottom: bottomPadding },
+          ]}
+          showsVerticalScrollIndicator={false}
+          numColumns={1}
+        />
+      )}
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  header: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
+  },
+  headerContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  subtitle: {
+    marginTop: spacing.xs / 2,
+  },
+  listContent: {
+    paddingHorizontal: spacing.lg,
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: spacing.xl,
+  },
+  emptyTitle: {
+    marginTop: spacing.lg,
+    marginBottom: spacing.sm,
+  },
+  emptyDescription: {
+    textAlign: "center",
+    marginBottom: spacing.lg,
+  },
+  createButton: {
+    marginTop: spacing.md,
+  },
+});

@@ -36,7 +36,9 @@ export const colors = {
 
   // Semantic
   success: '#22C55E',
+  successForeground: '#FFFFFF',
   warning: '#F59E0B',
+  warningForeground: '#FFFFFF',
 
   // Gradients (for premium buttons)
   gradientStart: '#1A1A1A',
