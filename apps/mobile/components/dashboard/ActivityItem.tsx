@@ -2,7 +2,7 @@ import { View, StyleSheet } from "react-native";
 import { Card } from "@/components/ui/Card";
 import { Text } from "@/components/ui/Text";
 import { Icon } from "@/components/ui/Icon";
-import { colors, spacing } from "@/constants/theme";
+import { colors, spacing, borderRadius } from "@/constants/theme";
 import type { LucideIcon } from "lucide-react-native";
 
 interface ActivityItemProps {
@@ -26,28 +26,33 @@ export function ActivityItem({
   amountColor = "foreground",
   onPress,
 }: ActivityItemProps) {
+  // Combine description and timestamp if both exist
+  const subtitle = description
+    ? `${description} • ${timestamp}`
+    : timestamp;
+
   return (
     <Card style={styles.card} onPress={onPress} accessibilityLabel={title}>
       <View style={styles.content}>
         <View style={styles.leftSection}>
-          <Icon icon={icon} size="md" color={iconColor} background />
+          <Icon
+            icon={icon}
+            size="xl"
+            color={iconColor}
+            background
+          />
         </View>
         <View style={styles.centerSection}>
-          <Text variant="body" color="foreground" style={styles.title}>
+          <Text variant="bodyLarge" color="foreground" style={styles.title}>
             {title}
           </Text>
-          {description && (
-            <Text variant="small" color="muted" style={styles.description}>
-              {description}
-            </Text>
-          )}
-          <Text variant="small" color="muted" style={styles.timestamp}>
-            {timestamp}
+          <Text variant="small" color="muted" style={styles.subtitle}>
+            {subtitle}
           </Text>
         </View>
         {amount && (
           <View style={styles.rightSection}>
-            <Text variant="body" color={amountColor} style={styles.amount}>
+            <Text variant="bodyLarge" color={amountColor} style={styles.amount}>
               {amount}
             </Text>
           </View>
@@ -59,7 +64,7 @@ export function ActivityItem({
 
 const styles = StyleSheet.create({
   card: {
-    padding: spacing.md,
+    padding: spacing.lg,
     marginBottom: spacing.sm,
   },
   content: {
@@ -71,21 +76,21 @@ const styles = StyleSheet.create({
   },
   centerSection: {
     flex: 1,
+    marginRight: spacing.sm,
   },
   title: {
-    fontWeight: "500",
+    fontWeight: "600",
     marginBottom: spacing.xs / 2,
   },
-  description: {
-    marginBottom: spacing.xs / 2,
-  },
-  timestamp: {
-    fontSize: 11,
+  subtitle: {
+    fontSize: 13,
+    lineHeight: 18,
   },
   rightSection: {
-    marginLeft: spacing.md,
+    alignItems: "flex-end",
   },
   amount: {
     fontWeight: "600",
+    fontSize: 16,
   },
 });

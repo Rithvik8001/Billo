@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import {
   SafeAreaView,
@@ -21,13 +21,47 @@ import {
   Wallet,
   Receipt,
   ArrowRight,
+  CheckCircle,
+  Activity,
 } from "lucide-react-native";
 import { Button } from "@/components/ui/Button";
+import { useActivity } from "@/hooks/useActivity";
+import type { ActivityItem as ActivityItemType } from "@/types/activity";
+
+// Map activity type to icon and color
+function getActivityIconConfig(type: ActivityItemType["type"]) {
+  switch (type) {
+    case "settlement":
+      return { icon: Wallet, color: "destructive" as const };
+    case "receipt":
+      return { icon: Receipt, color: "accent" as const };
+    case "payment":
+      return { icon: CheckCircle, color: "success" as const };
+    case "group":
+      return { icon: Users, color: "foreground" as const };
+    default:
+      return { icon: Activity, color: "foreground" as const };
+  }
+}
+
+// Map amount type to color
+function getAmountColor(amountType?: ActivityItemType["amountType"]): "foreground" | "destructive" | "success" | "muted" {
+  switch (amountType) {
+    case "owe":
+      return "destructive";
+    case "owed":
+      return "success";
+    default:
+      return "foreground";
+  }
+}
 
 export default function HomeTab() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [manualEntryVisible, setManualEntryVisible] = useState(false);
+  const { activities } = useActivity();
+  
   // Tab bar height (60) + safe area bottom + extra padding
   const bottomPadding = 60 + insets.bottom + spacing.xl;
 
@@ -40,13 +74,10 @@ export default function HomeTab() {
     owedToYouCount: 0,
   };
 
-  const recentActivity: {
-    icon: any;
-    title: string;
-    description?: string;
-    timestamp: string;
-    amount?: string;
-  }[] = [];
+  // Get recent activity (limited to 5 items)
+  const recentActivity = useMemo(() => {
+    return activities.slice(0, 5);
+  }, [activities]);
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -149,9 +180,23 @@ export default function HomeTab() {
             </View>
           ) : (
             <View>
-              {recentActivity.slice(0, 5).map((activity, index) => (
-                <ActivityItem key={index} {...activity} />
-              ))}
+              {recentActivity.map((activity) => {
+                const { icon, color } = getActivityIconConfig(activity.type);
+                const amountColor = getAmountColor(activity.amountType);
+                
+                return (
+                  <ActivityItem
+                    key={activity.id}
+                    icon={icon}
+                    iconColor={color}
+                    title={activity.title}
+                    description={activity.description}
+                    timestamp={activity.timestamp}
+                    amount={activity.amount}
+                    amountColor={amountColor}
+                  />
+                );
+              })}
             </View>
           )}
         </View>
