@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
-import { Sparkles } from "lucide-react-native";
-import { Button, Icon } from "@/components/ui";
+import { useRouter } from "expo-router";
+import { Button } from "@/components/ui";
 import { spacing } from "@/constants/theme";
 
 interface OnboardingButtonProps {
@@ -15,32 +15,41 @@ export function OnboardingButton({
   onPress,
   loading = false,
 }: OnboardingButtonProps) {
+  const router = useRouter();
+
+  const handleSignUp = () => {
+    router.push("/(auth)/sign-up");
+  };
+
+  const handleSignIn = () => {
+    router.push("/(auth)/sign-in");
+  };
+
   return (
     <Animated.View
       style={styles.container}
       entering={FadeIn.delay(200).duration(300)}
     >
       {isLastScreen ? (
-        <View style={styles.buttonRow}>
+        <View style={styles.buttonColumn}>
           <Button
-            onPress={onPress}
-            variant="outline"
+            onPress={handleSignUp}
+            variant="default"
             size="default"
-            style={styles.outlineButton}
-            accessibilityLabel="Get started with Billo"
+            fullWidth
+            accessibilityLabel="Sign up for Billo"
           >
-            Get Started
+            Sign Up
           </Button>
           <Button
-            onPress={onPress}
-            variant="gradient"
+            onPress={handleSignIn}
+            variant="outline"
             size="default"
-            icon={<Icon icon={Sparkles} size="sm" color="primaryForeground" />}
-            iconPosition="left"
-            style={styles.gradientButton}
-            accessibilityLabel="Get started with AI assistance"
+            fullWidth
+            style={styles.signInButton}
+            accessibilityLabel="Sign in to Billo"
           >
-            Create for me
+            Sign In
           </Button>
         </View>
       ) : (
@@ -64,14 +73,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.lg,
   },
-  buttonRow: {
-    flexDirection: "row",
+  buttonColumn: {
     gap: spacing.md,
   },
-  outlineButton: {
-    flex: 1,
-  },
-  gradientButton: {
-    flex: 1,
+  signInButton: {
+    marginTop: spacing.xs,
   },
 });

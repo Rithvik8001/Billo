@@ -64,19 +64,19 @@ export function useOnboarding(): UseOnboardingReturn {
     [currentIndex, totalScreens, springConfig]
   );
 
-  const navigateToMain = useCallback(() => {
-    router.replace("/(main)");
+  const navigateToAuth = useCallback(() => {
+    router.replace("/(auth)/sign-up");
   }, [router]);
 
   const completeOnboarding = useCallback(async () => {
     await setOnboardingCompleted();
-    navigateToMain();
-  }, [navigateToMain]);
+    navigateToAuth();
+  }, [navigateToAuth]);
 
   const skipOnboarding = useCallback(async () => {
     await setOnboardingCompleted();
-    navigateToMain();
-  }, [navigateToMain]);
+    navigateToAuth();
+  }, [navigateToAuth]);
 
   const getCurrentIndex = useCallback(() => {
     return Math.round(currentIndex.value);

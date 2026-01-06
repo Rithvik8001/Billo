@@ -1,6 +1,7 @@
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, Button } from "@/components/ui";
+import { SignOutButton } from "@/components/auth";
 import { colors, spacing } from "@/constants/theme";
 import { resetOnboarding } from "@/utils/storage";
 import { useRouter } from "expo-router";
@@ -30,7 +31,7 @@ export default function HomeScreen() {
           completing onboarding.
         </Text>
 
-        {/* Dev button to reset onboarding */}
+        {/* Dev buttons */}
         {__DEV__ && (
           <View style={styles.devSection}>
             <Text variant="caption" color="muted" style={styles.devLabel}>
@@ -41,6 +42,11 @@ export default function HomeScreen() {
             </Button>
           </View>
         )}
+
+        {/* Sign Out Button */}
+        <View style={styles.signOutSection}>
+          <SignOutButton variant="outline" fullWidth />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -79,5 +85,10 @@ const styles = StyleSheet.create({
   },
   devLabel: {
     marginBottom: spacing.sm,
+  },
+  signOutSection: {
+    marginTop: spacing.lg,
+    width: "100%",
+    maxWidth: 300,
   },
 });
