@@ -37,6 +37,14 @@ export const colors = {
   // Semantic
   success: '#22C55E',
   warning: '#F59E0B',
+
+  // Gradients (for premium buttons)
+  gradientStart: '#1A1A1A',
+  gradientEnd: '#0A0A0A',
+
+  // Icon backgrounds
+  iconBackground: '#F3F4F6',
+  iconBackgroundLight: '#F9FAFB',
 } as const;
 
 export const typography = {
@@ -143,6 +151,29 @@ export const shadows = {
     shadowRadius: 8,
     elevation: 4,
   },
+  card: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  button: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+} as const;
+
+export const iconSizes = {
+  sm: 20,
+  md: 24,
+  lg: 32,
+  xl: 48,
+  '2xl': 64,
+  '3xl': 96,
 } as const;
 
 // Type exports for type safety
@@ -152,3 +183,4 @@ export type Spacing = typeof spacing;
 export type BorderRadius = typeof borderRadius;
 export type Animation = typeof animation;
 export type Shadows = typeof shadows;
+export type IconSizes = typeof iconSizes;

@@ -1,3 +1,1 @@
-export { ScanIllustration } from "./ScanIllustration";
-export { SplitIllustration } from "./SplitIllustration";
-export { SettleIllustration } from "./SettleIllustration";
+// Illustrations removed - using Lucide icons instead

@@ -96,9 +96,7 @@ export default function OnboardingPage() {
             {ONBOARDING_SLIDES.map((slide, index) => (
               <OnboardingScreen
                 key={slide.id}
-                title={slide.title}
-                subtitle={slide.subtitle}
-                illustrationKey={slide.illustrationKey}
+                slide={slide}
                 index={index}
                 currentIndex={currentIndex}
               />
@@ -138,9 +136,9 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   bottomSection: {
-    paddingBottom: spacing.md,
+    paddingBottom: spacing.lg,
   },
   paginationContainer: {
-    paddingVertical: spacing.lg,
+    paddingBottom: spacing.sm,
   },
 });

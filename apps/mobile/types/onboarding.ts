@@ -1,10 +1,14 @@
-export type IllustrationKey = "scan" | "split" | "settle";
+export interface OnboardingFeature {
+  icon: string; // Lucide icon name
+  text: string;
+}
 
 export interface OnboardingSlide {
   id: string;
   title: string;
   subtitle: string;
-  illustrationKey: IllustrationKey;
+  iconName: string; // Lucide icon name
+  features: OnboardingFeature[];
 }
 
 export interface OnboardingState {

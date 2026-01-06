@@ -1,6 +1,7 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
-import { Button } from "@/components/ui";
+import { Sparkles } from "lucide-react-native";
+import { Button, Icon } from "@/components/ui";
 import { spacing } from "@/constants/theme";
 
 interface OnboardingButtonProps {
@@ -17,25 +18,43 @@ export function OnboardingButton({
   return (
     <Animated.View
       style={styles.container}
-      entering={FadeIn.delay(300).duration(400)}
+      entering={FadeIn.delay(200).duration(300)}
     >
-      <Button
-        onPress={onPress}
-        variant="default"
-        size="lg"
-        fullWidth
-        loading={loading}
-        accessibilityLabel={
-          isLastScreen ? "Get started with Billo" : "Go to next screen"
-        }
-        accessibilityHint={
-          isLastScreen
-            ? "Completes onboarding and opens the main app"
-            : "Shows the next onboarding screen"
-        }
-      >
-        {isLastScreen ? "Get Started" : "Next"}
-      </Button>
+      {isLastScreen ? (
+        <View style={styles.buttonRow}>
+          <Button
+            onPress={onPress}
+            variant="outline"
+            size="default"
+            style={styles.outlineButton}
+            accessibilityLabel="Get started with Billo"
+          >
+            Get Started
+          </Button>
+          <Button
+            onPress={onPress}
+            variant="gradient"
+            size="default"
+            icon={<Icon icon={Sparkles} size="sm" color="primaryForeground" />}
+            iconPosition="left"
+            style={styles.gradientButton}
+            accessibilityLabel="Get started with AI assistance"
+          >
+            Create for me
+          </Button>
+        </View>
+      ) : (
+        <Button
+          onPress={onPress}
+          variant="default"
+          size="default"
+          fullWidth
+          loading={loading}
+          accessibilityLabel="Continue to next screen"
+        >
+          Continue
+        </Button>
+      )}
     </Animated.View>
   );
 }
@@ -44,5 +63,15 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.lg,
+  },
+  buttonRow: {
+    flexDirection: "row",
+    gap: spacing.md,
+  },
+  outlineButton: {
+    flex: 1,
+  },
+  gradientButton: {
+    flex: 1,
   },
 });

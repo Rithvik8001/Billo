@@ -1,44 +1,25 @@
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
 import Animated, {
   useAnimatedStyle,
   interpolate,
   Extrapolation,
   type SharedValue,
 } from "react-native-reanimated";
-import { Text } from "@/components/ui";
-import { spacing } from "@/constants/theme";
-import type { IllustrationKey } from "@/types/onboarding";
-import {
-  ScanIllustration,
-  SplitIllustration,
-  SettleIllustration,
-} from "./illustrations";
+import { Text, Icon, Card } from "@/components/ui";
+import { spacing, colors } from "@/constants/theme";
+import type { OnboardingSlide } from "@/types/onboarding";
+import * as LucideIcons from "lucide-react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 interface OnboardingScreenProps {
-  /** Slide title */
-  title: string;
-  /** Slide subtitle/description */
-  subtitle: string;
-  /** Illustration key to render */
-  illustrationKey: IllustrationKey;
-  /** Index of this screen */
+  slide: OnboardingSlide;
   index: number;
-  /** Current index as shared value */
   currentIndex: SharedValue<number>;
 }
 
-const ILLUSTRATION_MAP: Record<IllustrationKey, React.ComponentType> = {
-  scan: ScanIllustration,
-  split: SplitIllustration,
-  settle: SettleIllustration,
-};
-
 export function OnboardingScreen({
-  title,
-  subtitle,
-  illustrationKey,
+  slide,
   index,
   currentIndex,
 }: OnboardingScreenProps) {
@@ -48,7 +29,7 @@ export function OnboardingScreen({
     const translateX = interpolate(
       currentIndex.value,
       inputRange,
-      [SCREEN_WIDTH * 0.5, 0, -SCREEN_WIDTH * 0.5],
+      [SCREEN_WIDTH, 0, -SCREEN_WIDTH],
       Extrapolation.CLAMP
     );
 
@@ -59,42 +40,71 @@ export function OnboardingScreen({
       Extrapolation.CLAMP
     );
 
-    const scale = interpolate(
-      currentIndex.value,
-      inputRange,
-      [0.9, 1, 0.9],
-      Extrapolation.CLAMP
-    );
-
     return {
-      transform: [{ translateX }, { scale }],
+      transform: [{ translateX }],
       opacity,
     };
   });
 
-  const IllustrationComponent = ILLUSTRATION_MAP[illustrationKey];
+  const IconComponent =
+    (LucideIcons as Record<string, React.ComponentType<any>>)[slide.iconName] ||
+    LucideIcons.Circle;
 
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
-      {/* Illustration */}
-      <View style={styles.illustrationContainer}>
-        <IllustrationComponent />
-      </View>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.iconWrapper}>
+            <Icon
+              icon={IconComponent}
+              size="lg"
+              color="foreground"
+              background
+              backgroundVariant="light"
+            />
+          </View>
+          <Text variant="h1" color="foreground" style={styles.title}>
+            {slide.title}
+          </Text>
+          <Text variant="bodyLarge" color="muted" style={styles.subtitle}>
+            {slide.subtitle}
+          </Text>
+        </View>
 
-      {/* Text content */}
-      <View style={styles.textContainer}>
-        <Text
-          variant="h1"
-          color="foreground"
-          style={styles.title}
-          accessibilityRole="header"
-        >
-          {title}
-        </Text>
-        <Text variant="bodyLarge" color="muted" style={styles.subtitle}>
-          {subtitle}
-        </Text>
-      </View>
+        {/* Feature Cards */}
+        <View style={styles.featuresContainer}>
+          {slide.features.map((feature, featureIndex) => {
+            const FeatureIconComponent =
+              (LucideIcons as Record<string, React.ComponentType<any>>)[
+                feature.icon
+              ] || LucideIcons.Circle;
+
+            return (
+              <Card key={featureIndex} style={styles.featureCard}>
+                <View style={styles.featureContent}>
+                  <View style={styles.featureIconWrapper}>
+                    <Icon
+                      icon={FeatureIconComponent}
+                      size="md"
+                      color="foreground"
+                    />
+                  </View>
+                  <View style={styles.featureTextWrapper}>
+                    <Text variant="body" color="foreground" style={styles.featureText}>
+                      {feature.text}
+                    </Text>
+                  </View>
+                </View>
+              </Card>
+            );
+          })}
+        </View>
+      </ScrollView>
     </Animated.View>
   );
 }
@@ -102,26 +112,58 @@ export function OnboardingScreen({
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: spacing.lg,
   },
-  illustrationContainer: {
-    alignItems: "center",
-    justifyContent: "center",
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing["2xl"],
+    paddingBottom: spacing.xl,
+  },
+  header: {
     marginBottom: spacing.xl,
   },
-  textContainer: {
-    alignItems: "center",
-    paddingBottom: spacing["2xl"],
+  iconWrapper: {
+    marginBottom: spacing.lg,
+    alignItems: "flex-start",
   },
   title: {
-    textAlign: "center",
-    marginBottom: spacing.md,
+    fontSize: 32,
+    fontWeight: "700",
+    marginBottom: spacing.sm,
+    lineHeight: 40,
   },
   subtitle: {
-    textAlign: "center",
-    maxWidth: 300,
+    fontSize: 16,
     lineHeight: 24,
+    color: colors.mutedForeground,
+  },
+  featuresContainer: {
+    gap: spacing.md,
+  },
+  featureCard: {
+    padding: spacing.lg,
+  },
+  featureContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  featureIconWrapper: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.iconBackgroundLight,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: spacing.md,
+  },
+  featureTextWrapper: {
+    flex: 1,
+  },
+  featureText: {
+    fontSize: 15,
+    fontWeight: "500",
+    lineHeight: 22,
   },
 });

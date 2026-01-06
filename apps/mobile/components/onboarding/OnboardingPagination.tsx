@@ -47,14 +47,9 @@ function PaginationDot({ index, currentIndex, total }: PaginationDotProps) {
       duration: animation.timing.default,
     });
 
-    const scale = withTiming(isActive ? 1.1 : 1, {
-      duration: animation.timing.default,
-    });
-
     return {
       width,
       opacity,
-      transform: [{ scale }],
     };
   });
 
@@ -64,7 +59,6 @@ function PaginationDot({ index, currentIndex, total }: PaginationDotProps) {
       accessible
       accessibilityRole="tab"
       accessibilityLabel={`Page ${index + 1} of ${total}`}
-      accessibilityState={{ selected: false }}
     />
   );
 }
@@ -74,7 +68,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: spacing.sm,
+    gap: 8,
+    paddingVertical: spacing.md,
   },
   dot: {
     height: 8,

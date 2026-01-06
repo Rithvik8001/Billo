@@ -1,6 +1,7 @@
 import {
   Pressable,
   StyleSheet,
+  View,
   type ViewStyle,
   type TextStyle,
 } from "react-native";
@@ -9,10 +10,22 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
-import { colors, borderRadius, spacing, animation } from "@/constants/theme";
+import {
+  colors,
+  borderRadius,
+  spacing,
+  animation,
+  shadows,
+} from "@/constants/theme";
 import { Text } from "./Text";
 
-type ButtonVariant = "default" | "outline" | "ghost" | "destructive";
+type ButtonVariant =
+  | "default"
+  | "outline"
+  | "ghost"
+  | "destructive"
+  | "gradient"
+  | "card";
 type ButtonSize = "default" | "sm" | "lg";
 
 interface ButtonProps {
@@ -26,6 +39,8 @@ interface ButtonProps {
   style?: ViewStyle;
   accessibilityLabel?: string;
   accessibilityHint?: string;
+  icon?: React.ReactNode;
+  iconPosition?: "left" | "right";
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -41,6 +56,8 @@ export function Button({
   style,
   accessibilityLabel,
   accessibilityHint,
+  icon,
+  iconPosition = "left",
 }: ButtonProps) {
   const pressed = useSharedValue(false);
 
@@ -90,13 +107,19 @@ export function Button({
         style,
       ]}
     >
+      {icon && iconPosition === "left" && (
+        <View style={styles.iconLeft}>{icon}</View>
+      )}
       <Text
-        variant={size === "sm" ? "small" : "body"}
+        variant={size === "sm" ? "small" : size === "lg" ? "bodyLarge" : "body"}
         color={variantStyles.textColor}
         style={[sizeStyles.text, isDisabled && styles.disabledText]}
       >
         {loading ? "Loading..." : children}
       </Text>
+      {icon && iconPosition === "right" && (
+        <View style={styles.iconRight}>{icon}</View>
+      )}
     </AnimatedPressable>
   );
 }
@@ -136,6 +159,25 @@ function getVariantStyles(variant: ButtonVariant): {
         },
         textColor: "primaryForeground",
       };
+    case "gradient":
+      return {
+        container: {
+          backgroundColor: colors.gradientStart,
+          ...shadows.button,
+        },
+        textColor: "primaryForeground",
+      };
+    case "card":
+      return {
+        container: {
+          backgroundColor: colors.foreground,
+          width: 40,
+          height: 40,
+          borderRadius: borderRadius.full,
+          padding: 0,
+        },
+        textColor: "primaryForeground",
+      };
   }
 }
 
@@ -148,33 +190,39 @@ function getSizeStyles(size: ButtonSize): {
       return {
         container: {
           paddingHorizontal: spacing.md,
-          paddingVertical: spacing.sm,
+          paddingVertical: 10,
           borderRadius: borderRadius.md,
+          minHeight: 36,
         },
         text: {
           fontWeight: "500",
+          fontSize: 14,
         },
       };
     case "default":
       return {
         container: {
           paddingHorizontal: spacing.lg,
-          paddingVertical: spacing.md - 4,
+          paddingVertical: 14,
           borderRadius: borderRadius.lg,
+          minHeight: 48,
         },
         text: {
           fontWeight: "600",
+          fontSize: 16,
         },
       };
     case "lg":
       return {
         container: {
           paddingHorizontal: spacing.xl,
-          paddingVertical: spacing.md,
-          borderRadius: borderRadius.lg,
+          paddingVertical: 16,
+          borderRadius: borderRadius.xl,
+          minHeight: 52,
         },
         text: {
           fontWeight: "600",
+          fontSize: 17,
         },
       };
   }
@@ -194,5 +242,11 @@ const styles = StyleSheet.create({
   },
   disabledText: {
     opacity: 0.8,
+  },
+  iconLeft: {
+    marginRight: spacing.sm,
+  },
+  iconRight: {
+    marginLeft: spacing.sm,
   },
 });
