@@ -14,8 +14,7 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: colors.mutedForeground,
         tabBarStyle: {
           backgroundColor: colors.card,
-          borderTopColor: colors.border,
-          borderTopWidth: 1,
+          borderTopWidth: 0,
           height: 60 + insets.bottom,
           paddingBottom: insets.bottom + spacing.sm,
           paddingTop: spacing.sm,
@@ -24,8 +23,6 @@ export default function TabsLayout() {
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "500",
-          letterSpacing: 0.6,
-          textTransform: "uppercase",
         },
         tabBarIconStyle: {
           marginTop: spacing.xs / 2,

@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { StyleSheet, Alert } from "react-native";
+import { StyleSheet, Alert, View } from "react-native";
 import { useSSO } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import * as Linking from "expo-linking";
-import { Button } from "@/components/ui";
-import { spacing } from "@/constants/theme";
+import { Button, Text } from "@/components/ui";
+import { spacing, colors, borderRadius } from "@/constants/theme";
 import * as WebBrowser from "expo-web-browser";
 
 WebBrowser.maybeCompleteAuthSession();
@@ -48,11 +48,17 @@ export function GoogleSignInButton() {
   return (
     <Button
       onPress={onPress}
-      variant="outline"
+      variant="social"
       size="default"
       fullWidth
       loading={loading}
       style={styles.button}
+      icon={
+        <View style={styles.googleIcon}>
+          <Text style={styles.googleG}>G</Text>
+        </View>
+      }
+      iconPosition="left"
     >
       Continue with Google
     </Button>
@@ -62,5 +68,19 @@ export function GoogleSignInButton() {
 const styles = StyleSheet.create({
   button: {
     marginTop: spacing.sm,
+  },
+  googleIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: borderRadius.sm,
+    backgroundColor: "#4285F4",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: spacing.sm,
+  },
+  googleG: {
+    color: colors.primaryForeground,
+    fontSize: 12,
+    fontWeight: "700",
   },
 });

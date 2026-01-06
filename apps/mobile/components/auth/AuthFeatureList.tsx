@@ -1,7 +1,7 @@
 import { View, StyleSheet } from "react-native";
 import { Camera, Users, Wallet } from "lucide-react-native";
 import { Text } from "@/components/ui";
-import { spacing, colors } from "@/constants/theme";
+import { spacing, colors, borderRadius } from "@/constants/theme";
 
 interface Feature {
   icon: React.ComponentType<{ size?: number; color?: string }>;
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   dot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: borderRadius.sm,
     backgroundColor: colors.primary,
     marginTop: 6,
     flexShrink: 0,

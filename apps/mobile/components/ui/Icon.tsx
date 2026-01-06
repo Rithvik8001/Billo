@@ -30,6 +30,7 @@ const colorMap: Record<TextColor, string> = {
   accent: colors.accent,
   destructive: colors.destructive,
   primaryForeground: colors.primaryForeground,
+  success: colors.success,
 };
 
 export function Icon({

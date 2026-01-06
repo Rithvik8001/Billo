@@ -6,7 +6,7 @@ import Animated, {
   type SharedValue,
 } from "react-native-reanimated";
 import { Text, Icon, Card } from "@/components/ui";
-import { spacing, colors } from "@/constants/theme";
+import { spacing, colors, borderRadius } from "@/constants/theme";
 import type { OnboardingSlide } from "@/types/onboarding";
 import * as LucideIcons from "lucide-react-native";
 
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   featureIconWrapper: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: borderRadius.full,
     backgroundColor: colors.iconBackgroundLight,
     alignItems: "center",
     justifyContent: "center",

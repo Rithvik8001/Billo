@@ -15,7 +15,7 @@ import { StatusBar } from "expo-status-bar";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
-import { colors, spacing } from "@/constants/theme";
+import { colors, spacing, borderRadius } from "@/constants/theme";
 import {
   ArrowLeft,
   Plus,
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     top: 32,
     right: 0,
     backgroundColor: colors.card,
-    borderRadius: 8,
+    borderRadius: borderRadius.xl,
     borderWidth: 1,
     borderColor: colors.border,
     minWidth: 160,

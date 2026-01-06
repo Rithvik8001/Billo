@@ -144,8 +144,8 @@ const styles = StyleSheet.create({
   },
   sheet: {
     backgroundColor: colors.card,
-    borderTopLeftRadius: borderRadius["2xl"],
-    borderTopRightRadius: borderRadius["2xl"],
+    borderTopLeftRadius: borderRadius["3xl"],
+    borderTopRightRadius: borderRadius["3xl"],
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.lg,
     maxHeight: "90%",
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.md,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.xl,
     marginBottom: spacing.xs,
   },
   currencyInfo: {

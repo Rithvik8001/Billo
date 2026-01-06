@@ -307,8 +307,8 @@ const styles = StyleSheet.create({
   },
   sheet: {
     backgroundColor: colors.card,
-    borderTopLeftRadius: borderRadius["2xl"],
-    borderTopRightRadius: borderRadius["2xl"],
+    borderTopLeftRadius: borderRadius["3xl"],
+    borderTopRightRadius: borderRadius["3xl"],
     ...shadows.lg,
   },
   sheetContent: {
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   },
   searchResults: {
     marginTop: spacing.sm,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.xl,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.card,
@@ -357,14 +357,14 @@ const styles = StyleSheet.create({
   userAvatar: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: borderRadius.full,
     borderWidth: 1,
     borderColor: colors.border,
   },
   userAvatarPlaceholder: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: borderRadius.full,
     backgroundColor: colors.muted,
     borderWidth: 1,
     borderColor: colors.border,
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
   selectedUser: {
     marginTop: spacing.md,
     padding: spacing.md,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.xl,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.muted,
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
   selectedAvatar: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: borderRadius.full,
     borderWidth: 1,
     borderColor: colors.border,
     marginRight: spacing.md,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
   selectedAvatarPlaceholder: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: borderRadius.full,
     backgroundColor: colors.muted,
     borderWidth: 1,
     borderColor: colors.border,

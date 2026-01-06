@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     backgroundColor: colors.secondary,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
   },
   text: {
     fontSize: 15,

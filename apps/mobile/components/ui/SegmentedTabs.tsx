@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   tabsWrapper: {
     flexDirection: "row",
     backgroundColor: colors.iconBackground,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius["2xl"],
     padding: spacing.xs / 2,
     position: "relative",
     height: 36,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.xl,
     zIndex: 1,
   },
   tabActive: {
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     left: spacing.xs / 2,
     height: 32,
     backgroundColor: colors.primary,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.full,
     zIndex: 0,
   },
 });

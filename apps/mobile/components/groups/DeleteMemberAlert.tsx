@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
   },
   alert: {
     backgroundColor: colors.card,
-    borderRadius: borderRadius.xl,
+    borderRadius: borderRadius["2xl"],
     padding: spacing.lg,
     width: "100%",
     maxWidth: 400,

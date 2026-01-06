@@ -7,7 +7,7 @@ import { Text } from "@/components/ui/Text";
 import { ActivityItem } from "@/components/dashboard";
 import { SegmentedTabs } from "@/components/ui/SegmentedTabs";
 import { Button } from "@/components/ui/Button";
-import { colors, spacing } from "@/constants/theme";
+import { colors, spacing, borderRadius } from "@/constants/theme";
 import { Activity, Wallet, Receipt, CheckCircle, Users, Camera } from "lucide-react-native";
 import { useActivity, type ActivityFilter, type ActivitySection } from "@/hooks/useActivity";
 import type { ActivityItem as ActivityItemType } from "@/types/activity";
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   emptyIconContainer: {
     width: 120,
     height: 120,
-    borderRadius: 60,
+    borderRadius: borderRadius.full,
     backgroundColor: colors.iconBackgroundLight,
     alignItems: "center",
     justifyContent: "center",

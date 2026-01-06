@@ -25,7 +25,8 @@ type ButtonVariant =
   | "ghost"
   | "destructive"
   | "gradient"
-  | "card";
+  | "card"
+  | "social";
 type ButtonSize = "default" | "sm" | "lg";
 
 interface ButtonProps {
@@ -133,6 +134,7 @@ function getVariantStyles(variant: ButtonVariant): {
       return {
         container: {
           backgroundColor: colors.primary,
+          ...shadows.button,
         },
         textColor: "primaryForeground",
       };
@@ -178,6 +180,15 @@ function getVariantStyles(variant: ButtonVariant): {
         },
         textColor: "primaryForeground",
       };
+    case "social":
+      return {
+        container: {
+          backgroundColor: "transparent",
+          borderWidth: 1,
+          borderColor: colors.border,
+        },
+        textColor: "foreground",
+      };
   }
 }
 
@@ -191,8 +202,8 @@ function getSizeStyles(size: ButtonSize): {
         container: {
           paddingHorizontal: spacing.md,
           paddingVertical: 10,
-          borderRadius: borderRadius.md,
-          minHeight: 36,
+          borderRadius: borderRadius.full,
+          minHeight: 40,
         },
         text: {
           fontWeight: "500",
@@ -204,8 +215,8 @@ function getSizeStyles(size: ButtonSize): {
         container: {
           paddingHorizontal: spacing.lg,
           paddingVertical: 14,
-          borderRadius: borderRadius.lg,
-          minHeight: 48,
+          borderRadius: borderRadius.full,
+          minHeight: 52,
         },
         text: {
           fontWeight: "600",
@@ -217,8 +228,8 @@ function getSizeStyles(size: ButtonSize): {
         container: {
           paddingHorizontal: spacing.xl,
           paddingVertical: 16,
-          borderRadius: borderRadius.xl,
-          minHeight: 52,
+          borderRadius: borderRadius.full,
+          minHeight: 56,
         },
         text: {
           fontWeight: "600",
