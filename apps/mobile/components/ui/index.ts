@@ -4,3 +4,4 @@ export { Icon } from "./Icon";
 export { Card } from "./Card";
 export { Input } from "./Input";
 export { SegmentedTabs } from "./SegmentedTabs";
+export { Switch } from "./Switch";

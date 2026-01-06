@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { View, StyleSheet, ScrollView, Pressable } from "react-native";
 import {
   SafeAreaView,
@@ -10,11 +11,14 @@ import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { SignOutButton } from "@/components/auth";
+import { SubscriptionCard } from "@/components/account/SubscriptionCard";
+import { CurrencySheet } from "@/components/account/CurrencySheet";
+import { EmailPreferencesCard } from "@/components/account/EmailPreferencesCard";
+import { useCurrency } from "@/hooks/useCurrency";
 import { colors, spacing, borderRadius } from "@/constants/theme";
 import {
   Settings,
   DollarSign,
-  Bell,
   HelpCircle,
   FileText,
   Shield,
@@ -62,9 +66,13 @@ function SettingsItem({
 
 export default function AccountTab() {
   const { user } = useUser();
+  const { getCurrency } = useCurrency();
   const insets = useSafeAreaInsets();
+  const [currencySheetVisible, setCurrencySheetVisible] = useState(false);
   // Tab bar height (60) + safe area bottom + extra padding
   const bottomPadding = 60 + insets.bottom + spacing.xl;
+
+  const currentCurrency = getCurrency();
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -114,26 +122,26 @@ export default function AccountTab() {
           </Button>
         </View>
 
-        {/* Preferences Section */}
+        {/* Subscription Section */}
+        <View style={styles.section}>
+          <SubscriptionCard />
+        </View>
+
+        {/* Currency Preference */}
         <View style={styles.section}>
           <Card style={styles.settingsCard}>
             <SettingsItem
               icon={DollarSign}
               label="Currency"
-              value="USD"
-              onPress={() => {
-                // Open currency selector later
-              }}
-            />
-            <View style={styles.divider} />
-            <SettingsItem
-              icon={Bell}
-              label="Notifications"
-              onPress={() => {
-                // Open notifications settings later
-              }}
+              value={`${currentCurrency.symbol} ${currentCurrency.code}`}
+              onPress={() => setCurrencySheetVisible(true)}
             />
           </Card>
+        </View>
+
+        {/* Email Notifications */}
+        <View style={styles.section}>
+          <EmailPreferencesCard />
         </View>
 
         {/* About Section */}
@@ -177,6 +185,11 @@ export default function AccountTab() {
           <SignOutButton variant="outline" fullWidth />
         </View>
       </ScrollView>
+
+      <CurrencySheet
+        visible={currencySheetVisible}
+        onClose={() => setCurrencySheetVisible(false)}
+      />
     </SafeAreaView>
   );
 }
