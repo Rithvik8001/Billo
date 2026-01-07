@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, spacing, iconSizes } from "@/constants/theme";
-import { Home, Activity, Users, User } from "lucide-react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
@@ -10,23 +10,19 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
+        tabBarShowLabel: false, // Icon-only navigation
         tabBarActiveTintColor: colors.primary, // Navy blue
         tabBarInactiveTintColor: colors.mutedForeground,
         tabBarStyle: {
           backgroundColor: colors.card,
-          borderTopWidth: 0.5,
-          borderTopColor: colors.border,
+          borderTopWidth: 0, // No divider
           height: 60 + insets.bottom,
           paddingBottom: insets.bottom + spacing.sm,
           paddingTop: spacing.sm,
           // Clean, no shadow for refined look
         },
-        tabBarLabelStyle: {
-          fontSize: 11, // Slightly smaller
-          fontWeight: "500",
-        },
         tabBarIconStyle: {
-          marginTop: spacing.xs / 2,
+          marginTop: 0, // Center icons vertically
         },
       }}
     >
@@ -34,8 +30,13 @@ export default function TabsLayout() {
         name="home"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => (
-            <Home size={iconSizes.md} color={color} />
+          tabBarAccessibilityLabel: "Home tab",
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={iconSizes.md}
+              color={color}
+            />
           ),
         }}
       />
@@ -43,8 +44,27 @@ export default function TabsLayout() {
         name="activity"
         options={{
           title: "Activity",
-          tabBarIcon: ({ color }) => (
-            <Activity size={iconSizes.md} color={color} />
+          tabBarAccessibilityLabel: "Activity tab",
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={focused ? "pulse" : "pulse-outline"}
+              size={iconSizes.md}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="receipt"
+        options={{
+          title: "Receipt",
+          tabBarAccessibilityLabel: "Receipt upload tab",
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={focused ? "camera" : "camera-outline"}
+              size={iconSizes.md}
+              color={color}
+            />
           ),
         }}
       />
@@ -52,8 +72,13 @@ export default function TabsLayout() {
         name="groups"
         options={{
           title: "Groups",
-          tabBarIcon: ({ color }) => (
-            <Users size={iconSizes.md} color={color} />
+          tabBarAccessibilityLabel: "Groups tab",
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={focused ? "people" : "people-outline"}
+              size={iconSizes.md}
+              color={color}
+            />
           ),
         }}
       />
@@ -61,8 +86,13 @@ export default function TabsLayout() {
         name="account"
         options={{
           title: "Account",
-          tabBarIcon: ({ color }) => (
-            <User size={iconSizes.md} color={color} />
+          tabBarAccessibilityLabel: "Account tab",
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons
+              name={focused ? "person-circle" : "person-circle-outline"}
+              size={iconSizes.md}
+              color={color}
+            />
           ),
         }}
       />
