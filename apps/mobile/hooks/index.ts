@@ -5,3 +5,4 @@ export * from "./useSubscription";
 export * from "./useAiUsage";
 export * from "./useCurrency";
 export * from "./useEmailPreferences";
+export * from "./useBalance";

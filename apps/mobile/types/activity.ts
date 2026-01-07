@@ -87,3 +87,11 @@ export interface Settlement {
   receipt: SettlementReceipt | null;
   group: SettlementGroup | null;
 }
+
+export interface BalanceSummary {
+  totalYouOwe: number;
+  totalOwedToYou: number;
+  netBalance: number;
+  youOweCount: number;
+  owedToYouCount: number;
+}

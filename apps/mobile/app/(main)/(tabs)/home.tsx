@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { View, StyleSheet, ScrollView, Pressable } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -13,7 +13,6 @@ import {
   BalanceCard,
   QuickActionCard,
   ActivityItem,
-  FloatingActionButton,
   ManualEntrySheet,
 } from "@/components/dashboard";
 import { colors, spacing } from "@/constants/theme";
@@ -26,9 +25,9 @@ import {
   CheckCircle,
   Activity,
   Plus,
-  ArrowDownRight,
 } from "lucide-react-native";
 import { useActivity } from "@/hooks/useActivity";
+import { useBalance } from "@/hooks/useBalance";
 import type { ActivityItem as ActivityItemType } from "@/types/activity";
 
 // Map activity type to icon and color
@@ -65,12 +64,13 @@ export default function HomeTab() {
   const { user } = useUser();
   const [manualEntryVisible, setManualEntryVisible] = useState(false);
   const { activities } = useActivity();
+  const { formattedBalances, isLoading: balancesLoading, error: balanceError } = useBalance();
 
   // Tab bar height (60) + safe area bottom + extra padding
   const bottomPadding = 60 + insets.bottom + spacing.xl;
 
-  // Mock data - will be replaced with API calls later
-  const balanceData = {
+  // Use real balance data or fallback to defaults
+  const balanceData = formattedBalances || {
     youOwe: "$0.00",
     owedToYou: "$0.00",
     netBalance: "$0.00",
@@ -110,50 +110,61 @@ export default function HomeTab() {
               onPress={() => setManualEntryVisible(true)}
               accessibilityLabel="Add expense"
             />
-            <IconButton
-              icon={ArrowDownRight}
-              variant="outlined"
-              size="sm"
-              onPress={() => {}}
-              accessibilityLabel="Quick actions"
-            />
           </View>
         </View>
 
         {/* Hero Balance Card */}
         <View style={styles.heroSection}>
-          <BalanceCard
-            label="NET BALANCE"
-            amount={balanceData.netBalance}
-            subtitle="You're all settled up!"
-            variant="hero"
-          />
+          {balancesLoading ? (
+            <View style={styles.balanceLoading}>
+              <ActivityIndicator size="large" color={colors.primary} />
+            </View>
+          ) : (
+            <BalanceCard
+              label="NET BALANCE"
+              amount={balanceData.netBalance}
+              subtitle={
+                balanceData.netBalance === "$0.00"
+                  ? "You're all settled up!"
+                  : balanceData.netBalance.startsWith("-")
+                  ? "You're owed money"
+                  : "You owe money"
+              }
+              variant="hero"
+            />
+          )}
         </View>
 
         {/* Secondary Balance Cards - Horizontal */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.balanceScroll}
-          contentContainerStyle={styles.balanceScrollContent}
-        >
-          <View style={styles.balanceCardWrapper}>
-            <BalanceCard
-              label="YOU OWE"
-              amount={balanceData.youOwe}
-              subtitle={`${balanceData.youOweCount} pending`}
-              variant="owe"
-            />
+        {balancesLoading ? (
+          <View style={styles.balanceCardsLoading}>
+            <ActivityIndicator size="small" color={colors.primary} />
           </View>
-          <View style={styles.balanceCardWrapper}>
-            <BalanceCard
-              label="OWED TO YOU"
-              amount={balanceData.owedToYou}
-              subtitle={`${balanceData.owedToYouCount} pending`}
-              variant="owed"
-            />
-          </View>
-        </ScrollView>
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.balanceScroll}
+            contentContainerStyle={styles.balanceScrollContent}
+          >
+            <View style={styles.balanceCardWrapper}>
+              <BalanceCard
+                label="YOU OWE"
+                amount={balanceData.youOwe}
+                subtitle={`${balanceData.youOweCount} pending`}
+                variant="owe"
+              />
+            </View>
+            <View style={styles.balanceCardWrapper}>
+              <BalanceCard
+                label="OWED TO YOU"
+                amount={balanceData.owedToYou}
+                subtitle={`${balanceData.owedToYouCount} pending`}
+                variant="owed"
+              />
+            </View>
+          </ScrollView>
+        )}
 
         {/* Quick Actions */}
         <View style={styles.section}>
@@ -165,7 +176,7 @@ export default function HomeTab() {
               icon={Camera}
               label="Scan Receipt"
               description="Capture & split"
-              onPress={() => {}}
+              onPress={() => router.push("/(main)/(tabs)/receipt")}
             />
             <QuickActionCard
               icon={Users}
@@ -177,13 +188,13 @@ export default function HomeTab() {
               icon={Receipt}
               label="Receipts"
               description="View all receipts"
-              onPress={() => {}}
+              onPress={() => router.push("/(main)/(tabs)/activity")}
             />
             <QuickActionCard
               icon={Wallet}
               label="Settle Up"
               description="Pay your balances"
-              onPress={() => {}}
+              onPress={() => router.push("/(main)/settlements")}
             />
           </View>
         </View>
@@ -233,8 +244,6 @@ export default function HomeTab() {
           )}
         </View>
       </ScrollView>
-
-      <FloatingActionButton onPress={() => setManualEntryVisible(true)} />
 
       <ManualEntrySheet
         visible={manualEntryVisible}
@@ -309,5 +318,16 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: "center",
+  },
+  balanceLoading: {
+    paddingVertical: spacing.xl,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 120,
+  },
+  balanceCardsLoading: {
+    paddingVertical: spacing.lg,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
