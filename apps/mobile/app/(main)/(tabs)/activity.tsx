@@ -150,6 +150,16 @@ export default function ActivityTab() {
     );
   };
 
+  const handleActivityPress = (item: ActivityItemType) => {
+    if (item.type === "receipt" && item.metadata.receiptId) {
+      router.push(`/receipt/${item.metadata.receiptId}`);
+    } else if ((item.type === "settlement" || item.type === "payment") && item.metadata.settlementId) {
+      router.push(`/settlement/${item.metadata.settlementId}`);
+    } else if (item.type === "group" && item.metadata.groupId) {
+      router.push(`/group/${item.metadata.groupId}`);
+    }
+  };
+
   const renderActivityItem = ({ item }: { item: ActivityItemType }) => {
     const { icon, color } = getActivityIconConfig(item.type);
     const amountColor = getAmountColor(item.amountType);
@@ -163,6 +173,7 @@ export default function ActivityTab() {
         timestamp={item.timestamp}
         amount={item.amount}
         amountColor={amountColor}
+        onPress={() => handleActivityPress(item)}
       />
     );
   };

@@ -1,5 +1,5 @@
 import { useApiClient } from "./api-client";
-import type { ActivityItem, ActivityType } from "@/types/activity";
+import type { ActivityItem, ActivityType, Receipt, Settlement } from "@/types/activity";
 
 // API response types
 interface SettlementWithUsers {
@@ -40,7 +40,8 @@ interface SettlementWithUsers {
   } | null;
 }
 
-interface Receipt {
+// Receipt type without items for activity list (items not needed)
+interface ReceiptListItem {
   id: string;
   userId: string;
   imageUrl: string;
@@ -156,7 +157,7 @@ function transformSettlement(
 }
 
 // Transform receipt to activity item
-function transformReceipt(receipt: Receipt): ActivityItem | null {
+function transformReceipt(receipt: ReceiptListItem): ActivityItem | null {
   if (receipt.status === "completed") {
     return {
       id: `receipt-${receipt.id}`,
@@ -204,7 +205,7 @@ export function useActivityService() {
       // Fetch settlements and receipts in parallel
       const [settlementsRes, receiptsRes] = await Promise.all([
         apiRequest<{ settlements: SettlementWithUsers[] }>("/api/settlements"),
-        apiRequest<{ receipts: Receipt[] }>("/api/receipts"),
+        apiRequest<{ receipts: ReceiptListItem[] }>("/api/receipts"),
       ]);
 
       // Transform settlements
@@ -239,8 +240,50 @@ export function useActivityService() {
     }
   };
 
+  const fetchReceipt = async (id: string): Promise<Receipt> => {
+    try {
+      const receipt = await apiRequest<Receipt>(`/api/receipts/${id}`);
+      return receipt;
+    } catch (error) {
+      console.error("Error fetching receipt:", error);
+      throw error;
+    }
+  };
+
+  const fetchSettlement = async (id: string): Promise<Settlement> => {
+    try {
+      const response = await apiRequest<{ settlement: Settlement }>(`/api/settlements/${id}`);
+      return response.settlement;
+    } catch (error) {
+      console.error("Error fetching settlement:", error);
+      throw error;
+    }
+  };
+
+  const updateSettlementStatus = async (
+    id: string,
+    status: "pending" | "completed"
+  ): Promise<Settlement> => {
+    try {
+      const response = await apiRequest<{ settlement: Settlement }>(
+        `/api/settlements/${id}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ status }),
+        }
+      );
+      return response.settlement;
+    } catch (error) {
+      console.error("Error updating settlement status:", error);
+      throw error;
+    }
+  };
+
   return {
     fetchActivity,
+    fetchReceipt,
+    fetchSettlement,
+    updateSettlementStatus,
   };
 }
 

@@ -19,6 +19,18 @@ export default function MainLayout() {
           presentation: "card",
         }}
       />
+      <Stack.Screen
+        name="receipt/[id]"
+        options={{
+          presentation: "card",
+        }}
+      />
+      <Stack.Screen
+        name="settlement/[id]"
+        options={{
+          presentation: "card",
+        }}
+      />
     </Stack>
   );
 }

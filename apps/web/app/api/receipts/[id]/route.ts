@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
-import { receipts, receiptItems } from "@/db/models/schema";
+import { receipts, receiptItems, groupMembers, itemAssignments } from "@/db/models/schema";
 import { updateReceiptSchema } from "@/lib/api/manual-entry-schemas";
-import { eq } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { isValidUUID } from "@/lib/utils";
 
 interface RouteParams {
@@ -36,7 +36,40 @@ export async function GET(request: Request, { params }: RouteParams) {
     }
 
     // Check access: owner, group member, or has assignments
-    if (receipt.userId !== userId) {
+    const isOwner = receipt.userId === userId;
+    let hasAccess = isOwner;
+
+    // Check if user is a member of the receipt's group
+    if (!hasAccess && receipt.groupId) {
+      const groupMember = await db.query.groupMembers.findFirst({
+        where: and(
+          eq(groupMembers.groupId, receipt.groupId),
+          eq(groupMembers.userId, userId)
+        ),
+      });
+      hasAccess = !!groupMember;
+    }
+
+    // Check if user has item assignments on this receipt
+    if (!hasAccess) {
+      const receiptItemsList = await db.query.receiptItems.findMany({
+        where: eq(receiptItems.receiptId, receiptId),
+        columns: { id: true },
+      });
+
+      if (receiptItemsList.length > 0) {
+        const itemIds = receiptItemsList.map((item) => item.id);
+        const assignment = await db.query.itemAssignments.findFirst({
+          where: and(
+            eq(itemAssignments.userId, userId),
+            inArray(itemAssignments.receiptItemId, itemIds)
+          ),
+        });
+        hasAccess = !!assignment;
+      }
+    }
+
+    if (!hasAccess) {
       return Response.json({ error: "Unauthorized" }, { status: 403 });
     }
 
