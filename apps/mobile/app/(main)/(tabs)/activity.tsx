@@ -190,7 +190,7 @@ export default function ActivityTab() {
     <SafeAreaView style={styles.container} edges={["top"]}>
       <StatusBar style="dark" />
       <View style={styles.header}>
-        <Text variant="h2" color="foreground">
+        <Text variant="h1" color="foreground">
           Activity
         </Text>
       </View>

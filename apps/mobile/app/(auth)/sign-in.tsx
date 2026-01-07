@@ -54,7 +54,7 @@ export default function SignInPage() {
             <TouchableOpacity style={styles.linkSection}>
               <Text variant="body" color="muted">
                 Don&apos;t have an account?{" "}
-                <Text variant="body" color="accent" style={styles.link}>
+                <Text variant="body" color="primary" style={styles.link}>
                   Sign up
                 </Text>
               </Text>
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     marginBottom: spacing.md,
-    borderRadius: borderRadius["2xl"],
+    borderRadius: borderRadius.lg, // Refined radius
   },
   title: {
     marginBottom: spacing.xs,

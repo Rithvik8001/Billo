@@ -2,18 +2,21 @@ import { View, StyleSheet } from "react-native";
 import { Card } from "@/components/ui/Card";
 import { Text } from "@/components/ui/Text";
 import { Icon } from "@/components/ui/Icon";
-import { spacing } from "@/constants/theme";
+import { colors, spacing, borderRadius } from "@/constants/theme";
+import { ChevronRight } from "lucide-react-native";
 import type { LucideIcon } from "lucide-react-native";
 
 interface QuickActionCardProps {
   icon: LucideIcon;
   label: string;
+  description?: string;
   onPress?: () => void;
 }
 
 export function QuickActionCard({
   icon,
   label,
+  description,
   onPress,
 }: QuickActionCardProps) {
   return (
@@ -23,12 +26,20 @@ export function QuickActionCard({
       accessibilityLabel={label}
     >
       <View style={styles.content}>
-        <View style={styles.iconWrapper}>
-          <Icon icon={icon} size="lg" color="foreground" background />
+        <View style={styles.iconContainer}>
+          <Icon icon={icon} size="md" color="primary" />
         </View>
-        <Text variant="body" color="foreground" style={styles.label}>
-          {label}
-        </Text>
+        <View style={styles.textContainer}>
+          <Text variant="bodyLarge" color="foreground" style={styles.label}>
+            {label}
+          </Text>
+          {description && (
+            <Text variant="small" color="muted" style={styles.description}>
+              {description}
+            </Text>
+          )}
+        </View>
+        <Icon icon={ChevronRight} size="sm" color="muted" />
       </View>
     </Card>
   );
@@ -40,14 +51,25 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   content: {
+    flexDirection: "row",
     alignItems: "center",
   },
-  iconWrapper: {
-    marginBottom: spacing.sm,
+  iconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.primaryBackground,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: spacing.md,
+  },
+  textContainer: {
+    flex: 1,
   },
   label: {
-    textAlign: "center",
-    fontWeight: "500",
+    fontWeight: "600",
+  },
+  description: {
+    marginTop: 2,
   },
 });
-

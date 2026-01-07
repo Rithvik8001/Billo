@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   badge: {
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs / 2,
-    borderRadius: borderRadius.full,
+    borderRadius: borderRadius.sm, // Refined
   },
   badgeText: {
     fontWeight: "600",
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     padding: spacing.md,
     backgroundColor: `${colors.warning}20`,
-    borderRadius: borderRadius.xl,
+    borderRadius: borderRadius.md, // Refined
     marginBottom: spacing.md,
   },
   warningText: {

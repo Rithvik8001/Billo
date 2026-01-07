@@ -64,7 +64,7 @@ export function ActivityItem({
 
 const styles = StyleSheet.create({
   card: {
-    padding: spacing.lg,
+    padding: spacing.md,
     marginBottom: spacing.sm,
   },
   content: {

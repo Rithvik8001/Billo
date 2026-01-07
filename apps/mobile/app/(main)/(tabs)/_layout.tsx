@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors, spacing, iconSizes, shadows } from "@/constants/theme";
+import { colors, spacing, iconSizes } from "@/constants/theme";
 import { Home, Activity, Users, User } from "lucide-react-native";
 
 export default function TabsLayout() {
@@ -10,18 +10,19 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
+        tabBarActiveTintColor: colors.primary, // Navy blue
         tabBarInactiveTintColor: colors.mutedForeground,
         tabBarStyle: {
           backgroundColor: colors.card,
-          borderTopWidth: 0,
+          borderTopWidth: 0.5,
+          borderTopColor: colors.border,
           height: 60 + insets.bottom,
           paddingBottom: insets.bottom + spacing.sm,
           paddingTop: spacing.sm,
-          ...shadows.md,
+          // Clean, no shadow for refined look
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11, // Slightly smaller
           fontWeight: "500",
         },
         tabBarIconStyle: {
@@ -33,7 +34,7 @@ export default function TabsLayout() {
         name="home"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <Home size={iconSizes.md} color={color} />
           ),
         }}
@@ -42,7 +43,7 @@ export default function TabsLayout() {
         name="activity"
         options={{
           title: "Activity",
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <Activity size={iconSizes.md} color={color} />
           ),
         }}
@@ -51,7 +52,7 @@ export default function TabsLayout() {
         name="groups"
         options={{
           title: "Groups",
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <Users size={iconSizes.md} color={color} />
           ),
         }}
@@ -60,7 +61,7 @@ export default function TabsLayout() {
         name="account"
         options={{
           title: "Account",
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({ color }) => (
             <User size={iconSizes.md} color={color} />
           ),
         }}

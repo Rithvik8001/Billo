@@ -70,10 +70,10 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primary, // Navy blue
     alignItems: "center",
     justifyContent: "center",
-    ...shadows.button,
+    ...shadows.elevated, // Enhanced depth
     zIndex: 1000,
   },
 });

@@ -85,6 +85,11 @@ export default function AccountTab() {
         ]}
         showsVerticalScrollIndicator={false}
       >
+        {/* Page Header */}
+        <View style={styles.header}>
+          <Text variant="h1" color="foreground">Account</Text>
+        </View>
+
         {/* User Profile Header */}
         <View style={styles.profileHeader}>
           {user?.imageUrl ? (
@@ -204,23 +209,26 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
+    paddingTop: spacing.md,
+  },
+  header: {
+    marginBottom: spacing.xl,
   },
   profileHeader: {
     alignItems: "center",
     marginBottom: spacing.xl,
   },
   avatar: {
-    width: 80,
-    height: 80,
+    width: 96,
+    height: 96,
     borderRadius: borderRadius.full,
     marginBottom: spacing.md,
   },
   avatarPlaceholder: {
-    width: 80,
-    height: 80,
+    width: 96,
+    height: 96,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primary, // Navy blue
     alignItems: "center",
     justifyContent: "center",
     marginBottom: spacing.md,

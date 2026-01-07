@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { Text } from "@/components/ui/Text";
 import { Button } from "@/components/ui/Button";
+import { IconButton } from "@/components/ui/Icon";
 import { GroupCard } from "@/components/dashboard";
 import { CreateGroupSheet } from "@/components/groups";
 import { useGroups } from "@/hooks/useGroups";
@@ -67,20 +68,20 @@ export default function GroupsTab() {
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <View>
-            <Text variant="h2" color="foreground">
+            <Text variant="h1" color="foreground">
               Groups
             </Text>
             <Text variant="body" color="muted" style={styles.subtitle}>
               Manage your groups
             </Text>
           </View>
-          <Button
-            variant="card"
+          <IconButton
+            icon={Plus}
+            variant="primary"
+            size="sm"
             onPress={() => setCreateSheetVisible(true)}
             accessibilityLabel="Create group"
-          >
-            <Plus size={20} color={colors.primaryForeground} />
-          </Button>
+          />
         </View>
       </View>
 

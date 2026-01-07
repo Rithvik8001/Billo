@@ -202,7 +202,7 @@ function getSizeStyles(size: ButtonSize): {
         container: {
           paddingHorizontal: spacing.md,
           paddingVertical: 10,
-          borderRadius: borderRadius.full,
+          borderRadius: borderRadius.md, // Refined from full
           minHeight: 40,
         },
         text: {
@@ -215,7 +215,7 @@ function getSizeStyles(size: ButtonSize): {
         container: {
           paddingHorizontal: spacing.lg,
           paddingVertical: 14,
-          borderRadius: borderRadius.full,
+          borderRadius: borderRadius.md, // Refined from full
           minHeight: 52,
         },
         text: {
@@ -228,7 +228,7 @@ function getSizeStyles(size: ButtonSize): {
         container: {
           paddingHorizontal: spacing.xl,
           paddingVertical: 16,
-          borderRadius: borderRadius.full,
+          borderRadius: borderRadius.md, // Refined from full
           minHeight: 56,
         },
         text: {

@@ -63,7 +63,7 @@ export function OnboardingScreen({
             <Icon
               icon={IconComponent}
               size="lg"
-              color="foreground"
+              color="primary"
               background
               backgroundVariant="light"
             />
@@ -150,10 +150,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   featureIconWrapper: {
-    width: 40,
-    height: 40,
-    borderRadius: borderRadius.full,
-    backgroundColor: colors.iconBackgroundLight,
+    width: 44,
+    height: 44,
+    borderRadius: borderRadius.md, // Refined radius
+    backgroundColor: colors.primaryBackground, // Navy blue tint
     alignItems: "center",
     justifyContent: "center",
     marginRight: spacing.md,

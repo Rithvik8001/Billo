@@ -1,5 +1,10 @@
-import { View, StyleSheet, type ViewStyle } from "react-native";
-import { colors, iconSizes, borderRadius, spacing } from "@/constants/theme";
+import { View, StyleSheet, Pressable, type ViewStyle } from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
+import { colors, iconSizes, borderRadius, spacing, animation, shadows } from "@/constants/theme";
 import type { TextColor } from "./Text";
 
 type IconSize = keyof typeof iconSizes;
@@ -92,6 +97,111 @@ export function Icon({
   );
 }
 
+// Circular icon button for action buttons (+ and arrow icons)
+type IconButtonVariant = "primary" | "outlined";
+type IconButtonSize = "sm" | "md" | "lg";
+
+interface IconButtonProps {
+  /** Lucide icon component */
+  icon: React.ComponentType<{ size?: number; color?: string }>;
+  /** Button press handler */
+  onPress: () => void;
+  /** Button variant */
+  variant?: IconButtonVariant;
+  /** Button size */
+  size?: IconButtonSize;
+  /** Accessibility label */
+  accessibilityLabel?: string;
+  /** Style override */
+  style?: ViewStyle;
+  /** Disabled state */
+  disabled?: boolean;
+}
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+const buttonSizes: Record<IconButtonSize, number> = {
+  sm: 40,
+  md: 48,
+  lg: 56,
+};
+
+export function IconButton({
+  icon: IconComponent,
+  onPress,
+  variant = "primary",
+  size = "md",
+  accessibilityLabel,
+  style,
+  disabled = false,
+}: IconButtonProps) {
+  const pressed = useSharedValue(false);
+  const buttonSize = buttonSizes[size];
+  const iconSize = buttonSize * 0.45;
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        scale: withTiming(pressed.value ? 0.95 : 1, {
+          duration: animation.timing.fast,
+        }),
+      },
+    ],
+    opacity: withTiming(pressed.value ? 0.9 : 1, {
+      duration: animation.timing.fast,
+    }),
+  }));
+
+  const getVariantStyles = (): ViewStyle => {
+    switch (variant) {
+      case "primary":
+        return {
+          backgroundColor: colors.primary,
+          ...shadows.md,
+        };
+      case "outlined":
+        return {
+          backgroundColor: "transparent",
+          borderWidth: 1,
+          borderColor: colors.borderStrong,
+        };
+    }
+  };
+
+  const iconColor = variant === "primary" ? colors.primaryForeground : colors.foreground;
+
+  return (
+    <AnimatedPressable
+      onPress={onPress}
+      onPressIn={() => {
+        pressed.value = true;
+      }}
+      onPressOut={() => {
+        pressed.value = false;
+      }}
+      disabled={disabled}
+      accessible
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ disabled }}
+      style={[
+        styles.iconButton,
+        {
+          width: buttonSize,
+          height: buttonSize,
+          borderRadius: buttonSize / 2,
+        },
+        getVariantStyles(),
+        disabled && styles.disabled,
+        animatedStyle,
+        style,
+      ]}
+    >
+      <IconComponent size={iconSize} color={iconColor} />
+    </AnimatedPressable>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
@@ -101,5 +211,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  iconButton: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  disabled: {
+    opacity: 0.5,
+  },
 });
-

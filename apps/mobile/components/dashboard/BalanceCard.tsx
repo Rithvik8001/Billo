@@ -1,13 +1,15 @@
 import { View, StyleSheet } from "react-native";
 import { Text } from "@/components/ui/Text";
 import { Card } from "@/components/ui/Card";
-import { colors, spacing, borderRadius } from "@/constants/theme";
+import { Icon } from "@/components/ui/Icon";
+import { colors, spacing, shadows } from "@/constants/theme";
+import { TrendingDown, TrendingUp, Wallet } from "lucide-react-native";
 
 interface BalanceCardProps {
   label: string;
   amount: string;
   subtitle: string;
-  variant?: "owe" | "owed" | "net";
+  variant?: "owe" | "owed" | "net" | "hero";
 }
 
 export function BalanceCard({
@@ -20,42 +22,89 @@ export function BalanceCard({
     switch (variant) {
       case "owe":
         return {
-          backgroundColor: colors.iconBackground,
+          backgroundColor: colors.card,
           accentColor: colors.destructive,
+          icon: TrendingDown,
+          iconBg: `${colors.destructive}15`,
         };
       case "owed":
         return {
-          backgroundColor: colors.iconBackground,
+          backgroundColor: colors.card,
           accentColor: colors.success,
+          icon: TrendingUp,
+          iconBg: `${colors.success}15`,
         };
       case "net":
         return {
-          backgroundColor: colors.iconBackground,
-          accentColor: colors.mutedForeground,
+          backgroundColor: colors.card,
+          accentColor: colors.foreground,
+          icon: Wallet,
+          iconBg: colors.iconBackground,
+        };
+      case "hero":
+        return {
+          backgroundColor: colors.primary,
+          accentColor: colors.primaryForeground,
+          icon: Wallet,
+          iconBg: `${colors.primaryForeground}20`,
         };
     }
   };
 
   const variantStyles = getVariantStyles();
+  const isHero = variant === "hero";
+
+  if (isHero) {
+    return (
+      <Card
+        style={[styles.heroCard, { backgroundColor: variantStyles.backgroundColor }]}
+        variant="elevated"
+        disablePressAnimation
+      >
+        <View style={[styles.heroIconContainer, { backgroundColor: variantStyles.iconBg }]}>
+          <Icon
+            icon={variantStyles.icon}
+            size="lg"
+            color="primaryForeground"
+          />
+        </View>
+        <Text variant="caption" style={[styles.heroLabel, { color: `${colors.primaryForeground}90` }]}>
+          {label}
+        </Text>
+        <Text
+          variant="displayLarge"
+          style={[styles.heroAmount, { color: variantStyles.accentColor }]}
+        >
+          {amount}
+        </Text>
+        <Text variant="small" style={[styles.heroSubtitle, { color: `${colors.primaryForeground}80` }]}>
+          {subtitle}
+        </Text>
+      </Card>
+    );
+  }
 
   return (
     <Card
-      style={[
-        styles.card,
-        { backgroundColor: variantStyles.backgroundColor },
-      ]}
+      style={[styles.card, { backgroundColor: variantStyles.backgroundColor }]}
       disablePressAnimation
     >
-      <Text variant="caption" color="muted" style={styles.label}>
-        {label}
-      </Text>
+      <View style={styles.header}>
+        <View style={[styles.iconContainer, { backgroundColor: variantStyles.iconBg }]}>
+          <Icon
+            icon={variantStyles.icon}
+            size="sm"
+            customSize={18}
+            color={variant === "owe" ? "destructive" : variant === "owed" ? "success" : "foreground"}
+          />
+        </View>
+        <Text variant="caption" color="muted" style={styles.label}>
+          {label}
+        </Text>
+      </View>
       <Text
-        variant="h1"
-        color="foreground"
-        style={[
-          styles.amount,
-          { color: variantStyles.accentColor },
-        ]}
+        variant="h2"
+        style={[styles.amount, { color: variantStyles.accentColor }]}
       >
         {amount}
       </Text>
@@ -69,17 +118,54 @@ export function BalanceCard({
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-    padding: spacing.md,
+    padding: spacing.lg,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: spacing.sm,
+  },
+  iconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: spacing.sm,
   },
   label: {
-    marginBottom: spacing.xs,
+    flex: 1,
   },
   amount: {
-    marginBottom: spacing.xs / 2,
-    fontFamily: "monospace",
+    marginBottom: spacing.xs,
+    fontWeight: "700",
   },
   subtitle: {
     fontSize: 12,
   },
+  // Hero variant styles
+  heroCard: {
+    width: "100%",
+    padding: spacing.xl,
+    alignItems: "center",
+  },
+  heroIconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: spacing.md,
+  },
+  heroLabel: {
+    marginBottom: spacing.xs,
+  },
+  heroAmount: {
+    marginBottom: spacing.xs,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  heroSubtitle: {
+    textAlign: "center",
+  },
 });
-

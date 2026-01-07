@@ -307,8 +307,8 @@ const styles = StyleSheet.create({
   },
   sheet: {
     backgroundColor: colors.card,
-    borderTopLeftRadius: borderRadius["3xl"],
-    borderTopRightRadius: borderRadius["3xl"],
+    borderTopLeftRadius: borderRadius["2xl"], // Refined from 3xl
+    borderTopRightRadius: borderRadius["2xl"],
     ...shadows.lg,
   },
   sheetContent: {

@@ -1,12 +1,14 @@
 import { useState, useMemo } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
-import { Text } from "@/components/ui/Text";
+import { useUser } from "@clerk/clerk-expo";
+import { Text, MixedText } from "@/components/ui/Text";
+import { IconButton } from "@/components/ui/Icon";
 import {
   BalanceCard,
   QuickActionCard,
@@ -20,11 +22,12 @@ import {
   Users,
   Wallet,
   Receipt,
-  ArrowRight,
+  ChevronRight,
   CheckCircle,
   Activity,
+  Plus,
+  ArrowDownRight,
 } from "lucide-react-native";
-import { Button } from "@/components/ui/Button";
 import { useActivity } from "@/hooks/useActivity";
 import type { ActivityItem as ActivityItemType } from "@/types/activity";
 
@@ -59,9 +62,10 @@ function getAmountColor(amountType?: ActivityItemType["amountType"]): "foregroun
 export default function HomeTab() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { user } = useUser();
   const [manualEntryVisible, setManualEntryVisible] = useState(false);
   const { activities } = useActivity();
-  
+
   // Tab bar height (60) + safe area bottom + extra padding
   const bottomPadding = 60 + insets.bottom + spacing.xl;
 
@@ -79,6 +83,8 @@ export default function HomeTab() {
     return activities.slice(0, 5);
   }, [activities]);
 
+  const firstName = user?.firstName || "there";
+
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <StatusBar style="dark" />
@@ -90,86 +96,112 @@ export default function HomeTab() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.balanceSection}>
-          <BalanceCard
-            label="You Owe"
-            amount={balanceData.youOwe}
-            subtitle={`${balanceData.youOweCount} pending settlement${
-              balanceData.youOweCount !== 1 ? "s" : ""
-            }`}
-            variant="owe"
-          />
-          <View style={styles.balanceGap} />
-          <BalanceCard
-            label="Owed to You"
-            amount={balanceData.owedToYou}
-            subtitle={`${balanceData.owedToYouCount} pending settlement${
-              balanceData.owedToYouCount !== 1 ? "s" : ""
-            }`}
-            variant="owed"
-          />
-          <View style={styles.balanceGap} />
-          <BalanceCard
-            label="Net Balance"
-            amount={balanceData.netBalance}
-            subtitle="Total balance"
-            variant="net"
-          />
-        </View>
-
-        <View style={styles.section}>
-          <Text variant="h3" color="foreground" style={styles.sectionTitle}>
-            Quick Actions
-          </Text>
-          <View style={styles.actionsGrid}>
-            <QuickActionCard
-              icon={Camera}
-              label="Scan Receipt"
-              onPress={() => {
-                // Navigate to scan screen later
-              }}
+        {/* Header with welcome and action buttons */}
+        <View style={styles.header}>
+          <View style={styles.headerText}>
+            <Text variant="body" color="muted">Welcome back,</Text>
+            <Text variant="h1" color="foreground">{firstName}</Text>
+          </View>
+          <View style={styles.headerActions}>
+            <IconButton
+              icon={Plus}
+              variant="primary"
+              size="sm"
+              onPress={() => setManualEntryVisible(true)}
+              accessibilityLabel="Add expense"
             />
-            <QuickActionCard
-              icon={Users}
-              label="Groups"
-              onPress={() => {
-                router.push("/(main)/(tabs)/groups");
-              }}
-            />
-            <QuickActionCard
-              icon={Receipt}
-              label="Receipts"
-              onPress={() => {
-                // Navigate to receipts later
-              }}
-            />
-            <QuickActionCard
-              icon={Wallet}
-              label="Settle Up"
-              onPress={() => {
-                // Navigate to settlements later
-              }}
+            <IconButton
+              icon={ArrowDownRight}
+              variant="outlined"
+              size="sm"
+              onPress={() => {}}
+              accessibilityLabel="Quick actions"
             />
           </View>
         </View>
 
+        {/* Hero Balance Card */}
+        <View style={styles.heroSection}>
+          <BalanceCard
+            label="NET BALANCE"
+            amount={balanceData.netBalance}
+            subtitle="You're all settled up!"
+            variant="hero"
+          />
+        </View>
+
+        {/* Secondary Balance Cards - Horizontal */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.balanceScroll}
+          contentContainerStyle={styles.balanceScrollContent}
+        >
+          <View style={styles.balanceCardWrapper}>
+            <BalanceCard
+              label="YOU OWE"
+              amount={balanceData.youOwe}
+              subtitle={`${balanceData.youOweCount} pending`}
+              variant="owe"
+            />
+          </View>
+          <View style={styles.balanceCardWrapper}>
+            <BalanceCard
+              label="OWED TO YOU"
+              amount={balanceData.owedToYou}
+              subtitle={`${balanceData.owedToYouCount} pending`}
+              variant="owed"
+            />
+          </View>
+        </ScrollView>
+
+        {/* Quick Actions */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text variant="h3" color="foreground" style={styles.sectionTitle}>
-              Recent Activity
-            </Text>
+            <Text variant="h3" color="foreground">Quick Actions</Text>
+          </View>
+          <View style={styles.actionsGrid}>
+            <QuickActionCard
+              icon={Camera}
+              label="Scan Receipt"
+              description="Capture & split"
+              onPress={() => {}}
+            />
+            <QuickActionCard
+              icon={Users}
+              label="Groups"
+              description="Manage your groups"
+              onPress={() => router.push("/(main)/(tabs)/groups")}
+            />
+            <QuickActionCard
+              icon={Receipt}
+              label="Receipts"
+              description="View all receipts"
+              onPress={() => {}}
+            />
+            <QuickActionCard
+              icon={Wallet}
+              label="Settle Up"
+              description="Pay your balances"
+              onPress={() => {}}
+            />
+          </View>
+        </View>
+
+        {/* Recent Activity */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text variant="h3" color="foreground">Recent Activity</Text>
             {recentActivity.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onPress={() => {
-                  router.push("/(main)/(tabs)/activity");
-                }}
-                icon={<ArrowRight size={16} color={colors.foreground} />}
-                iconPosition="right"
+              <Pressable
+                style={styles.seeAllButton}
+                onPress={() => router.push("/(main)/(tabs)/activity")}
               >
-                View All
-              </Button>
+                <Text variant="small" color="primary" style={styles.seeAllText}>
+                  See all
+                </Text>
+                <ChevronRight size={16} color={colors.primary} />
+              </Pressable>
             )}
           </View>
           {recentActivity.length === 0 ? (
@@ -183,7 +215,7 @@ export default function HomeTab() {
               {recentActivity.map((activity) => {
                 const { icon, color } = getActivityIconConfig(activity.type);
                 const amountColor = getAmountColor(activity.amountType);
-                
+
                 return (
                   <ActivityItem
                     key={activity.id}
@@ -221,17 +253,38 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
+    paddingTop: spacing.md,
   },
-  balanceSection: {
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    paddingHorizontal: spacing.lg,
     marginBottom: spacing.xl,
+  },
+  headerText: {
+    flex: 1,
+  },
+  headerActions: {
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
+  heroSection: {
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
+  },
+  balanceScroll: {
+    marginBottom: spacing.xl,
+  },
+  balanceScrollContent: {
+    paddingHorizontal: spacing.lg,
     gap: spacing.md,
   },
-  balanceGap: {
-    height: spacing.md,
+  balanceCardWrapper: {
+    width: 200,
   },
   section: {
+    paddingHorizontal: spacing.lg,
     marginBottom: spacing.xl,
   },
   sectionHeader: {
@@ -240,11 +293,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: spacing.md,
   },
-  sectionTitle: {
-    marginBottom: spacing.md,
+  seeAllButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  seeAllText: {
+    fontWeight: "500",
   },
   actionsGrid: {
-    gap: spacing.md,
+    gap: spacing.sm,
   },
   emptyState: {
     paddingVertical: spacing.xl,

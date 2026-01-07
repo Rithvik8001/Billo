@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
   dot: {
     height: 8,
-    backgroundColor: colors.foreground,
+    backgroundColor: colors.primary, // Navy blue
     borderRadius: borderRadius.full,
   },
 });

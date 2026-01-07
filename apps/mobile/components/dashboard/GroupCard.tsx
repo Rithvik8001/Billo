@@ -2,8 +2,8 @@ import { View, StyleSheet } from "react-native";
 import { Card } from "@/components/ui/Card";
 import { Text } from "@/components/ui/Text";
 import { Icon } from "@/components/ui/Icon";
-import { colors, spacing } from "@/constants/theme";
-import { Users } from "lucide-react-native";
+import { colors, spacing, borderRadius } from "@/constants/theme";
+import { Users, ChevronRight } from "lucide-react-native";
 
 interface GroupCardProps {
   emoji?: string;
@@ -23,30 +23,31 @@ export function GroupCard({
   return (
     <Card style={styles.card} onPress={onPress} accessibilityLabel={name}>
       <View style={styles.content}>
-        <View style={styles.header}>
+        <View style={styles.emojiContainer}>
           <Text style={styles.emoji}>{emoji}</Text>
-          <View style={styles.info}>
-            <Text variant="h3" color="foreground" style={styles.name}>
-              {name}
-            </Text>
+        </View>
+        <View style={styles.info}>
+          <Text variant="bodyLarge" color="foreground" style={styles.name}>
+            {name}
+          </Text>
+          <View style={styles.meta}>
             <View style={styles.memberInfo}>
-              <Icon icon={Users} size="sm" color="muted" />
+              <Icon icon={Users} size="sm" customSize={14} color="muted" />
               <Text variant="small" color="muted" style={styles.memberCount}>
                 {memberCount} {memberCount === 1 ? "member" : "members"}
               </Text>
             </View>
+            {balance && (
+              <>
+                <Text variant="small" color="muted" style={styles.dot}>•</Text>
+                <Text variant="small" color="foreground" style={styles.balance}>
+                  {balance}
+                </Text>
+              </>
+            )}
           </View>
         </View>
-        {balance && (
-          <View style={styles.balanceSection}>
-            <Text variant="body" color="muted" style={styles.balanceLabel}>
-              Balance
-            </Text>
-            <Text variant="body" color="foreground" style={styles.balance}>
-              {balance}
-            </Text>
-          </View>
-        )}
+        <Icon icon={ChevronRight} size="sm" color="muted" />
       </View>
     </Card>
   );
@@ -55,46 +56,48 @@ export function GroupCard({
 const styles = StyleSheet.create({
   card: {
     padding: spacing.md,
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   content: {
-    gap: spacing.sm,
-  },
-  header: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    gap: spacing.md,
+    alignItems: "center",
+  },
+  emojiContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.iconBackground,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: spacing.md,
   },
   emoji: {
-    fontSize: 32,
+    fontSize: 24,
   },
   info: {
     flex: 1,
   },
   name: {
-    marginBottom: spacing.xs / 2,
+    fontWeight: "600",
+    marginBottom: 2,
+  },
+  meta: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   memberInfo: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.xs,
+    gap: spacing.xs / 2,
   },
   memberCount: {
     fontSize: 12,
   },
-  balanceSection: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingTop: spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  balanceLabel: {
-    fontSize: 12,
+  dot: {
+    marginHorizontal: spacing.xs,
   },
   balance: {
+    fontSize: 12,
     fontWeight: "600",
   },
 });
-

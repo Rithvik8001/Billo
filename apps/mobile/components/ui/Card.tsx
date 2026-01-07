@@ -8,10 +8,14 @@ import { colors, borderRadius, shadows, spacing, animation } from "@/constants/t
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
+type CardVariant = "default" | "elevated" | "outlined";
+
 interface CardProps {
   children: React.ReactNode;
   onPress?: () => void;
   style?: ViewStyle;
+  /** Card style variant */
+  variant?: CardVariant;
   /** Disable press animation */
   disablePressAnimation?: boolean;
   /** Accessibility label */
@@ -22,6 +26,7 @@ export function Card({
   children,
   onPress,
   style,
+  variant = "default",
   disablePressAnimation = false,
   accessibilityLabel,
 }: CardProps) {
@@ -46,8 +51,10 @@ export function Card({
     };
   });
 
+  const variantStyle = getVariantStyle(variant);
+
   const content = (
-    <Animated.View style={[styles.card, animatedStyle, style]}>
+    <Animated.View style={[styles.card, variantStyle, animatedStyle, style]}>
       {children}
     </Animated.View>
   );
@@ -74,12 +81,30 @@ export function Card({
   return content;
 }
 
+function getVariantStyle(variant: CardVariant): ViewStyle {
+  switch (variant) {
+    case "default":
+      return {
+        ...shadows.card,
+      };
+    case "elevated":
+      return {
+        ...shadows.elevated,
+      };
+    case "outlined":
+      return {
+        borderWidth: 1,
+        borderColor: colors.border,
+        shadowOpacity: 0,
+        elevation: 0,
+      };
+  }
+}
+
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.card,
-    borderRadius: borderRadius["2xl"],
+    borderRadius: borderRadius.lg, // Refined from 2xl (was 32px, now 14px)
     padding: spacing.lg,
-    ...shadows.card,
   },
 });
-

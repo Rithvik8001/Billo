@@ -1,8 +1,8 @@
-import { Text as RNText, StyleSheet, type TextProps as RNTextProps } from "react-native";
+import { Text as RNText, StyleSheet, View, type TextProps as RNTextProps, type TextStyle } from "react-native";
 import { colors, typography } from "@/constants/theme";
 
-type TextVariant = "display" | "h1" | "h2" | "h3" | "body" | "bodyLarge" | "small" | "caption";
-type TextColor = "foreground" | "muted" | "primary" | "accent" | "destructive" | "primaryForeground" | "success";
+export type TextVariant = "displayLarge" | "hero" | "display" | "h1" | "h2" | "h3" | "body" | "bodyLarge" | "small" | "caption";
+export type TextColor = "foreground" | "muted" | "primary" | "accent" | "destructive" | "primaryForeground" | "success";
 
 interface TextProps extends RNTextProps {
   /** Typography variant */
@@ -45,9 +45,54 @@ export function Text({
   );
 }
 
+// Mixed weight text for "You are on Top" + "of your Finances" pattern
+interface MixedTextProps {
+  /** Bold portion of text */
+  boldText: string;
+  /** Light/normal weight portion */
+  lightText: string;
+  /** Typography variant for sizing */
+  variant?: TextVariant;
+  /** Color for the bold text */
+  boldColor?: TextColor;
+  /** Color for the light text */
+  lightColor?: TextColor;
+}
+
+export function MixedText({
+  boldText,
+  lightText,
+  variant = "h1",
+  boldColor = "foreground",
+  lightColor = "muted",
+}: MixedTextProps) {
+  return (
+    <View>
+      <Text variant={variant} color={boldColor} style={{ fontWeight: "700" }}>
+        {boldText}
+      </Text>
+      <Text variant={variant} color={lightColor} style={{ fontWeight: "300" }}>
+        {lightText}
+      </Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   base: {
     fontFamily: "System",
+  },
+  displayLarge: {
+    fontSize: typography.displayLarge.fontSize,
+    lineHeight: typography.displayLarge.lineHeight,
+    fontWeight: typography.displayLarge.fontWeight,
+    letterSpacing: typography.displayLarge.letterSpacing,
+  },
+  hero: {
+    fontSize: typography.hero.fontSize,
+    lineHeight: typography.hero.lineHeight,
+    fontWeight: typography.hero.fontWeight,
+    letterSpacing: typography.hero.letterSpacing,
   },
   display: {
     fontSize: typography.display.fontSize,
