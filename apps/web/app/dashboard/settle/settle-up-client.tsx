@@ -325,7 +325,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
-          <label className="text-small font-medium mb-2 block text-foreground">
+          <label htmlFor="group-filter" className="text-small font-medium mb-2 block text-foreground">
             Group
           </label>
           <Select
@@ -336,7 +336,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
               setSelectedGroupId(value === "all" ? "all" : value)
             }
           >
-            <SelectTrigger>
+            <SelectTrigger id="group-filter">
               <SelectValue placeholder="All groups" />
             </SelectTrigger>
             <SelectContent>
@@ -351,7 +351,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
         </div>
 
         <div className="flex-1">
-          <label className="text-small font-medium mb-2 block text-foreground">
+          <label htmlFor="status-filter" className="text-small font-medium mb-2 block text-foreground">
             Status
           </label>
           <Select
@@ -360,7 +360,7 @@ export function SettleUpClient({ userId }: SettleUpClientProps) {
               setStatusFilter(value)
             }
           >
-            <SelectTrigger>
+            <SelectTrigger id="status-filter">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

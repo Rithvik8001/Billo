@@ -41,7 +41,8 @@ export function useBalanceService() {
         (sum, s) => sum + parseFloat(s.amount),
         0
       );
-      const netBalance = totalYouOwe - totalOwedToYou;
+      // Net balance: positive = money coming to you, negative = you owe money
+      const netBalance = totalOwedToYou - totalYouOwe;
 
       return {
         totalYouOwe,

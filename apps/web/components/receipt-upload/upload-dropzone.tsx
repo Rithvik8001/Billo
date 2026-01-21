@@ -44,6 +44,7 @@ export function UploadDropzone({
       <input
         ref={fileInputRef}
         type="file"
+        name="receipt"
         accept="image/*"
         onChange={onInputChange}
         className="hidden"

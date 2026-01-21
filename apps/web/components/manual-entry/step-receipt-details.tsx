@@ -65,6 +65,7 @@ export function StepReceiptDetails({
             <Store className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
             <Input
               id="merchant-name"
+              name="merchantName"
               value={receiptDetails.merchantName}
               onChange={(e) =>
                 updateReceiptDetails({ merchantName: e.target.value })
@@ -74,18 +75,20 @@ export function StepReceiptDetails({
                 "pl-10",
                 !receiptDetails.merchantName.trim() && "border-destructive/50"
               )}
+              autoComplete="organization"
             />
           </div>
         </div>
 
         {/* Purchase Date */}
         <div className="space-y-2">
-          <Label className="text-small font-medium">
+          <Label htmlFor="purchase-date" className="text-small font-medium">
             Purchase Date <span className="text-destructive">*</span>
           </Label>
           <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
             <PopoverTrigger asChild>
               <Button
+                id="purchase-date"
                 variant="outline"
                 className={cn(
                   "w-full justify-start text-left font-normal h-10 pl-10 relative",
@@ -121,6 +124,7 @@ export function StepReceiptDetails({
             <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
             <Input
               id="tax"
+              name="tax"
               type="text"
               inputMode="decimal"
               value={receiptDetails.tax}
@@ -133,6 +137,7 @@ export function StepReceiptDetails({
               }}
               placeholder="0.00"
               className="pl-10"
+              autoComplete="off"
             />
           </div>
         </div>

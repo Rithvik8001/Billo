@@ -1,5 +1,11 @@
 import { useState, useMemo } from "react";
-import { View, StyleSheet, ScrollView, Pressable, ActivityIndicator } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -7,7 +13,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
-import { Text, MixedText } from "@/components/ui/Text";
+import { Text } from "@/components/ui/Text";
 import { IconButton } from "@/components/ui/Icon";
 import {
   BalanceCard,
@@ -47,7 +53,9 @@ function getActivityIconConfig(type: ActivityItemType["type"]) {
 }
 
 // Map amount type to color
-function getAmountColor(amountType?: ActivityItemType["amountType"]): "foreground" | "destructive" | "success" | "muted" {
+function getAmountColor(
+  amountType?: ActivityItemType["amountType"]
+): "foreground" | "destructive" | "success" | "muted" {
   switch (amountType) {
     case "owe":
       return "destructive";
@@ -64,7 +72,11 @@ export default function HomeTab() {
   const { user } = useUser();
   const [manualEntryVisible, setManualEntryVisible] = useState(false);
   const { activities } = useActivity();
-  const { formattedBalances, isLoading: balancesLoading, error: balanceError } = useBalance();
+  const {
+    formattedBalances,
+    isLoading: balancesLoading,
+    error: balanceError,
+  } = useBalance();
 
   // Tab bar height (60) + safe area bottom + extra padding
   const bottomPadding = 60 + insets.bottom + spacing.xl;
@@ -99,8 +111,12 @@ export default function HomeTab() {
         {/* Header with welcome and action buttons */}
         <View style={styles.header}>
           <View style={styles.headerText}>
-            <Text variant="body" color="muted">Welcome back,</Text>
-            <Text variant="h1" color="foreground">{firstName}</Text>
+            <Text variant="body" color="muted">
+              Welcome back,
+            </Text>
+            <Text variant="h1" color="foreground">
+              {firstName}
+            </Text>
           </View>
           <View style={styles.headerActions}>
             <IconButton
@@ -127,8 +143,8 @@ export default function HomeTab() {
                 balanceData.netBalance === "$0.00"
                   ? "You're all settled up!"
                   : balanceData.netBalance.startsWith("-")
-                  ? "You're owed money"
-                  : "You owe money"
+                  ? "You owe money"
+                  : "You're owed money"
               }
               variant="hero"
             />
@@ -169,7 +185,9 @@ export default function HomeTab() {
         {/* Quick Actions */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text variant="h3" color="foreground">Quick Actions</Text>
+            <Text variant="h3" color="foreground">
+              Quick Actions
+            </Text>
           </View>
           <View style={styles.actionsGrid}>
             <QuickActionCard
@@ -202,7 +220,9 @@ export default function HomeTab() {
         {/* Recent Activity */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text variant="h3" color="foreground">Recent Activity</Text>
+            <Text variant="h3" color="foreground">
+              Recent Activity
+            </Text>
             {recentActivity.length > 0 && (
               <Pressable
                 style={styles.seeAllButton}

@@ -89,6 +89,7 @@ export function CreateGroupDialog({
                 <Label htmlFor="group-emoji">Emoji</Label>
                 <Input
                   id="group-emoji"
+                  name="emoji"
                   value={emoji}
                   onChange={(e) => setEmoji(e.target.value)}
                   onFocus={(e) => e.target.select()}
@@ -96,18 +97,21 @@ export function CreateGroupDialog({
                   maxLength={10}
                   disabled={isLoading}
                   className="text-center text-2xl h-10"
+                  autoComplete="off"
                 />
               </div>
               <div className="space-y-2 flex-1">
                 <Label htmlFor="group-name">Group Name *</Label>
                 <Input
                   id="group-name"
+                  name="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g., Roommates, Family Trip"
                   maxLength={100}
                   required
                   disabled={isLoading}
+                  autoComplete="off"
                 />
               </div>
             </div>
@@ -116,12 +120,14 @@ export function CreateGroupDialog({
               <Label htmlFor="group-description">Description (optional)</Label>
               <Textarea
                 id="group-description"
+                name="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Add a description for this group..."
                 maxLength={500}
                 rows={3}
                 disabled={isLoading}
+                autoComplete="off"
               />
             </div>
           </div>
