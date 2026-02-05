@@ -1,11 +1,11 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { resend, EMAIL_CONFIG } from "@/lib/email/resend-client";
 import { AddedToGroupEmail } from "@/emails/added-to-group";
+import { getAuthUserId } from "@/lib/api/auth";
 
 export async function GET(request: Request) {
   try {
-    const { userId } = await auth();
+    const userId = await getAuthUserId(request);
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

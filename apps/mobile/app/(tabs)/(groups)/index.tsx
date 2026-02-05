@@ -14,16 +14,28 @@ export default function GroupsScreen() {
       style={{ backgroundColor: theme.colors.background }}
       contentContainerStyle={{ padding: 24, gap: 16 }}
     >
-      <Text
-        selectable
-        style={{
-          fontFamily: theme.typography.fontFamily.semibold,
-          fontSize: theme.typography.size.title,
-          color: theme.colors.foreground,
-        }}
-      >
-        Groups
-      </Text>
+      <View style={{ gap: 6 }}>
+        <Text
+          selectable
+          style={{
+            fontFamily: theme.typography.fontFamily.semibold,
+            fontSize: theme.typography.size.title,
+            color: theme.colors.foreground,
+          }}
+        >
+          Groups
+        </Text>
+        <Text
+          selectable
+          style={{
+            fontFamily: theme.typography.fontFamily.regular,
+            fontSize: theme.typography.size.small,
+            color: theme.colors.muted,
+          }}
+        >
+          Manage the people you split with.
+        </Text>
+      </View>
 
       <View style={{ gap: 12 }}>
         {sampleGroups.map((group) => (

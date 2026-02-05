@@ -1,17 +1,17 @@
-import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { receipts, receiptItems } from "@/db/models/schema";
 import { manualItemSchema } from "@/lib/api/manual-entry-schemas";
 import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 import { isValidUUID } from "@/lib/utils";
+import { getAuthUserId } from "@/lib/api/auth";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
 export async function GET(request: Request, { params }: RouteParams) {
-  const { userId } = await auth();
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -55,7 +55,7 @@ export async function GET(request: Request, { params }: RouteParams) {
 }
 
 export async function PUT(request: Request, { params }: RouteParams) {
-  const { userId } = await auth();
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -152,7 +152,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
 }
 
 export async function POST(request: Request, { params }: RouteParams) {
-  const { userId } = await auth();
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -249,7 +249,7 @@ export async function POST(request: Request, { params }: RouteParams) {
 }
 
 export async function DELETE(request: Request, { params }: RouteParams) {
-  const { userId } = await auth();
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -305,4 +305,3 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     );
   }
 }
-

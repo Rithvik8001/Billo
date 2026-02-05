@@ -1,10 +1,11 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { clerkClient } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { receipts, users, groupMembers, itemAssignments, receiptItems } from "@/db/models/schema";
 import { eq, desc, or, and, inArray } from "drizzle-orm";
+import { getAuthUserId } from "@/lib/api/auth";
 
 export async function POST(request: Request) {
-  const { userId } = await auth();
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
     }
 
     // Ensure user exists in database
-    const user = await currentUser();
+    const user = await clerkClient.users.getUser(userId).catch(() => null);
     if (user) {
       const [existingUser] = await db
         .select()
@@ -72,7 +73,7 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
-  const { userId } = await auth();
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });

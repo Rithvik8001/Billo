@@ -14,20 +14,36 @@ export default function ReceiptsScreen() {
       style={{ backgroundColor: theme.colors.background }}
       contentContainerStyle={{ padding: 24, gap: 16 }}
     >
-      <Text
-        selectable
-        style={{
-          fontFamily: theme.typography.fontFamily.semibold,
-          fontSize: theme.typography.size.title,
-          color: theme.colors.foreground,
-        }}
-      >
-        Receipts
-      </Text>
+      <View style={{ gap: 6 }}>
+        <Text
+          selectable
+          style={{
+            fontFamily: theme.typography.fontFamily.semibold,
+            fontSize: theme.typography.size.title,
+            color: theme.colors.foreground,
+          }}
+        >
+          Receipts
+        </Text>
+        <Text
+          selectable
+          style={{
+            fontFamily: theme.typography.fontFamily.regular,
+            fontSize: theme.typography.size.small,
+            color: theme.colors.muted,
+          }}
+        >
+          All scanned and manual receipts in one place.
+        </Text>
+      </View>
 
       <View style={{ gap: 12 }}>
         {sampleReceipts.map((receipt) => (
-          <Link href={`/(tabs)/(receipts)/${receipt.id}`} asChild>
+          <Link
+            key={receipt.id}
+            href={`/(tabs)/(receipts)/${receipt.id}`}
+            asChild
+          >
             <Pressable
               style={{
                 borderRadius: theme.radii.lg,

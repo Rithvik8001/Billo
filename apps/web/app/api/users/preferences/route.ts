@@ -1,11 +1,11 @@
-import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { users } from "@/db/models/schema";
 import { eq } from "drizzle-orm";
 import { updatePreferencesSchema } from "@/lib/api/preferences-schemas";
+import { getAuthUserId } from "@/lib/api/auth";
 
-export async function GET() {
-  const { userId } = await auth();
+export async function GET(request: Request) {
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -36,7 +36,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  const { userId } = await auth();
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });

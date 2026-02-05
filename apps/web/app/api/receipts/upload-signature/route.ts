@@ -1,8 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
 import { generateUploadSignature } from "@/lib/cloudinary";
+import { getAuthUserId } from "@/lib/api/auth";
 
-export async function POST() {
-  const { userId } = await auth();
+export async function POST(request: Request) {
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });

@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { groups, groupMembers, users } from "@/db/models/schema";
 import { eq, and } from "drizzle-orm";
 import { addMemberSchema } from "@/lib/api/group-schemas";
 import { isValidUUID } from "@/lib/utils";
+import { getAuthUserId } from "@/lib/api/auth";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -27,7 +27,7 @@ async function checkAdminAccess(
 
 export async function GET(request: Request, { params }: RouteParams) {
   try {
-    const { userId } = await auth();
+    const userId = await getAuthUserId(request);
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -91,7 +91,7 @@ export async function GET(request: Request, { params }: RouteParams) {
 
 export async function POST(request: Request, { params }: RouteParams) {
   try {
-    const { userId } = await auth();
+    const userId = await getAuthUserId(request);
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

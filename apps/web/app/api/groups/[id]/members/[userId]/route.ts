@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { groupMembers, users } from "@/db/models/schema";
 import { eq, and } from "drizzle-orm";
 import { updateMemberRoleSchema } from "@/lib/api/group-schemas";
 import { isValidUUID } from "@/lib/utils";
+import { getAuthUserId } from "@/lib/api/auth";
 
 interface RouteParams {
   params: Promise<{ id: string; userId: string }>;
@@ -38,7 +38,7 @@ async function getAdminCount(groupId: string): Promise<number> {
 
 export async function PATCH(request: Request, { params }: RouteParams) {
   try {
-    const { userId: currentUserId } = await auth();
+    const currentUserId = await getAuthUserId(request);
 
     if (!currentUserId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -129,7 +129,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
 export async function DELETE(request: Request, { params }: RouteParams) {
   try {
-    const { userId: currentUserId } = await auth();
+    const currentUserId = await getAuthUserId(request);
 
     if (!currentUserId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

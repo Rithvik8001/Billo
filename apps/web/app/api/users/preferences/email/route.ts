@@ -1,13 +1,13 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import db from "@/db/config/connection";
 import { users } from "@/db/models/schema";
 import { eq } from "drizzle-orm";
 import { emailPreferencesSchema } from "@/lib/email/email-schemas";
+import { getAuthUserId } from "@/lib/api/auth";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const { userId } = await auth();
+    const userId = await getAuthUserId(request);
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -44,7 +44,7 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
-    const { userId } = await auth();
+    const userId = await getAuthUserId(request);
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

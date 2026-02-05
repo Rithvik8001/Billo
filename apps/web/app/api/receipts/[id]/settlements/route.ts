@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { receipts, settlements } from "@/db/models/schema";
 import { eq } from "drizzle-orm";
 import { isValidUUID } from "@/lib/utils";
+import { getAuthUserId } from "@/lib/api/auth";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -13,9 +13,9 @@ interface RouteParams {
  * GET /api/receipts/[id]/settlements
  * Check settlement status for a receipt
  */
-export async function GET(_request: Request, { params }: RouteParams) {
+export async function GET(request: Request, { params }: RouteParams) {
   try {
-    const { userId } = await auth();
+    const userId = await getAuthUserId(request);
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

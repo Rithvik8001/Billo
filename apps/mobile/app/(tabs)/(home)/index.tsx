@@ -12,16 +12,28 @@ export default function HomeScreen() {
         gap: 20,
       }}
     >
-      <Text
-        selectable
-        style={{
-          fontFamily: theme.typography.fontFamily.semibold,
-          fontSize: theme.typography.size.title,
-          color: theme.colors.foreground,
-        }}
-      >
-        Welcome back
-      </Text>
+      <View style={{ gap: 6 }}>
+        <Text
+          selectable
+          style={{
+            fontFamily: theme.typography.fontFamily.semibold,
+            fontSize: theme.typography.size.title,
+            color: theme.colors.foreground,
+          }}
+        >
+          Home
+        </Text>
+        <Text
+          selectable
+          style={{
+            fontFamily: theme.typography.fontFamily.regular,
+            fontSize: theme.typography.size.small,
+            color: theme.colors.muted,
+          }}
+        >
+          Overview of your balances and recent activity.
+        </Text>
+      </View>
 
       <View
         style={{

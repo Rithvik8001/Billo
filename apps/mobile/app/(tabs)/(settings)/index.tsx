@@ -8,16 +8,28 @@ export default function SettingsScreen() {
       style={{ backgroundColor: theme.colors.background }}
       contentContainerStyle={{ padding: 24, gap: 16 }}
     >
-      <Text
-        selectable
-        style={{
-          fontFamily: theme.typography.fontFamily.semibold,
-          fontSize: theme.typography.size.title,
-          color: theme.colors.foreground,
-        }}
-      >
-        Settings
-      </Text>
+      <View style={{ gap: 6 }}>
+        <Text
+          selectable
+          style={{
+            fontFamily: theme.typography.fontFamily.semibold,
+            fontSize: theme.typography.size.title,
+            color: theme.colors.foreground,
+          }}
+        >
+          Settings
+        </Text>
+        <Text
+          selectable
+          style={{
+            fontFamily: theme.typography.fontFamily.regular,
+            fontSize: theme.typography.size.small,
+            color: theme.colors.muted,
+          }}
+        >
+          Preferences and account controls.
+        </Text>
+      </View>
       <View
         style={{
           borderRadius: theme.radii.lg,

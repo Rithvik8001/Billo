@@ -1,16 +1,16 @@
-import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { receipts, receiptItems, groupMembers, itemAssignments } from "@/db/models/schema";
 import { updateReceiptSchema } from "@/lib/api/manual-entry-schemas";
 import { eq, and, inArray } from "drizzle-orm";
 import { isValidUUID } from "@/lib/utils";
+import { getAuthUserId } from "@/lib/api/auth";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
 export async function GET(request: Request, { params }: RouteParams) {
-  const { userId } = await auth();
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -81,7 +81,7 @@ export async function GET(request: Request, { params }: RouteParams) {
 }
 
 export async function PUT(request: Request, { params }: RouteParams) {
-  const { userId } = await auth();
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });

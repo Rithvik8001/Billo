@@ -1,11 +1,12 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { clerkClient } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { receipts, receiptItems, users } from "@/db/models/schema";
 import { createManualReceiptSchema } from "@/lib/api/manual-entry-schemas";
 import { eq } from "drizzle-orm";
+import { getAuthUserId } from "@/lib/api/auth";
 
 export async function POST(request: Request) {
-  const { userId } = await auth();
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -16,7 +17,7 @@ export async function POST(request: Request) {
     const validatedData = createManualReceiptSchema.parse(body);
 
     // Ensure user exists in database
-    const user = await currentUser();
+    const user = await clerkClient.users.getUser(userId).catch(() => null);
     if (user) {
       const [existingUser] = await db
         .select()
@@ -108,4 +109,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

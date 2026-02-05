@@ -1,15 +1,15 @@
-import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { receipts, receiptItems } from "@/db/models/schema";
 import { receiptExtractionSchema } from "@/lib/ai/schemas";
 import { eq } from "drizzle-orm";
 import { isValidUUID } from "@/lib/utils";
+import { getAuthUserId } from "@/lib/api/auth";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { userId } = await auth();
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -145,4 +145,3 @@ export async function POST(
     );
   }
 }
-

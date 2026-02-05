@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import db from "@/db/config/connection";
 import { settlements, users } from "@/db/models/schema";
 import { eq, or, and } from "drizzle-orm";
 import { settlementFiltersSchema, createSettlementSchema } from "@/lib/api/settlement-schemas";
 import { isValidUUID } from "@/lib/utils";
+import { getAuthUserId } from "@/lib/api/auth";
 
 export async function GET(request: Request) {
   try {
-    const { userId } = await auth();
+    const userId = await getAuthUserId(request);
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -123,7 +123,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { userId } = await auth();
+    const userId = await getAuthUserId(request);
 
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -217,4 +217,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

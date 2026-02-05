@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import { streamText, Output } from "ai";
 import { receipts, users } from "@/db/models/schema";
 import { receiptExtractionSchema } from "@/lib/ai/schemas";
@@ -14,9 +13,10 @@ import { checkAiScanLimit } from "@/lib/rate-limit";
 import db from "@/db/config/connection";
 import { eq } from "drizzle-orm";
 import type { SubscriptionTier } from "@/lib/polar";
+import { getAuthUserId } from "@/lib/api/auth";
 
 export async function POST(request: Request) {
-  const { userId } = await auth();
+  const userId = await getAuthUserId(request);
 
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });

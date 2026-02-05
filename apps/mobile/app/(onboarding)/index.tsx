@@ -1,14 +1,17 @@
 import { View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import { useAuth } from "@clerk/clerk-expo";
 import { BrandMark } from "../../components/onboarding/brand-mark";
 import { Hero } from "../../components/onboarding/hero";
 import { ReceiptPreviewCard } from "../../components/onboarding/receipt-preview-card";
 import { FeatureList } from "../../components/onboarding/feature-list";
 import { OnboardingCta } from "../../components/onboarding/cta";
 import { theme } from "../../theme";
+import { setOnboardingComplete } from "../../lib/storage/onboarding";
 
 export default function OnboardingScreen() {
+  const { isSignedIn } = useAuth();
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const density =
@@ -51,10 +54,19 @@ export default function OnboardingScreen() {
           <FeatureList density={density} />
         </View>
         <OnboardingCta
-          onPrimaryPress={() => {
-            router.replace("/(tabs)/(home)");
+          onPrimaryPress={async () => {
+            await setOnboardingComplete(true);
+            if (isSignedIn) {
+              router.replace("/(tabs)/(home)");
+              return;
+            }
+            router.replace("/(auth)/sign-in");
           }}
-          onSecondaryPress={() => {}}
+          onSecondaryPress={() => {
+            setOnboardingComplete(true).then(() => {
+              router.replace("/(auth)/sign-in");
+            });
+          }}
         />
       </View>
     </View>
