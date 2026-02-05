@@ -39,6 +39,20 @@ export default function RootLayout() {
       "Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY. Add it to your env.",
     );
   }
+  const appEnv =
+    process.env.EXPO_PUBLIC_APP_ENV ?? (__DEV__ ? "development" : "production");
+
+  if (appEnv === "production" && publishableKey.startsWith("pk_test")) {
+    throw new Error(
+      "EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY is a test key in production. Set a live key (pk_live_...) in .env.production.",
+    );
+  }
+
+  if (appEnv === "development" && publishableKey.startsWith("pk_live")) {
+    console.warn(
+      "Clerk publishable key is live in development. Use a test key to avoid touching production data.",
+    );
+  }
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
