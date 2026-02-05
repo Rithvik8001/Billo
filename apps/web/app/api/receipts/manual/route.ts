@@ -17,7 +17,8 @@ export async function POST(request: Request) {
     const validatedData = createManualReceiptSchema.parse(body);
 
     // Ensure user exists in database
-    const user = await clerkClient.users.getUser(userId).catch(() => null);
+    const clerk = await clerkClient();
+    const user = await clerk.users.getUser(userId).catch(() => null);
     if (user) {
       const [existingUser] = await db
         .select()
