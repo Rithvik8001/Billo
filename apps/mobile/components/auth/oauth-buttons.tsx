@@ -1,12 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import { useSSO } from "@clerk/clerk-expo";
-import { Asset } from "expo-asset";
-import { SvgUri } from "react-native-svg";
+import { FontAwesome } from "@expo/vector-icons";
 import { theme } from "../../theme";
-
-const googleIconUri = Asset.fromModule(
-  require("../../assets/images/google.svg"),
-).uri;
 
 export function OAuthButtons() {
   const { startSSOFlow } = useSSO();
@@ -44,7 +39,7 @@ export function OAuthButtons() {
           opacity: pressed ? 0.9 : 1,
         })}
       >
-        <SvgUri width={18} height={18} uri={googleIconUri} />
+        <FontAwesome name="google" size={18} color="#4285F4" />
         <Text
           selectable
           style={{
